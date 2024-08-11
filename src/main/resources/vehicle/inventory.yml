@@ -1,0 +1,12 @@
+PT:
+  vehicle:
+    title: "Veículo"
+    blockedSlot: "§cSlot Ocupado"
+    emptySlot: "§aSlot Vazio"
+    broken: "§cO veículo quebrou ou você está muito longe para entrar!"
+EN:
+  vehicle:
+    title: "Vehicle"
+    blockedSlot: "§cSlot Occupied"
+    emptySlot: "§aEmpty Slot"
+    broken: "§cThe vehicle is broken or you are too far away to enter!"

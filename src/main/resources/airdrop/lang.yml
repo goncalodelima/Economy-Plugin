@@ -1,0 +1,18 @@
+EN:
+  someone-airdrop-open: "§cSomeone already has the supplydrop open!"
+  has-airdrop: "§cThere is already an supplydrop in this location!"
+  airdrop-floor: "§cPut the supplydrop on the ground!"
+  airdrop-air: "§cYou need to place the airdrop where there is room in height for it to fall!"
+  airDrop:
+    - ""
+    - "§b§lSUPPLYDROP §f- §b%player% §fcalled a &b&lSUPPLY DROP§b!"
+    - ""
+PT:
+  someone-airdrop-open: "§cAlguém já tem o supplydrop aberto!"
+  has-airdrop: "§cJá tem um supplydrop nessa localidade!"
+  airdrop-floor: "§cColoque o supplydrop no chão!"
+  airdrop-air: "§cVocê precisa colocar o lançamento aéreo onde haja espaço em altura para ele cair!"
+  airDrop:
+    - ""
+    - "§b§lSUPPLYDROP §f- §b%player% §fchamou um &b&lSUPPLY DROP§b!"
+    - ""

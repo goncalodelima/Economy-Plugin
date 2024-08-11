@@ -1,0 +1,1531 @@
+PT:
+  back: "§aVoltar"
+  craft:
+    title: "Bancada de trabalho"
+    blocks: "§aBlocos"
+    explosives: "§aExplosivos"
+    equipments: "§aEquipamentos"
+    tools: "§aFerramentas"
+    defense: "§aDefesa"
+    munitions: "§aMunições"
+    guns: "§aArmas"
+    medications: "§aMedicamentos"
+  amount:
+    confirm: "§aConfirmar"
+    reset: "§cResetar"
+    totalAmount: "§cNão definida"
+    name: "§eQuantidade"
+    lore:
+      - "§fTotal: §e%amount%"
+  blocks:
+    title: "Bancada de trabalho - Blocos"
+    cupboard:
+      name: "§aArmário"
+      lore:
+        - "§e100x Log"
+        - ""
+        - "§7Item utilizado para"
+        - "§7criar uma área para construção."
+      lore1:
+        - "§7Item utilizado para"
+        - "§7criar uma área para construção."
+    bed:
+      name: "§aCama"
+      lore:
+        - "§e250x Log"
+        - ""
+        - "§7Item utilizado para"
+        - "§7marcar um ponto de spawn."
+      lore1:
+        - "§7Item utilizado para"
+        - "§7marcar um ponto de spawn."
+    furnace:
+      name: "§aFornalha"
+      lore:
+        - "§e250x Log"
+        - "§e435x Stone"
+        - ""
+        - "§7Item utilizado para"
+        - "§7queimar os minérios."
+      lore1:
+        - "§7Item utilizado para"
+        - "§7queimar os minérios."
+    chest:
+      name: "§aBaú"
+      lore:
+        - "§e500x Log"
+        - ""
+        - "§7Item utilizado para"
+        - "§7guardar os seus itens."
+      lore1:
+        - "§7Item utilizado para"
+        - "§7guardar os seus itens."
+    wood_door:
+      name: "§aPorta de Madeira"
+      lore:
+        - "§e400x Log"
+        - ""
+        - "§7Item que permite entrar"
+        - "§7na sua base (com senha)."
+        - "§7Resistência: §e1 §7C4"
+      lore1:
+        - "§7Item que permite entrar"
+        - "§7na sua base (com senha)."
+        - "§7Resistência: §e1 §7C4"
+    iron_door:
+      name: "§aPorta de Ferro"
+      lore:
+        - "§e100x Iron"
+        - ""
+        - "§7Item que permite entrar"
+        - "§7na sua base (com senha)."
+        - "§7Resistência: §e4 §7C4"
+      lore1:
+        - "§7Item que permite entrar"
+        - "§7na sua base (com senha)."
+        - "§7Resistência: §e4 §7C4"
+    t1:
+      name: "§aMadeira"
+      lore:
+        - "§e12x Log"
+        - ""
+        - "§7Item utilizado em construções"
+        - "§7Resistência: §e1 §7C4"
+      lore1:
+        - "§7Item utilizado em construções"
+        - "§7Resistência: §e1 §7C4"
+    t1_stairs:
+      name: "§aEscadas de Madeira"
+      lore:
+        - "§e12x Log"
+        - ""
+        - "§7Item utilizado em construções"
+        - "§7Resistência: §e1 §7C4"
+      lore1:
+        - "§7Item utilizado em construções"
+        - "§7Resistência: §e1 §7C4"
+    t2:
+      name: "§aMadeira Reforçada"
+      lore:
+        - "§e60x Log"
+        - ""
+        - "§7Item utilizado em construções."
+        - "§7Resistência: §e2 §7C4"
+      lore1:
+        - "§7Item utilizado em construções."
+        - "§7Resistência: §e2 §7C4"
+    t2_stairs:
+      name: "§aEscadas de Madeira Reforçada"
+      lore:
+        - "§e60x Log"
+        - ""
+        - "§7Item utilizado em construções."
+        - "§7Resistência: §e2 §7C4"
+      lore1:
+        - "§7Item utilizado em construções."
+        - "§7Resistência: §e2 §7C4"
+    t3:
+      name: "§aPedra Reforçada"
+      lore:
+        - "§e10x Iron"
+        - "§e20x Stone"
+        - ""
+        - "§7Item utilizado em construções."
+        - "§7Resistência: §e3 §7C4"
+      lore1:
+        - "§7Item utilizado em construções."
+        - "§7Resistência: §e3 §7C4"
+    t3_stairs:
+      name: "§aEscadas de Pedra Reforçada"
+      lore:
+        - "§e10x Iron"
+        - "§e20x Stone"
+        - ""
+        - "§7Item utilizado em construções."
+        - "§7Resistência: §e3 §7C4"
+      lore1:
+        - "§7Item utilizado em construções."
+        - "§7Resistência: §e3 §7C4"
+    t4:
+      name: "§aConcreto"
+      lore:
+        - "§e20x Iron"
+        - "§e35x Stone"
+        - ""
+        - "§7Item utilizado em construções."
+        - "§7Resistência: §e4 §7C4"
+      lore1:
+        - "§7Item utilizado em construções."
+        - "§7Resistência: §e4 §7C4"
+    t4_stairs:
+      name: "§aEscadas de Concreto"
+      lore:
+        - "§e20x Iron"
+        - "§e35x Stone"
+        - ""
+        - "§7Item utilizado em construções."
+        - "§7Resistência: §e4 §7C4"
+      lore1:
+        - "§7Item utilizado em construções."
+        - "§7Resistência: §e4 §7C4"
+    t5:
+      name: "§aTitanium"
+      lore:
+        - "§e100x Titanium"
+        - ""
+        - "§7Item utilizado em construções."
+        - "§7Resistência: §e5 §7C4"
+      lore1:
+        - "§7Item utilizado em construções."
+        - "§7Resistência: §e5 §7C4"
+    t5_stairs:
+      name: "§aEscadas de Titanium"
+      lore:
+        - "§e100x Titanium"
+        - ""
+        - "§7Item utilizado em construções."
+        - "§7Resistência: §e5 §7C4"
+      lore1:
+        - "§7Item utilizado em construções."
+        - "§7Resistência: §e5 §7C4"
+    torch:
+      name: "§aTocha"
+      lore:
+        - "§e25x Log"
+        - "§e5x Coal"
+        - ""
+        - "§7Item utilizado em construções."
+      lore1:
+        - "§7Item utilizado em construções."
+    wood_trapdoor:
+      name: "§aAlçapão de Madeira Reforçada"
+      lore:
+        - "§e225x Log"
+        - ""
+        - "§7Item que permite entrar"
+        - "§7na sua base (com senha)."
+        - "§7Resistência: §e2 §7C4"
+      lore1:
+        - "§7Item que permite entrar"
+        - "§7na sua base (com senha)."
+        - "§7Resistência: §e2 §7C4"
+    iron_trapdoor:
+      name: "§aAlçapão de Ferro"
+      lore:
+        - "§e125x Iron"
+        - ""
+        - "§7Item que permite entrar"
+        - "§7na sua base (com senha)."
+        - "§7Resistência: §e4 §7C4"
+      lore1:
+        - "§7Item que permite entrar"
+        - "§7na sua base (com senha)."
+        - "§7Resistência: §e4 §7C4"
+  defense:
+    title: "Bancada de trabalho - Defesa"
+    thorns:
+      name: "§aArame"
+      lore:
+        - "§e500x Log"
+        - ""
+        - "§7Item utilizado para"
+        - "§7proteger construções."
+      lore1:
+        - "§7Item utilizado para"
+        - "§7proteger construções."
+    woodbase:
+      name: "§aMadeira para Base"
+      lore:
+        - "§e125x Log"
+        - ""
+        - "§7Item utilizado para"
+        - "§7fazer aprimoramentos nos"
+        - "§7níveis de 1 §aArmário§7."
+      lore1:
+        - "§7Item utilizado para"
+        - "§7fazer aprimoramentos nos"
+        - "§7níveis de 1 §aArmário§7."
+    stonebase:
+      name: "§aPedra para Base"
+      lore:
+        - "§e125x Stone"
+        - ""
+        - "§7Item utilizado para"
+        - "§7fazer aprimoramentos nos"
+        - "§7níveis de 1 §aArmário§7."
+      lore1:
+        - "§7Item utilizado para"
+        - "§7fazer aprimoramentos nos"
+        - "§7níveis de 1 §aArmário§7."
+    ironbase:
+      name: "§aFerro para Base"
+      lore:
+        - "§e100x Iron"
+        - ""
+        - "§7Item utilizado para"
+        - "§7fazer aprimoramentos nos"
+        - "§7níveis de 1 §aArmário§7."
+      lore1:
+        - "§7Item utilizado para"
+        - "§7fazer aprimoramentos nos"
+        - "§7níveis de 1 §aArmário§7."
+  equipments:
+    title: "Bancada de trabalho - Equipamentos"
+    wood_helmet:
+      name: "§aCapacete de Madeira"
+      lore:
+        - "§e180x Log"
+        - ""
+        - "§7Armadura de Madeira"
+        - "§7Defesa: §e1"
+    wood_chestplate:
+      name: "§aPeitoral de Madeira Reforçada"
+      lore:
+        - "§e350x Log"
+        - ""
+        - "§7Armadura de Madeira"
+        - "§7Defesa: §e1"
+    wood_leggings:
+      name: "§aCalças de Madeira"
+      lore:
+        - "§e275x Log"
+        - ""
+        - "§7Armadura de Madeira"
+        - "§7Defesa: §e1"
+    wood_boots:
+      name: "§aBotas de Madeira"
+      lore:
+        - "§e140x Log"
+        - ""
+        - "§7Armadura de Madeira"
+        - "§7Defesa: §e1"
+    reinforced_wood_helmet:
+      name: "§aCapacete de Madeira Reforçada"
+      lore:
+        - "§e90x Log"
+        - ""
+        - "§7Armadura de Madeira Reforçada"
+        - "§7Defesa: §e2"
+    reinforced_wood_chestplate:
+      name: "§aPeitoral de Madeira Reforçada"
+      lore:
+        - "§e175x Log"
+        - ""
+        - "§7Armadura de Madeira Reforçada"
+        - "§7Defesa: §e2"
+    reinforced_wood_leggings:
+      name: "§aCalças de Madeira Reforçada"
+      lore:
+        - "§e135x Log"
+        - ""
+        - "§7Armadura de Madeira Reforçada"
+        - "§7Defesa: §e2"
+    reinforced_wood_boots:
+      name: "§aBotas de Madeira Reforçada"
+      lore:
+        - "§e70x Log"
+        - ""
+        - "§7Armadura de Madeira Reforçada"
+        - "§7Defesa: §e2"
+    florest_helmet:
+      name: "§aCapacete de Floresta"
+      lore:
+        - "§e60x Leaves"
+        - ""
+        - "§7Armadura de Floresta"
+        - "§7Defesa: §e3"
+    florest_chestplate:
+      name: "§aPeitoral de Floresta"
+      lore:
+        - "§e100x Leaves"
+        - ""
+        - "§7Armadura de Floresta"
+        - "§7Defesa: §e3"
+    florest_leggings:
+      name: "§aCalças de Floresta"
+      lore:
+        - "§e80x Leaves"
+        - ""
+        - "§7Armadura de Floresta"
+        - "§7Defesa: §e3"
+    florest_boots:
+      name: "§aBotas de Floresta"
+      lore:
+        - "§e40x Leaves"
+        - ""
+        - "§7Armadura de Floresta"
+        - "§7Defesa: §e3"
+    soldier_helmet:
+      name: "§aCapacete de Soldado"
+      lore:
+        - "§e60 Iron"
+        - ""
+        - "§7Armadura de Soldado"
+        - "§7Defesa: §e4"
+    soldier_chestplate:
+      name: "§aPeitoral de Soldado"
+      lore:
+        - "§e100 Iron"
+        - ""
+        - "§7Armadura de Soldado"
+        - "§7Defesa: §e4"
+    soldier_leggings:
+      name: "§aCalças de Soldado"
+      lore:
+        - "§e80x Iron"
+        - ""
+        - "§7Armadura de Soldado"
+        - "§7Defesa: §e4"
+    soldier_boots:
+      name: "§aBotas de Soldado"
+      lore:
+        - "§e40x Iron"
+        - ""
+        - "§7Armadura de Soldado"
+        - "§7Defesa: §e4"
+    kevlar_helmet:
+      name: "§aCapacete de Kevlar"
+      lore:
+        - "§e130x Iron"
+        - "§e65x Titanium"
+        - ""
+        - "§7Armadura de Kevlar"
+        - "§7Defesa: §e5"
+    kevlar_chestplate:
+      name: "§aPeitoral de Kevlar"
+      lore:
+        - "§e240x Iron"
+        - "§e120x Titanium"
+        - ""
+        - "§7Armadura de Kevlar"
+        - "§7Defesa: §e5"
+    kevlar_leggings:
+      name: "§aCalças de Kevlar"
+      lore:
+        - "§e180x Iron"
+        - "§e90x Titanium"
+        - ""
+        - "§7Armadura de Kevlar"
+        - "§7Defesa: §e5"
+    kevlar_boots:
+      name: "§aBotas de Kevlar"
+      lore:
+        - "§e100x Iron"
+        - "§e50x Titanium"
+        - ""
+        - "§7Armadura de Kevlar"
+        - "§7Defesa: §e5"
+  explosives:
+    title: "Bancada de trabalho - Explosivos"
+    fuse:
+      name: "§aFusível"
+      lore:
+        - "§e150x Cloth"
+        - "§e30x Leather"
+        - ""
+        - "§7Item utilizado para"
+        - "§7craftar c4."
+    explosive:
+      name: "§aExplosivo"
+      lore:
+        - "§e64 Pure Sulfur"
+        - "§e20x Leather"
+        - ""
+        - "§7Item utilizado para"
+        - "§7craftar c4."
+    homemade:
+      name: "§aHomemade Explosive"
+      lore:
+        - "§e5x Explosivos"
+        - "§e50x Pure Sulfur"
+        - ""
+        - "§7Item utilizado para"
+        - "§7invadir blocos de construções."
+        - "§7Tem chance de falhar §c(50%)."
+        - "§7Invade apenas §eT1 §7e se falhar, alguns materiais são devolvidos."
+    c4:
+      name: "§aC4"
+      lore:
+        - "§e15x Explosivos"
+        - "§e1x Fusível"
+        - "§e90x Pure Sulfur"
+        - "§e384x Coal"
+        - ""
+        - "§7Item utilizado para"
+        - "§7invadir blocos de construções."
+    fuel:
+      name: "§aCombustível"
+      lore:
+        - "§e6x Leather"
+        - "§e12x Cloth"
+        - "§e6x Etanol"
+        - ""
+        - "§7Item utilizado para"
+        - "§7ativar mineradoras."
+  guns:
+    title: "Bancada de trabalho - Armas"
+    usp:
+      name: "§aUSP-S"
+      lore:
+        - "§e60x Iron"
+        - "§e35x Stone"
+        - ""
+        - "§eCategoria: §fPistola"
+        - "§eDano: §f2.6"
+        - "§eAlcance: §f60 blocos"
+        - "§eCapacidade: §f12 balas"
+        - "§eAttachments §c✖"
+    anaconda:
+      name: "§aAnaconda"
+      lore:
+        - "§e70x Iron"
+        - "§e30x Stone"
+        - ""
+        - "§eCategoria: §fPistola"
+        - "§eDano: §f3.5"
+        - "§eAlcance: §f60 blocos"
+        - "§eCapacidade: §f6 balas"
+        - "§eAttachments §c✖"
+    ump45:
+      name: "§aUMP-45"
+      lore:
+        - "§e120x Iron"
+        - "§e60x Stone"
+        - ""
+        - "§eCategoria: §fSub-Metralhadora"
+        - "§eDano: §f1.2"
+        - "§eAlcance: §f60 blocos"
+        - "§eCapacidade: §f30 balas"
+        - "§eAttachments §c✖"
+    mac10:
+      name: "§aMAC-10"
+      lore:
+        - "§e140x Iron"
+        - "§e120x Stone"
+        - ""
+        - "§eCategoria: §fSub-Metralhadora"
+        - "§eDano: §f1.4"
+        - "§eAlcance: §f60 blocos"
+        - "§eCapacidade: §f30 balas"
+        - "§eAttachments §c✖"
+    thompson:
+      name: "§aThompson"
+      lore:
+        - "§e160x Iron"
+        - "§e120x Stone"
+        - ""
+        - "§eCategoria: §fSub-Metralhadora"
+        - "§eDano: §f1.6"
+        - "§eAlcance: §f60 blocos"
+        - "§eCapacidade: §f30 balas"
+        - "§eAttachments §c✖"
+    m4a1:
+      name: "§aM4A1"
+      lore:
+        - "§e280x Iron"
+        - "§e220x Stone"
+        - ""
+        - "§eCategoria: §fRifle"
+        - "§eDano: §f2.8"
+        - "§eAlcance: §f60 blocos"
+        - "§eCapacidade: §f30 balas"
+        - "§eAttachments §c✖"
+    ak47:
+      name: "§aAK-47"
+      lore:
+        - "§e300x Iron"
+        - "§e200x Stone"
+        - ""
+        - "§eCategoria: §fRifle"
+        - "§eDano: §f3.0"
+        - "§eAlcance: §f50 blocos"
+        - "§eCapacidade: §f30 balas"
+        - "§eAttachments §c✖"
+    fnfal:
+      name: "§aFNFAL"
+      lore:
+        - "§e300x Iron"
+        - "§e250x Stone"
+        - ""
+        - "§eCategoria: §fRifle"
+        - "§eDano: §f3.0"
+        - "§eAlcance: §f75 blocos"
+        - "§eCapacidade: §f20 balas"
+        - "§eAttachments §c✖"
+    spas:
+      name: "§aSPAS-12"
+      lore:
+        - "§e350x Iron"
+        - "§e130x Stone"
+        - ""
+        - "§eCategoria: §fShotgun"
+        - "§eDano: §f6.0"
+        - "§eAlcance: §f10 blocos"
+        - "§eCapacidade: §f6 balas"
+        - "§eAttachments §c✖"
+    crossbow:
+      name: "§aCrossbow"
+      lore:
+        - "§e225x Iron"
+        - "§e125x Stone"
+        - ""
+        - "§eCategoria: §fBesta"
+        - "§eDano: §f7.0"
+        - "§eAlcance: §f120 blocos"
+        - "§eCapacidade: §f1 bala"
+        - "§eAttachments §c✖"
+    m40:
+      name: "§aM40"
+      lore:
+        - "§e400x Iron"
+        - "§e200x Stone"
+        - ""
+        - "§eCategoria: §fSniper"
+        - "§eDano: §f11.0"
+        - "§eAlcance: §f140 blocos"
+        - "§eCapacidade: §f5 balas"
+        - "§eAttachments §c✖"
+    as50:
+      name: "§aAS-50"
+      lore:
+        - "§e550x Iron"
+        - "§e350x Stone"
+        - ""
+        - "§eCategoria: §fSniper"
+        - "§eDano: §f14.0"
+        - "§eAlcance: §f140 blocos"
+        - "§eCapacidade: §f5 balas"
+        - "§eAttachments §c✖"
+  medications:
+    title: "Bancada de trabalho - Medicações"
+    smallmedkit:
+      name: "§aKit médico pequeno"
+      lore:
+        - "§e7x Leather"
+        - "§e12x Cloth"
+        - "§e3x Etanol"
+        - "§e6x Tissue"
+        - ""
+        - "§7Item utilizado para"
+        - "§7recuperar §e3 §c❤§7."
+    largemedkit:
+      name: "§aKit médico grande"
+      lore:
+        - "§e16x Leather"
+        - "§e25x Cloth"
+        - "§e6x Etanol"
+        - "§e12x Tissue"
+        - ""
+        - "§7Item utilizado para"
+        - "§7recuperar §e6 §c❤§7."
+  munitions:
+    title: "Bancada de trabalho - Munições"
+    pistol:
+      name: "§aMunição de Pistola"
+      lore:
+        - "§e2x Pure Sulfur"
+        - "§e1x Iron"
+        - ""
+        - "§7Munição utilizada em armas"
+        - "§7do tipo pistola."
+      lore1:
+        - "§7Munição utilizada em armas"
+        - "§7do tipo pistola."
+    submachine:
+      name: "§aMunição de Sub-Metralhadora"
+      lore:
+        - "§e2x Pure Sulfur"
+        - "§e1x Iron"
+        - ""
+        - "§7Munição utilizada em armas"
+        - "§7do tipo sub-metralhadora."
+      lore1:
+        - "§7Munição utilizada em armas"
+        - "§7do tipo sub-metralhadora."
+    rifle:
+      name: "§aMunição de Rifle"
+      lore:
+        - "§e3x Pure Sulfur"
+        - "§e1x Iron"
+        - ""
+        - "§7Munição utilizada em armas"
+        - "§7do tipo rifle."
+      lore1:
+        - "§7Munição utilizada em armas"
+        - "§7do tipo rifle."
+    shotgun:
+      name: "§aMunição de Shotgun"
+      lore:
+        - "§e4x Pure Sulfur"
+        - "§e1x Iron"
+        - ""
+        - "§7Munição utilizada em armas"
+        - "§7do tipo shotgun."
+      lore1:
+        - "§7Munição utilizada em armas"
+        - "§7do tipo shotgun."
+    arrow:
+      name: "§aFlecha"
+      lore:
+        - "§e5x Pure Sulfur"
+        - "§e1x Iron"
+        - ""
+        - "§7Munição utilizada em armas"
+        - "§7do tipo crossbow."
+      lore1:
+        - "§7Munição utilizada em armas"
+        - "§7do tipo crossbow."
+    sniper:
+      name: "§aMunição de Sniper"
+      lore:
+        - "§e6x Pure Sulfur"
+        - "§e1x Iron"
+        - ""
+        - "§7Munição utilizada em armas"
+        - "§7do tipo sniper."
+      lore1:
+        - "§7Munição utilizada em armas"
+        - "§7do tipo sniper."
+  tools:
+    title: "Bancada de Trabalho - Ferramentas"
+    wood_axe:
+      name: "§aMachado de Madeira"
+      lore:
+        - "§e45x Log"
+        - ""
+        - "§7Machado de Madeira"
+        - "§7Eficiência: §e1§7."
+      lore1:
+        - "§7Eficiência: §clvl§e1§7."
+    wood_pickaxe:
+      name: "§aPicareta de Madeira"
+      lore:
+        - "§e35x Log"
+        - ""
+        - "§7Picareta de Madeira"
+        - "§7Eficiência: §e1§7."
+      lore1:
+        - "§7Eficiência: §clvl§e1§7."
+    stone_axe:
+      name: "§aMachado de Pedra"
+      lore:
+        - "§e150x Log"
+        - "§e35x Stone"
+        - ""
+        - "§7Machado de Pedra"
+        - "§7Eficiência: §e2§7."
+      lore1:
+        - "§7Eficiência: §clvl§e2§7."
+    stone_pickaxe:
+      name: "§aPicareta de Pedra"
+      lore:
+        - "§e140x Log"
+        - "§e50x Stone"
+        - ""
+        - "§7Picareta de Pedra"
+        - "§7Eficiência: §e2§7."
+      lore1:
+        - "§7Eficiência: §clvl§e2§7."
+    iron_axe:
+      name: "§aMachado de Ferro"
+      lore:
+        - "§e450x Log"
+        - "§e80x Stone"
+        - ""
+        - "§7Machado de Ferro"
+        - "§7Eficiência: §e3§7."
+      lore1:
+        - "§7Eficiência: §clvl§e3§7."
+    iron_pickaxe:
+      name: "§aPicareta de Ferro"
+      lore:
+        - "§e420x Log"
+        - "§e90x Iron"
+        - ""
+        - "§7Picareta de Ferro"
+        - "§7Eficiência: §e3§7."
+      lore1:
+        - "§7Eficiência: §clvl§e3§7."
+    stone_sword:
+      name: "§aEspada de Pedra"
+      lore:
+        - "§e220x Log"
+        - "§e50x Stone"
+        - ""
+        - "§7Espada de Pedra"
+        - "§7Dano: §e1§7."
+      lore1:
+        - "§7Dano: §clvl§e2§7."
+    iron_sword:
+      name: "§aEspada de Ferro"
+      lore:
+        - "§e450x Log"
+        - "§e80x Iron"
+        - ""
+        - "§7Espada de Ferro"
+        - "§7Dano: §e2§7."
+      lore1:
+        - "§7Dano: §clvl§e3§7."
+    diamond_sword:
+      name: "§aEspada de Diamante"
+      lore:
+        - "§e600x Log"
+        - "§e190x Iron"
+        - ""
+        - "§7Espada de Diamante"
+        - "§7Dano: §e3§7."
+      lore1:
+        - "§7Dano: §clvl§e4§7."
+    repair_kit:
+      name: "§aKit de Reparo"
+      lore:
+        - "§e300x Log"
+        - "§e100x Iron"
+        - "§e130x Stone"
+        - ""
+        - "§7Item utilizado para reparar"
+        - "§7armas, armaduras e veículos."
+      lore1:
+        - "§7Item utilizado para reparar"
+        - "§7armas, armaduras e veículos."
+  crafting:
+    title: "Bancada de Trabalho - Craftar"
+    cancel: "§cCancelar"
+    confirm: "§aConfirmar"
+    workbench:
+      name: "§aBancada de Trabalho"
+      lore:
+        - "§e50x Log"
+        - ""
+        - "§7Bancada utilizada para"
+        - "§7craftar diversos itens."
+
+EN:
+  back: "§aBack"
+  craft:
+    title: "Workbench"
+    blocks: "§aBlocks"
+    explosives: "§aExplosives"
+    equipments: "§aEquipments"
+    tools: "§aTools"
+    defense: "§aDefense"
+    munitions: "§aMunitions"
+    guns: "§aGuns"
+    medications: "§aMedications"
+  amount:
+    confirm: "§aConfirm"
+    reset: "§cReset"
+    totalAmount: "§cUndefined"
+    name: "§eAmount"
+    lore:
+      - "§fTotal: §e%amount%"
+  blocks:
+    title: "Workbench - Blocks"
+    cupboard:
+      name: "§aCupboard"
+      lore:
+        - "§e100x Log"
+        - ""
+        - "§7Item used to"
+        - "§7create an area for construction."
+    bed:
+      name: "§aBed"
+      lore:
+        - "§e250x Log"
+        - ""
+        - "§7Item used to"
+        - "§7set a spawn point."
+    furnace:
+      name: "§aFurnace"
+      lore:
+        - "§e250x Log"
+        - "§e435x Stone"
+        - ""
+        - "§7Item used to"
+        - "§7smelt ores."
+    chest:
+      name: "§aChest"
+      lore:
+        - "§e500x Log"
+        - ""
+        - "§7Item used to"
+        - "§7store your items."
+    wood_door:
+      name: "§aWooden Door"
+      lore:
+        - "§e400x Log"
+        - ""
+        - "§7Item that allows entry"
+        - "§7to your base (with code)."
+        - "§7Resistance: §e1 §7C4"
+    iron_door:
+      name: "§aIron Door"
+      lore:
+        - "§e100x Iron"
+        - ""
+        - "§7Item that allows entry"
+        - "§7to your base (with code)."
+        - "§7Resistance: §e4 §7C4"
+    t1:
+      name: "§aWood"
+      lore:
+        - "§e12x Log"
+        - ""
+        - "§7Item used in constructions."
+        - "§7Resistance: §e1 §7C4"
+    t1_stairs:
+      name: "§aWood Stairs"
+      lore:
+        - "§e12x Log"
+        - ""
+        - "§7Item used in constructions."
+        - "§7Resistance: §e1 §7C4"
+    t2:
+      name: "§aReinforced Wood"
+      lore:
+        - "§e60x Log"
+        - ""
+        - "§7Item used in constructions."
+        - "§7Resistance: §e2 §7C4"
+    t2_stairs:
+      name: "§aReinforced Wood Stairs"
+      lore:
+        - "§e60x Log"
+        - ""
+        - "§7Item used in constructions."
+        - "§7Resistance: §e2 §7C4"
+    t3:
+      name: "§aReinforced Stone"
+      lore:
+        - "§e10x Iron"
+        - "§e20x Stone"
+        - ""
+        - "§7Item used in constructions."
+        - "§7Resistance: §e3 §7C4"
+    t3_stairs:
+      name: "§aReinforced Stone Stairs"
+      lore:
+        - "§e10x Iron"
+        - "§e20x Stone"
+        - ""
+        - "§7Item used in constructions."
+        - "§7Resistance: §e3 §7C4"
+    t4:
+      name: "§aConcrete"
+      lore:
+        - "§e20x Iron"
+        - "§e35x Stone"
+        - ""
+        - "§7Item used in constructions."
+        - "§7Resistance: §e4 §7C4"
+    t4_stairs:
+      name: "§aConcrete Stairs"
+      lore:
+        - "§e20x Iron"
+        - "§e35x Stone"
+        - ""
+        - "§7Item used in constructions."
+        - "§7Resistance: §e4 §7C4"
+    t5:
+      name: "§aTitanium"
+      lore:
+        - "§e100x Titanium"
+        - ""
+        - "§7Item used in constructions."
+        - "§7Resistance: §e5 §7C4"
+    t5_stairs:
+      name: "§aTitanium Stairs"
+      lore:
+        - "§e100x Titanium"
+        - ""
+        - "§7Item used in constructions."
+        - "§7Resistance: §e5 §7C4"
+    torch:
+      name: "§aTorch"
+      lore:
+        - "§e25x Log"
+        - "§e5x Coal"
+        - ""
+        - "§7Item used in constructions."
+    wood_trapdoor:
+      name: "§aReinforced Wood Trapdoor"
+      lore:
+        - "§e225x Log"
+        - ""
+        - "§7Item that allows entry"
+        - "§7to your base (with code)."
+        - "§7Resistance: §e2 §7C4"
+    iron_trapdoor:
+      name: "§aIron Trapdoor"
+      lore:
+        - "§e125x Iron"
+        - ""
+        - "§7Item that allows entry"
+        - "§7to your base (with code)."
+        - "§7Resistance: §e4 §7C4"
+  defense:
+    title: "Workbench - Defense"
+    thorns:
+      name: "§aWireframe"
+      lore:
+        - "§e500x Log"
+        - ""
+        - "§7Item used to"
+        - "§7protect the cupboard."
+    woodbase:
+      name: "§aWood Base"
+      lore:
+        - "§e125x Log"
+        - ""
+        - "§7Item used to"
+        - "§7upgrade levels of 1 §aCupboard§7."
+    stonebase:
+      name: "§aStone Base"
+      lore:
+        - "§e125x Stone"
+        - ""
+        - "§7Item used to"
+        - "§7upgrade levels of 1 §aCupboard§7."
+    ironbase:
+      name: "§aIron Base"
+      lore:
+        - "§e100x Iron"
+        - ""
+        - "§7Item used to"
+        - "§7upgrade levels of 1 §aCupboard§7."
+  equipments:
+    title: "Workbench - Equipments"
+    wood_helmet:
+      name: "§aWood Helmet"
+      lore:
+        - "§e90x Log"
+        - ""
+        - "§7Wood Armor"
+        - "§7Defense: §e1"
+    wood_chestplate:
+      name: "§aWood Chestplate"
+      lore:
+        - "§e175x Log"
+        - ""
+        - "§7Wood Armor"
+        - "§7Defense: §e1"
+    wood_leggings:
+      name: "§aWood Leggings"
+      lore:
+        - "§e135x Log"
+        - ""
+        - "§7Wood Armor"
+        - "§7Defense: §e1"
+    wood_boots:
+      name: "§aWood Boots"
+      lore:
+        - "§e70x Log"
+        - ""
+        - "§7Wood Armor"
+        - "§7Defense: §e1"
+    reinforced_wood_helmet:
+      name: "§aReinforced Wood Helmet"
+      lore:
+        - "§e180x Log"
+        - ""
+        - "§7Reinforced Wood Armor"
+        - "§7Defense: §e2"
+    reinforced_wood_chestplate:
+      name: "§aReinforced Wood Chestplate"
+      lore:
+        - "§e350x Log"
+        - ""
+        - "§7Reinforced Wood Armor"
+        - "§7Defense: §e2"
+    reinforced_wood_leggings:
+      name: "§aReinforced Wood Leggings"
+      lore:
+        - "§e275x Log"
+        - ""
+        - "§7Reinforced Wood Armor"
+        - "§7Defense: §e2"
+    reinforced_wood_boots:
+      name: "§aReinforced Wood Boots"
+      lore:
+        - "§e140x Log"
+        - ""
+        - "§7Reinforced Wood Armor"
+        - "§7Defense: §e2"
+    florest_helmet:
+      name: "§aForest Helmet"
+      lore:
+        - "§e60x Leaves"
+        - ""
+        - "§7Forest Armor"
+        - "§7Defense: §e3"
+    florest_chestplate:
+      name: "§aForest Chestplate"
+      lore:
+        - "§e100x Leaves"
+        - ""
+        - "§7Forest Armor"
+        - "§7Defense: §e3"
+    florest_leggings:
+      name: "§aForest Leggings"
+      lore:
+        - "§e80x Leaves"
+        - ""
+        - "§7Forest Armor"
+        - "§7Defense: §e3"
+    florest_boots:
+      name: "§aForest Boots"
+      lore:
+        - "§e40x Leaves"
+        - ""
+        - "§7Forest Armor"
+        - "§7Defense: §e3"
+    soldier_helmet:
+      name: "§aSoldier Helmet"
+      lore:
+        - "§e60 Iron"
+        - ""
+        - "§7Soldier Armor"
+        - "§7Defense: §e4"
+    soldier_chestplate:
+      name: "§aSoldier Chestplate"
+      lore:
+        - "§e100 Iron"
+        - ""
+        - "§7Soldier Armor"
+        - "§7Defense: §e4"
+    soldier_leggings:
+      name: "§aSoldier Leggings"
+      lore:
+        - "§e80 Iron"
+        - ""
+        - "§7Soldier Armor"
+        - "§7Defense: §e4"
+    soldier_boots:
+      name: "§aSoldier Boots"
+      lore:
+        - "§e40 Iron"
+        - ""
+        - "§7Soldier Armor"
+        - "§7Defense: §e4"
+    kevlar_helmet:
+      name: "§aKevlar Helmet"
+      lore:
+        - "§e130x Iron"
+        - "§e65x Titanium"
+        - ""
+        - "§7Kevlar Armor"
+        - "§7Defense: §e5"
+    kevlar_chestplate:
+      name: "§aKevlar Chestplate"
+      lore:
+        - "§e240x Iron"
+        - "§e120x Titanium"
+        - ""
+        - "§7Kevlar Armor"
+        - "§7Defense: §e5"
+    kevlar_leggings:
+      name: "§aKevlar Leggings"
+      lore:
+        - "§e180x Iron"
+        - "§e90x Titanium"
+        - ""
+        - "§7Kevlar Armor"
+        - "§7Defense: §e5"
+    kevlar_boots:
+      name: "§aKevlar Boots"
+      lore:
+        - "§e100x Iron"
+        - "§e50x Titanium"
+        - ""
+        - "§7Kevlar Armor"
+        - "§7Defense: §e5"
+  explosives:
+    title: "Workbench - Explosives"
+    fuse:
+      name: "§aFuse"
+      lore:
+        - "§e150x Cloth"
+        - "§e30x Leather"
+        - ""
+        - "§7Resource used to"
+        - "§7craft of c4."
+    explosive:
+      name: "§aExplosive"
+      lore:
+        - "§e64x Pure Sulfur"
+        - "§e20x Leather"
+        - ""
+        - "§7Resource used to"
+        - "§7craft of c4."
+    homemade:
+      name: "§aHomemade Explosive"
+      lore:
+        - "§e5x Explosives"
+        - "§e50x Pure Sulfur"
+        - ""
+        - "§7Item used to"
+        - "§7invade building blocks."
+        - "§7Has a chance to fail §c(50%)."
+        - "§7Invades only §eT1 §7and if it fails, some materials are returned."
+    c4:
+      name: "§aC4"
+      lore:
+        - "§e15x Explosives"
+        - "§e1x Fuse"
+        - "§e90x Pure Sulfur"
+        - "§e384x Coal"
+        - ""
+        - "§7Item used to"
+        - "§7invade building blocks."
+    fuel:
+      name: "§aFuel"
+      lore:
+        - "§e6x Leather"
+        - "§e12x Cloth"
+        - "§e6x Ethanol"
+        - ""
+        - "§7Item used to"
+        - "§7activate miners."
+  guns:
+    title: "Workbench - Guns"
+    usp:
+      name: "§aUSP-S"
+      lore:
+        - "§e60x Iron"
+        - "§e35x Stone"
+        - ""
+        - "§eCategory: §fPistol"
+        - "§eDamage: §f2.6"
+        - "§eRange: §f60 blocks"
+        - "§eCapacity: §f12 bullets"
+        - "§eAttachments §c✖"
+    anaconda:
+      name: "§aAnaconda"
+      lore:
+        - "§e70x Iron"
+        - "§e30x Stone"
+        - ""
+        - "§eCategory: §fPistol"
+        - "§eDamage: §f3.5"
+        - "§eRange: §f60 blocks"
+        - "§eCapacity: §f6 bullets"
+        - "§eAttachments §c✖"
+    ump45:
+      name: "§aUMP-45"
+      lore:
+        - "§e120x Iron"
+        - "§e60x Stone"
+        - ""
+        - "§eCategory: §fSubmachine Gun"
+        - "§eDamage: §f1.2"
+        - "§eRange: §f60 blocks"
+        - "§eCapacity: §f30 bullets"
+        - "§eAttachments §c✖"
+    mac10:
+      name: "§aMAC-10"
+      lore:
+        - "§e140x Iron"
+        - "§e120x Stone"
+        - ""
+        - "§eCategory: §fSubmachine Gun"
+        - "§eDamage: §f1.4"
+        - "§eRange: §f60 blocks"
+        - "§eCapacity: §f30 bullets"
+        - "§eAttachments §c✖"
+    thompson:
+      name: "§aThompson"
+      lore:
+        - "§e160x Iron"
+        - "§e120x Stone"
+        - ""
+        - "§eCategory: §fSubmachine Gun"
+        - "§eDamage: §f1.6"
+        - "§eRange: §f60 blocks"
+        - "§eCapacity: §f30 bullets"
+        - "§eAttachments §c✖"
+    m4a1:
+      name: "§aM4A1"
+      lore:
+        - "§e280x Iron"
+        - "§e220x Stone"
+        - ""
+        - "§eCategory: §fRifle"
+        - "§eDamage: §f2.8"
+        - "§eRange: §f60 blocks"
+        - "§eCapacity: §f30 bullets"
+        - "§eAttachments §c✖"
+    ak47:
+      name: "§aAK-47"
+      lore:
+        - "§e300x Iron"
+        - "§e200x Stone"
+        - ""
+        - "§eCategory: §fRifle"
+        - "§eDamage: §f3.0"
+        - "§eRange: §f50 blocks"
+        - "§eCapacity: §f30 bullets"
+        - "§eAttachments §c✖"
+    fnfal:
+      name: "§aFNFAL"
+      lore:
+        - "§e300x Iron"
+        - "§e250x Stone"
+        - ""
+        - "§eCategory: §fRifle"
+        - "§eDamage: §f3.0"
+        - "§eRange: §f75 blocks"
+        - "§eCapacity: §f20 bullets"
+        - "§eAttachments §c✖"
+    spas:
+      name: "§aSPAS-12"
+      lore:
+        - "§e350x Iron"
+        - "§e130x Stone"
+        - ""
+        - "§eCategory: §fShotgun"
+        - "§eDamage: §f6.0"
+        - "§eRange: §f10 blocks"
+        - "§eCapacity: §f6 bullets"
+        - "§eAttachments §c✖"
+    crossbow:
+      name: "§aCrossbow"
+      lore:
+        - "§e225x Iron"
+        - "§e125x Stone"
+        - ""
+        - "§eCategory: §fCrossbow"
+        - "§eDamage: §f7.0"
+        - "§eRange: §f120 blocks"
+        - "§eCapacity: §f1 bolt"
+        - "§eAttachments §c✖"
+    m40:
+      name: "§aM40"
+      lore:
+        - "§e400x Iron"
+        - "§e200x Stone"
+        - ""
+        - "§eCategory: §fSniper"
+        - "§eDamage: §f11.0"
+        - "§eRange: §f140 blocks"
+        - "§eCapacity: §f5 bullets"
+        - "§eAttachments §c✖"
+    as50:
+      name: "§aAS-50"
+      lore:
+        - "§e550x Iron"
+        - "§e350x Stone"
+        - ""
+        - "§eCategory: §fSniper"
+        - "§eDamage: §f14.0"
+        - "§eRange: §f140 blocks"
+        - "§eCapacity: §f5 bullets"
+        - "§eAttachments §c✖"
+  medications:
+    title: "Workbench - Medications"
+    smallmedkit:
+      name: "§aSmall Medkit"
+      lore:
+        - "§e7x Leather"
+        - "§e12x Cloth"
+        - "§e3x Ethanol"
+        - "§e6x Tissue"
+        - ""
+        - "§7Item used to"
+        - "§7recover §e3 §c❤§7."
+    largemedkit:
+      name: "§aLarge Medkit"
+      lore:
+        - "§e16x Leather"
+        - "§e25x Cloth"
+        - "§e6x Ethanol"
+        - "§e12x Tissue"
+        - ""
+        - "§7Item used to"
+        - "§7recover §e6 §c❤§7."
+  munitions:
+    title: "Workbench - Ammunition"
+    pistol:
+      name: "§aPistol Ammo"
+      lore:
+        - "§e2x Pure Sulfur"
+        - "§e1x Iron"
+        - ""
+        - "§7Ammunition used in"
+        - "§7pistol-type weapons."
+      lore1:
+        - "§7Ammunition used in"
+        - "§7pistol-type weapons."
+    submachine:
+      name: "§aSubmachine Gun Ammo"
+      lore:
+        - "§e2x Pure Sulfur"
+        - "§e1x Iron"
+        - ""
+        - "§7Ammunition used in"
+        - "§7submachine-type weapons."
+      lore1:
+        - "§7Ammunition used in"
+        - "§7submachine-type weapons."
+    rifle:
+      name: "§aRifle Ammo"
+      lore:
+        - "§e3x Pure Sulfur"
+        - "§e1x Iron"
+        - ""
+        - "§7Ammunition used in"
+        - "§7rifle-type weapons."
+      lore1:
+        - "§7Ammunition used in"
+        - "§7rifle-type weapons."
+    shotgun:
+      name: "§aShotgun Ammo"
+      lore:
+        - "§e4x Pure Sulfur"
+        - "§e1x Iron"
+        - ""
+        - "§7Ammunition used in"
+        - "§7shotgun-type weapons."
+      lore1:
+        - "§7Ammunition used in"
+        - "§7shotgun-type weapons."
+    arrow:
+      name: "§aArrow"
+      lore:
+        - "§e5x Pure Sulfur"
+        - "§e1x Iron"
+        - ""
+        - "§7Ammunition used in"
+        - "§7crossbow-type weapons."
+      lore1:
+        - "§7Ammunition used in"
+        - "§7crossbow-type weapons."
+    sniper:
+      name: "§aSniper Ammo"
+      lore:
+        - "§e6x Pure Sulfur"
+        - "§e1x Iron"
+        - ""
+        - "§7Ammunition used in"
+        - "§7sniper-type weapons."
+      lore1:
+        - "§7Ammunition used in"
+        - "§7sniper-type weapons."
+  tools:
+    title: "Workbench - Tools"
+    wood_axe:
+      name: "§aWood Axe"
+      lore:
+        - "§e45x Log"
+        - ""
+        - "§7Wood Axe"
+        - "§7Efficiency: §e1§7."
+      lore1:
+        - "§7Efficiency: §clvl§e1§7."
+        - "§7Progress: %progress% §a%level%➚§8/10"
+    wood_pickaxe:
+      name: "§aWood Pickaxe"
+      lore:
+        - "§e35x Log"
+        - ""
+        - "§7Wood Pickaxe"
+        - "§7Efficiency: §e1§7."
+      lore1:
+        - "§7Efficiency: §clvl§e1§7."
+        - "§7Progress: %progress% §a%level%➚§8/10"
+    stone_axe:
+      name: "§aStone Axe"
+      lore:
+        - "§e150x Log"
+        - "§e35x Stone"
+        - ""
+        - "§7Stone Axe"
+        - "§7Efficiency: §e2§7."
+      lore1:
+        - "§7Efficiency: §clvl§e2§7."
+        - "§7Progress: %progress% §a%level%➚§8/25"
+    stone_pickaxe:
+      name: "§aStone Pickaxe"
+      lore:
+        - "§e140x Log"
+        - "§e50x Stone"
+        - ""
+        - "§7Stone Pickaxe"
+        - "§7Efficiency: §e2§7."
+      lore1:
+        - "§7Efficiency: §clvl§e2§7."
+        - "§7Progress: %progress% §a%level%➚§8/25"
+    iron_axe:
+      name: "§aIron Axe"
+      lore:
+        - "§e450x Log"
+        - "§e80x Stone"
+        - ""
+        - "§7Iron Axe"
+        - "§7Efficiency: §e3§7."
+      lore1:
+        - "§7Efficiency: §clvl§e3§7."
+        - "§7Progress: %progress% §a%level%➚§8/50"
+    iron_pickaxe:
+      name: "§aIron Pickaxe"
+      lore:
+        - "§e420x Log"
+        - "§e90x Iron"
+        - ""
+        - "§7Iron Pickaxe"
+        - "§7Efficiency: §e3§7."
+      lore1:
+        - "§7Efficiency: §clvl§e3§7."
+        - "§7Progress: %progress% §a%level%➚§8/50"
+    stone_sword:
+      name: "§aStone Sword"
+      lore:
+        - "§e220x Log"
+        - "§e50x Stone"
+        - ""
+        - "§7Stone Sword"
+        - "§7Damage: §e1§7."
+      lore1:
+        - "§7Damage: §clvl§e2§7."
+    iron_sword:
+      name: "§aIron Sword"
+      lore:
+        - "§e450x Log"
+        - "§e80x Iron"
+        - ""
+        - "§7Iron Sword"
+        - "§7Damage: §e2§7."
+      lore1:
+        - "§7Damage: §clvl§e3§7."
+    diamond_sword:
+      name: "§aDiamond Sword"
+      lore:
+        - "§e600x Log"
+        - "§e190x Iron"
+        - ""
+        - "§7Diamond Sword"
+        - "§7Damage: §e3§7."
+      lore1:
+        - "§7Damage: §clvl§e4§7."
+    repair_kit:
+      name: "§aRepair Kit"
+      lore:
+        - "§e300x Log"
+        - "§e100x Iron"
+        - "§e130x Stone"
+        - ""
+        - "§7Item used to repair"
+        - "§7weapons, armor, and vehicles."
+      lore1:
+        - "§7Item used to repair"
+        - "§7weapons, armor, and vehicles."
+  crafting:
+    title: "Crafting Workbench"
+    cancel: "§cCancel"
+    confirm: "§aConfirm"
+    workbench:
+      name: "§aCrafting Workbench"
+      lore:
+        - "§e50x Log"
+        - ""
+        - "§7Workbench used to"
+        - "§7craft various items."

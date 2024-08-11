@@ -1,0 +1,559 @@
+PT:
+  back: "§cVoltar"
+  kit-edit:
+    title: "Editar Kit"
+    size: 27
+    permission:
+      material: "PAPER"
+      data: 0
+      name: "§ePermissão"
+      lore:
+        - "§7Clique para definir a permissão"
+        - ""
+        - " §7Permissão atual: §f{permission}"
+      slot: 10
+    delay:
+      material: "REDSTONE_BLOCK"
+      data: 0
+      name: "§eDelay"
+      lore:
+        - "§7Clique para definir o delay"
+        - ""
+        - " §7Delay atual: §f{delay}"
+      slot: 12
+    name:
+      material: "NAME_TAG"
+      data: 0
+      name: "§eNome"
+      lore:
+        - "§7Clique para definir o nome"
+        - ""
+        - " §7Nome atual: §f{name}"
+      slot: 14
+    item:
+      material: "GRASS"
+      data: 0
+      name: "§eItens"
+      lore:
+        - "§7Clique para definir os itens"
+      slot: 16
+    save:
+      material: "EMERALD"
+      data: 0
+      name: "§aSalvar"
+      lore:
+        - "§7Clique para salvar as configurações"
+      slot: 26
+
+  kit-view:
+    title: "Ver Kit"
+
+  main-kit:
+    title: "Kits - Menu Principal"
+    basic:
+      name: "§eKit Básico"
+      lore:
+        - "§fLeft-Click: §7Coletar kit"
+        - "§fRight-Click: §7Ver conteúdo"
+        - ""
+        - "§eClique para desfrutar"
+        - "§edeste kit."
+    vip:
+      name: "§eKit's VIP"
+      lore:
+        - "§fEsta categoria é destinada"
+        - "§fpara os VIP's do servidor."
+        - ""
+        - "§eApoie o servidor, adquirindo"
+        - "§eem: §fwww.twins-mc.com"
+    shop:
+      name: "§eLoja Cash"
+      lore:
+        - "§fEsta categoria é destinada"
+        - "§fpara os usuários com cash"
+        - ""
+        - "§eApoie o servidor, adquirindo"
+        - "§eem: §fwww.twins-mc.com"
+
+  shop-kit:
+    title: "Kits - Categoria Cash"
+    chestPassword:
+      name: "§eBaú com Senha"
+      lore:
+        - "§7Item utilizado para"
+        - "§7guardar os seus itens."
+        - "§7Resistência: §e2 §7C4"
+        - ""
+        - "§fPreço: §6§l✪§6350"
+
+    t3:
+      name: "§eT3"
+      lore:
+        - "§7Item utilizado em construções."
+        - "§7Resistência: §e3 §7C4"
+        - ""
+        - "§fPreço: §6§l✪§615"
+
+    largeMedkit:
+      name: "§eKit médico grande"
+      lore:
+        - "§7Item utilizado para"
+        - "§7recuperar §e6 §c❤§7."
+        - ""
+        - "§fPreço: §6§l✪§66"
+
+    miningQuarry:
+      name: "§ePedreira de Mineração"
+      lore:
+        - "§7Item utilizado para"
+        - "§7obter minérios."
+        - ""
+        - "§fPreço: §6§l✪§6500"
+
+    bike:
+      name: "§eVehicle §8- §aBMX"
+      lore:
+        - "§fType: §7Bike"
+        - "§fSeats: §71"
+        - "§fDurability: §a100%"
+        - ""
+        - "§fPreço: §6§l✪§625"
+
+    t4:
+      name: "§eT4"
+      lore:
+        - "§7Item utilizado em construções."
+        - "§7Resistência: §e4 §7C4"
+        - ""
+        - "§fPreço: §6§l✪§620"
+
+    t5:
+      name: "§eT5"
+      lore:
+        - "§7Item utilizado em construções."
+        - "§7Resistência: §e5 §7C4"
+        - ""
+        - "§fPreço: §6§l✪§625"
+
+    smallMedkit:
+      name: "§eKit médico pequeno"
+      lore:
+        - "§7Item utilizado para"
+        - "§7recuperar §e3 §c❤§7."
+        - ""
+        - "§fPreço: §6§l✪§63"
+
+    moto:
+      name: "§eVehicle §8- §aR1"
+      lore:
+        - "§fType: §7Motorcycle"
+        - "§fSeats: §72"
+        - "§fDurability: §e80%"
+        - ""
+        - "§fPreço: §6§l✪§6125"
+
+    car:
+      name: "§eVehicle §8- §aSubaru"
+      lore:
+        - "§fType: §7Car"
+        - "§fSeats: §74"
+        - "§fDurability: §a90%"
+        - ""
+        - "§fPreço: §6§l✪§6150"
+
+    repairKit:
+      name: "§eKit de Reparo"
+      lore:
+        - "§7Item utilizado para reparar"
+        - "§7armas, armaduras e veículos."
+        - ""
+        - "§fPreço: §6§l✪§67"
+
+    illegalFarm:
+      name: "§eFarm Ilegal"
+      lore:
+        - "§7Item utilizado para obter"
+        - "§7etanol"
+        - ""
+        - "§fPreço: §6§l✪§6250"
+
+    fuel:
+      name: "§eCombustível"
+      lore:
+        - "§7Item utilizado para"
+        - "§7reabastecer pedreiras"
+        - "§7de mineração."
+        - ""
+        - "§fPreço: §6§l✪§63"
+
+    mozzie:
+      name: "§eVehicle §8- §aMozzie"
+      lore:
+        - "§fType: §7Helicopter"
+        - "§fSeats: §72"
+        - "§fDurability: §e80%"
+        - ""
+        - "§fPreço: §6§l✪§6200"
+
+    jaguar:
+      name: "§eVehicle §8- §aJaguar"
+      lore:
+        - "§fType: §7Helicopter"
+        - "§fSeats: §74"
+        - "§fDurability: §a90%"
+        - ""
+        - "§fPreço: §6§l✪§6325"
+    info:
+      name: "§eLoja de Cash"
+      lore:
+        - "§7Aqui você poderá comprar"
+        - "§7itens exclusivos de acordo"
+        - "§7com a sua liberdade financeira."
+        - ""
+        - "§fO seu saldo atual: §6§l✪§6%value%"
+
+  vip-kit:
+    title: "Kits - Categoria VIP's"
+    vips:
+      name: "§eNovice Semanal"
+      lore:
+        - "§fLeft-Click: §7Coletar kit"
+        - "§fRight-Click: §7Ver conteúdo"
+        - ""
+        - "§eApoie o servidor, adquirindo"
+        - "§eem: §fwww.twins-mc.com"
+    vipd:
+      name: "§eNovice Diário"
+      lore:
+        - "§fLeft-Click: §7Coletar kit"
+        - "§fRight-Click: §7Ver conteúdo"
+        - ""
+        - "§eApoie o servidor, adquirindo"
+        - "§eem: §fwww.twins-mc.com"
+    mvps:
+      name: "§eAdept Semanal"
+      lore:
+        - "§fLeft-Click: §7Coletar kit"
+        - "§fRight-Click: §7Ver conteúdo"
+        - ""
+        - "§eApoie o servidor, adquirindo"
+        - "§eem: §fwww.twins-mc.com"
+    mvpd:
+      name: "§eAdept Diário"
+      lore:
+        - "§fLeft-Click: §7Coletar kit"
+        - "§fRight-Click: §7Ver conteúdo"
+        - ""
+        - "§eApoie o servidor, adquirindo"
+        - "§eem: §fwww.twins-mc.com"
+    mvppluss:
+      name: "§eMaster Semanal"
+      lore:
+        - "§fLeft-Click: §7Coletar kit"
+        - "§fRight-Click: §7Ver conteúdo"
+        - ""
+        - "§eApoie o servidor, adquirindo"
+        - "§eem: §fwww.twins-mc.com"
+    mvpplusd:
+      name: "§eMaster Diário"
+      lore:
+        - "§fLeft-Click: §7Coletar kit"
+        - "§fRight-Click: §7Ver conteúdo"
+        - ""
+        - "§eApoie o servidor, adquirindo"
+        - "§eem: §fwww.twins-mc.com"
+    twinss:
+      name: "§eGrandMaster Semanal"
+      lore:
+        - "§fLeft-Click: §7Coletar kit"
+        - "§fRight-Click: §7Ver conteúdo"
+        - ""
+        - "§eApoie o servidor, adquirindo"
+        - "§eem: §fwww.twins-mc.com"
+    twinsd:
+      name: "§eGrandMaster Diário"
+      lore:
+        - "§fLeft-Click: §7Coletar kit"
+        - "§fRight-Click: §7Ver conteúdo"
+        - ""
+        - "§eApoie o servidor, adquirindo"
+        - "§eem: §fwww.twins-mc.com"
+
+EN:
+  back: "§cBack"
+  kit-edit:
+    title: "Edit Kit"
+    size: 27
+    permission:
+      material: "PAPER"
+      data: 0
+      name: "§ePermission"
+      lore:
+        - "§7Click to set the permission"
+        - ""
+        - " §7Current permission: §f{permission}"
+      slot: 10
+    delay:
+      material: "REDSTONE_BLOCK"
+      data: 0
+      name: "§eDelay"
+      lore:
+        - "§7Click to set the delay"
+        - ""
+        - " §7Current delay: §f{delay}"
+      slot: 12
+    name:
+      data: 0
+      material: "NAME_TAG"
+      name: "§eName"
+      lore:
+        - "§7Click to set the name"
+        - ""
+        - " §7Current name: §f{name}"
+      slot: 14
+    item:
+      material: "GRASS"
+      data: 0
+      name: "§eItems"
+      lore:
+        - "§7Click to set the items"
+      slot: 16
+    save:
+      material: "EMERALD"
+      data: 0
+      name: "§aSave"
+      lore:
+        - "§7Click to save changes"
+      slot: 26
+
+  kit-view:
+    title: "View Kit"
+
+  main-kit:
+    title: "Kits - Main Menu"
+    basic:
+      name: "§eBasic Kit"
+      lore:
+        - "§fLeft-Click: §7Collect kit"
+        - "§fRight-Click: §7View contents"
+        - ""
+        - "§eClick to enjoy"
+        - "§ethis kit."
+    vip:
+      name: "§eVIP Kits"
+      lore:
+        - "§fThis category is for"
+        - "§fserver VIPs."
+        - ""
+        - "§eSupport the server by acquiring"
+        - "§eat: §fwww.twins-mc.com"
+    shop:
+      name: "§eCash Shop"
+      lore:
+        - "§fThis category is for users with cash"
+        - ""
+        - "§eSupport the server by acquiring"
+        - "§eat: §fwww.twins-mc.com"
+
+  shop-kit:
+    title: "Kits - Cash Category"
+    chestPassword:
+      name: "§ePassword Chest"
+      lore:
+        - "§7Item used to"
+        - "§7store your items."
+        - "§7Resistance: §e2 §7C4"
+        - ""
+        - "§fPrice: §6§l✪§6350"
+
+    t3:
+      name: "§eT3"
+      lore:
+        - "§7Item used in construction."
+        - "§7Resistance: §e3 §7C4"
+        - ""
+        - "§fPrice: §6§l✪§620"
+
+    largeMedkit:
+      name: "§eLarge Medkit"
+      lore:
+        - "§7Item used to"
+        - "§7recover §e6 §c❤§7."
+        - ""
+        - "§fPrice: §6§l✪§66"
+
+    miningQuarry:
+      name: "§eMining Quarry"
+      lore:
+        - "§7Item used to"
+        - "§7extract minerals."
+        - ""
+        - "§fPrice: §6§l✪§6500"
+
+    bike:
+      name: "§eVehicle §8- §aBMX"
+      lore:
+        - "§fType: §7Bike"
+        - "§fSeats: §71"
+        - "§fDurability: §a100%"
+        - ""
+        - "§fPrice: §6§l✪§625"
+
+    t4:
+      name: "§eT4"
+      lore:
+        - "§7Item used in construction."
+        - "§7Resistance: §e4 §7C4"
+        - ""
+        - "§fPrice: §6§l✪§620"
+
+    t5:
+      name: "§eT5"
+      lore:
+        - "§7Item used in construction."
+        - "§7Resistance: §e5 §7C4"
+        - ""
+        - "§fPrice: §6§l✪§625"
+
+    smallMedkit:
+      name: "§eSmall Medkit"
+      lore:
+        - "§7Item used to"
+        - "§7recover §e3 §c❤§7."
+        - ""
+        - "§fPrice: §6§l✪§63"
+
+    moto:
+      name: "§eVehicle §8- §aR1"
+      lore:
+        - "§fType: §7Motorcycle"
+        - "§fSeats: §72"
+        - "§fDurability: §e80%"
+        - ""
+        - "§fPrice: §6§l✪§6125"
+
+    car:
+      name: "§eVehicle §8- §aSubaru"
+      lore:
+        - "§fType: §7Car"
+        - "§fSeats: §74"
+        - "§fDurability: §a90%"
+        - ""
+        - "§fPrice: §6§l✪§6150"
+
+    repairKit:
+      name: "§eRepair Kit"
+      lore:
+        - "§7Item used to repair"
+        - "§7weapons, armor, and vehicles."
+        - ""
+        - "§fPrice: §6§l✪§67"
+
+    illegalFarm:
+      name: "§eIllegal Farm"
+      lore:
+        - "§7Item used to produce"
+        - "§7ethanol."
+        - ""
+        - "§fPrice: §6§l✪§6250"
+
+    fuel:
+      name: "§eFuel"
+      lore:
+        - "§7Item used to"
+        - "§7refuel mining quarries."
+        - ""
+        - "§fPrice: §6§l✪§63"
+
+    mozzie:
+      name: "§eVehicle §8- §aMozzie"
+      lore:
+        - "§fType: §7Helicopter"
+        - "§fSeats: §72"
+        - "§fDurability: §e80%"
+        - ""
+        - "§fPrice: §6§l✪§6200"
+
+    jaguar:
+      name: "§eVehicle §8- §aJaguar"
+      lore:
+        - "§fType: §7Helicopter"
+        - "§fSeats: §74"
+        - "§fDurability: §a90%"
+        - ""
+        - "§fPrice: §6§l✪§6325"
+    info:
+      name: "§eCash Shop"
+      lore:
+        - "§7Here you can buy"
+        - "§7exclusive items according"
+        - "§7to your financial freedom."
+        - ""
+        - "§fYour current balance: §6§l✪§6%value%"
+
+  vip-kit:
+    title: "Kits - VIP Category"
+    vips:
+      name: "§eWeekly Novice"
+      lore:
+        - "§fLeft-Click: §7Collect kit"
+        - "§fRight-Click: §7View contents"
+        - ""
+        - "§eSupport the server by acquiring"
+        - "§eat: §fwww.twins-mc.com"
+    vipd:
+      name: "§eDaily Novice"
+      lore:
+        - "§fLeft-Click: §7Collect kit"
+        - "§fRight-Click: §7View contents"
+        - ""
+        - "§eSupport the server by acquiring"
+        - "§eat: §fwww.twins-mc.com"
+    mvps:
+      name: "§eWeekly Adept"
+      lore:
+        - "§fLeft-Click: §7Collect kit"
+        - "§fRight-Click: §7View contents"
+        - ""
+        - "§eSupport the server by acquiring"
+        - "§eat: §fwww.twins-mc.com"
+    mvpd:
+      name: "§eDaily Adept"
+      lore:
+        - "§fLeft-Click: §7Collect kit"
+        - "§fRight-Click: §7View contents"
+        - ""
+        - "§eSupport the server by acquiring"
+        - "§eat: §fwww.twins-mc.com"
+    mvppluss:
+      name: "§eMaster Hitman"
+      lore:
+        - "§fLeft-Click: §7Collect kit"
+        - "§fRight-Click: §7View contents"
+        - ""
+        - "§eSupport the server by acquiring"
+        - "§eat: §fwww.twins-mc.com"
+    mvpplusd:
+      name: "§eMaster Hitman"
+      lore:
+        - "§fLeft-Click: §7Collect kit"
+        - "§fRight-Click: §7View contents"
+        - ""
+        - "§eSupport the server by acquiring"
+        - "§eat: §fwww.twins-mc.com"
+    twinss:
+      name: "§eWeekly GrandMaster"
+      lore:
+        - "§fLeft-Click: §7Collect kit"
+        - "§fRight-Click: §7View contents"
+        - ""
+        - "§eSupport the server by acquiring"
+        - "§eat: §fwww.twins-mc.com"
+    twinsd:
+      name: "§eDaily GrandMaster"
+      lore:
+        - "§fLeft-Click: §7Collect kit"
+        - "§fRight-Click: §7View contents"
+        - ""
+        - "§eSupport the server by acquiring"
+        - "§eat: §fwww.twins-mc.com"

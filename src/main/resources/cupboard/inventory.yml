@@ -1,0 +1,339 @@
+PT:
+  back: "§aVoltar"
+  cupboard:
+    undefined: "§cNão definida"
+    selected: "§aSenha selecionada"
+    password:
+      - "§fPassword: §e%password%"
+    confirm: "§aConfirmar"
+    reset: "§cResetar"
+    subLeader: "Sub-Líder"
+    member: "Membro"
+    recruit: "Recruta"
+    bed:
+      title: "Camas"
+    invitation:
+      title: "Armário - Membros"
+      name: "§a%owner%"
+      lore:
+        - "§fCargo: §7Líder"
+      role:
+        name: "§a%name%"
+        lore:
+          - "§fCargo: §7%role%"
+    main:
+      title: "Armário - Principal"
+      level: "Nível "
+      size: "Tamanho §7"
+      height: "Altura §7"
+      disband:
+        name: "§cDesfazer armário"
+        lore:
+          - "§7Esta ação não tem confirmação."
+      invitations:
+        name: "§aConvites"
+        lore:
+          - "§7Left-Click para convidar"
+          - "§7Right-Click para expulsar"
+          - "§7Scroll-Click para gerir"
+          - "§7Shift-Click para promover"
+          - "§7Drop-CLick para rebaixar"
+      raid:
+        name: "§aInvadir armário"
+        lore:
+          - "§7Esta ação não tem confirmação."
+      information:
+        name: "§aInformações"
+        lore:
+          - "§fLíder: §7%owner%"
+          - "§fNível: §7%level%"
+          - ""
+          - "§aClique para gerenciar as permissões"
+    manage:
+      title: "Armário - Permissões"
+      place:
+        name: "§ePermissão para colocar blocos"
+        lore:
+          - "§fCom esta permissão, os jogadores"
+          - "§fcom este cargo conseguem"
+          - "§fcolocar blocos dentro do armário."
+      break:
+        name: "§ePermissão para quebrar blocos"
+        lore:
+          - "§fCom esta permissão, os jogadores"
+          - "§fcom este cargo conseguem"
+          - "§fquebrar blocos dentro do armário."
+      upgrade:
+        name: "§ePermissão para evoluir de nível"
+        lore:
+          - "§fCom esta permissão, os jogadores"
+          - "§fcom este cargo conseguem"
+          - "§fevoluir o armário de nível."
+    permission:
+      title: "Armário - Permissões"
+      manage:
+        name: "§aGerenciar Permissões"
+        lore:
+          - "§fCargo: §7%role%"
+    miningQuarry:
+      main:
+        title: "Pedreira de Mineração"
+        name: "§cRemover §l⚠"
+        lore:
+          - "§7O combustível e os"
+          - "§7minérios serão perdidos."
+        info:
+          name: "§eInformações"
+          lore:
+            - "§7Dono: §f%owner%"
+            - "§7Nível do Armazém: §f%storageLevel%"
+            - "§7Nível da Eficácia: §f%efficiencyLevel%"
+            - ""
+            - "§eRight-Click: §fConvidar"
+            - "§eLeft-Click: §fExpulsar"
+            - "§eScroll-Click: §fGerir"
+        upgrade:
+          name: "§eEvoluir de nível"
+          lore:
+            - "§fRight-Click: §b§l▾"
+            - "§7Evoluir armazém %storageCash%"
+            - ""
+            - "§fLeft-Click: §b§l▾"
+            - "§7Evoluir eficiência %efficiencyCash%"
+            - ""
+            - "§fVocê tem §6§l✪§6%userCurrency%"
+        storage:
+          name: "§eArmazém"
+          lore:
+            - "§fAqui você poderá gerir"
+            - "§fo armazém da mineradora."
+            - ""
+            - "§7O seu armazém consegue"
+            - "§7guardar §f%storageCapacity% §7itens."
+        fuel:
+          name: "§eCombustível"
+          lore:
+            - "§fLeft-Click: §b§l▾"
+            - "§7Armazenar 1x"
+            - ""
+            - "§fRight-Click: §b§l▾"
+            - "§7Armazenar 16x"
+            - ""
+            - "§fA mineradora tem §e%fuelAmount% §fcombustíveis"
+      manage:
+        title: "Pedreira de Mineração - Membros"
+        owner: "§fDono"
+        member: "§fMembro"
+      storage:
+        coal:
+          name: "§fCarvão"
+          lore:
+            - "§7Permite aquecer os"
+            - "§7outros minérios."
+            - ""
+            - "§fArmazenado: §e%coalAmount%"
+
+        stone:
+          name: "§7Pedra"
+          lore:
+            - "§7Utilize para craftar diversos"
+            - "§7itens na crafting table."
+            - ""
+            - "§fArmazenado: §e%stoneAmount%"
+
+        iron:
+          name: "§aFerro"
+          lore:
+            - "§7Cozinhe este item na fornalha"
+            - "§7e utilize para craftar diversos"
+            - "§7itens na Crafting Table."
+            - ""
+            - "§fArmazenado: §e%ironAmount%"
+
+        sulfur:
+          name: "§6Sulfur"
+          lore:
+            - "§7Cozinhe este item na fornalha"
+            - "§7e utilize para craftar diversos"
+            - "§7itens na Crafting Table."
+            - ""
+            - "§fArmazenado: §e%sulfurAmount%"
+
+        titanium:
+          name: "§dTitanium"
+          lore:
+            - "§7Cozinhe este item na fornalha"
+            - "§7e utilize para craftar diversos"
+            - "§7itens na Crafting Table."
+            - ""
+            - "§fArmazenado: §e%titaniumAmount%"
+
+EN:
+  back: "§aBack"
+  cupboard:
+    undefined: "§cNot defined"
+    selected: "§aPassword selected"
+    password:
+      - "§fPassword: §e%password%"
+    confirm: "§aConfirm"
+    reset: "§cReset"
+    subLeader: "Sub-Leader"
+    member: "Member"
+    recruit: "Recruit"
+    bed:
+      title: "Beds"
+    invitation:
+      title: "Cupboard - Members"
+      name: "§a%owner%"
+      lore:
+        - "§fRole: §7Leader"
+      role:
+        name: "§a%name%"
+        lore:
+          - "§fRole: §7%role%"
+    main:
+      title: "Cupboard - Main"
+      level: "Level "
+      size: "Size §7"
+      height: "Height §7"
+      disband:
+        name: "§cDisband cupboard"
+        lore:
+          - "§7This action is irreversible."
+      invitations:
+        name: "§aInvitations"
+        lore:
+          - "§7Left-Click to invite"
+          - "§7Right-Click to expel"
+          - "§7Scroll-Click to manage"
+          - "§7Shift-Click to promote"
+          - "§7Drop-Click to demote"
+      raid:
+        name: "§aRaid cupboard"
+        lore:
+          - "§7This action is irreversible."
+      information:
+        name: "§aInformation"
+        lore:
+          - "§fLeader: §7%owner%"
+          - "§fLevel: §7%level%"
+          - ""
+          - "§aClick to manage permissions"
+    manage:
+      title: "Cupboard - Permissions"
+      place:
+        name: "§ePermission to place blocks"
+        lore:
+          - "§fWith this permission, players"
+          - "§fwith this role can"
+          - "§fplace blocks inside the cupboard."
+      break:
+        name: "§ePermission to break blocks"
+        lore:
+          - "§fWith this permission, players"
+          - "§fwith this role can"
+          - "§fbreak blocks inside the cupboard."
+      upgrade:
+        name: "§ePermission to upgrade level"
+        lore:
+          - "§fWith this permission, players"
+          - "§fwith this role can"
+          - "§fupgrade the cupboard level."
+    permission:
+      title: "Cupboard - Permissions"
+      manage:
+        name: "§aManage Permissions"
+        lore:
+          - "§fRole: §7%role%"
+    miningQuarry:
+      main:
+        title: "Mining Quarry"
+        name: "§cRemove §l⚠"
+        lore:
+          - "§7Fuel and ores"
+          - "§7will be lost."
+        info:
+          name: "§eInformation"
+          lore:
+            - "§7Owner: §f%owner%"
+            - "§7Storage Level: §f%storageLevel%"
+            - "§7Efficiency Level: §f%efficiencyLevel%"
+            - ""
+            - "§eRight-Click: §fInvite"
+            - "§eLeft-Click: §fExpel"
+            - "§eScroll-Click: §fManage"
+        upgrade:
+          name: "§eUpgrade level"
+          lore:
+            - "§fRight-Click: §b§l▾"
+            - "§7Upgrade storage %storageCash%"
+            - ""
+            - "§fLeft-Click: §b§l▾"
+            - "§7Upgrade efficiency %efficiencyCash%"
+            - ""
+            - "§fYou have §6§l✪§6%userCurrency%"
+        storage:
+          name: "§eStorage"
+          lore:
+            - "§fManage your"
+            - "§fmining quarry's storage here."
+            - ""
+            - "§7Your storage can"
+            - "§7hold §f%storageCapacity% §7items."
+        fuel:
+          name: "§eFuel"
+          lore:
+            - "§fLeft-Click: §b§l▾"
+            - "§7Store 1x"
+            - ""
+            - "§fRight-Click: §b§l▾"
+            - "§7Store 16x"
+            - ""
+            - "§fYour quarry has §e%fuelAmount% §ffuel"
+      manage:
+        title: "Mining Quarry - Members"
+        owner: "§fOwner"
+        member: "§fMember"
+      storage:
+        coal:
+          name: "§fCoal"
+          lore:
+            - "§7Used to smelt"
+            - "§7other ores."
+            - ""
+            - "§fStored: §e%coalAmount%"
+
+        stone:
+          name: "§7Stone"
+          lore:
+            - "§7Used for crafting various"
+            - "§7items at the crafting table."
+            - ""
+            - "§fStored: §e%stoneAmount%"
+
+        iron:
+          name: "§aIron"
+          lore:
+            - "§7Smelt this item in the furnace"
+            - "§7and use it for crafting"
+            - "§7various items at the crafting table."
+            - ""
+            - "§fStored: §e%ironAmount%"
+
+        sulfur:
+          name: "§6Sulfur"
+          lore:
+            - "§7Smelt this item in the furnace"
+            - "§7and use it for crafting"
+            - "§7various items at the crafting table."
+            - ""
+            - "§fStored: §e%sulfurAmount%"
+
+        titanium:
+          name: "§dTitanium"
+          lore:
+            - "§7Smelt this item in the furnace"
+            - "§7and use it for crafting"
+            - "§7various items at the crafting table."
+            - ""
+            - "§fStored: §e%titaniumAmount%"

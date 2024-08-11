@@ -1,0 +1,95 @@
+PT:
+  warp-edit:
+    title: "Editar Warp"
+    size: 27
+    permission:
+      material: "PAPER"
+      data: 0
+      name: "§ePermissão"
+      lore:
+        - "§7Clique para definir a permissão"
+        - ""
+        - " §7Permissão atual: §f{permission}"
+      slot: 10
+    title-msg:
+      material: "GOLD_BLOCK"
+      data: 0
+      name: "§eTítulo"
+      lore:
+        - "§7Clique para definir o título"
+        - ""
+        - " §7Título atual: {title}"
+      slot: 12
+    subtitle-msg:
+      material: "GOLD_INGOT"
+      data: 0
+      name: "§eSub Título"
+      lore:
+        - "§7Clique para definir o sub título"
+        - ""
+        - " §7Sub Título atual: {subtitle}"
+      slot: 14
+    location:
+      material: "BED"
+      data: 0
+      name: "§eLocalização"
+      lore:
+        - "§7Clique para definir a localização"
+        - ""
+        - " §7Localização atual: §f{location}"
+      slot: 16
+    save:
+      material: "EMERALD"
+      data: 0
+      name: "§aSalvar"
+      lore:
+        - "§7Clique para salvar as configurações"
+      slot: 26
+
+EN:
+  warp-edit:
+    title: "Edit Warp"
+    size: 27
+    permission:
+      material: "PAPER"
+      data: 0
+      name: "§ePermission"
+      lore:
+        - "§7Click to set permission"
+        - ""
+        - " §7Current Permission: §f{permission}"
+      slot: 10
+    title-msg:
+      material: "GOLD_BLOCK"
+      data: 0
+      name: "§eTitle"
+      lore:
+        - "§7Click to set the title"
+        - ""
+        - " §7Current Title: {title}"
+      slot: 12
+    subtitle-msg:
+      material: "GOLD_INGOT"
+      data: 0
+      name: "§eSubtitle"
+      lore:
+        - "§7Click to set the subtitle"
+        - ""
+        - " §7Current Subtitle: {subtitle}"
+      slot: 14
+    location:
+      material: "BED"
+      data: 0
+      name: "§eLocation"
+      lore:
+        - "§7Click to set the location"
+        - ""
+        - " §7Current Location: §f{location}"
+      slot: 16
+    save:
+      material: "EMERALD"
+      data: 0
+      name: "§aSave"
+      lore:
+        - "§7Click to save the settings"
+      slot: 26

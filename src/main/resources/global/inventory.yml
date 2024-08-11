@@ -1,0 +1,44 @@
+PT:
+  backpack:
+    title: "Mochila"
+    blockedSlot: "§cSlot bloqueado"
+  beginner:
+    title: "Iniciante"
+    value:
+      name: "§3§lINICIANTE"
+      lore:
+        - ""
+        - "§fSeja immune a PvP e raids!"
+        - ""
+        - "§c§lPS: §cNão é immune a radiações,"
+        - "§clandmines, danos de queda, etc."
+        - ""
+        - "§fTempo restante: §e%time%"
+        - ""
+        - "§cClique aqui para remover!"
+      lore1:
+        - ""
+        - "§cVocê não é mais iniciante!
+        - "
+EN:
+  backpack:
+    title: "Backpack"
+    blockedSlot: "§cBlocked Slot"
+  beginner:
+    title: "Beginner"
+    value:
+      name: "§3§lBEGINNER"
+      lore:
+        - ""
+        - "§fImmune to PvP and raids!"
+        - ""
+        - "§c§lPS: §cNot immune to radiation,"
+        - "§clandmines, fall damage, etc."
+        - ""
+        - "§fRemaining time: §e%time%"
+        - ""
+        - "§cClick here to remove!"
+      lore1:
+        - ""
+        - "§cYou are no longer a beginner!"
+        - ""

@@ -1,0 +1,28 @@
+PT:
+  looting-no-permission: "§cVocê não possui permissão para executar este comando."
+  looting-invalid: "§cO item da sua mão ou a chance estão inválidos."
+  looting-create: "§aLooting criado com sucesso."
+  looting-delete: "§cLooting eliminado com sucesso."
+  looting-edit: "§aItens do looting modificados com sucesso."
+  looting-no-exists: "§cEste looting não existe."
+  looting-exists: "§cEste looting já existe."
+  looting-help:
+    - "§e§lAJUDA"
+    - ""
+    - "§e/looting create <nome> <chance> §7- crie um loot"
+    - "§e/looting delete <nome> §7- elimine um loot"
+    - ""
+EN:
+  looting-no-permission: "§cYou do not have permission to execute this command."
+  looting-invalid: "§cThe item in your hand or the chance is invalid."
+  looting-create: "§aLooting created successfully."
+  looting-delete: "§cLooting deleted successfully."
+  looting-edit: "§aLooting items modified successfully."
+  looting-no-exists: "§cThis looting does not exist."
+  looting-exists: "§cThis looting already exists."
+  looting-help:
+    - "§e§lHELP"
+    - ""
+    - "§e/looting create <name> <chance> §7- create a loot"
+    - "§e/looting delete <name> §7- delete a loot"
+    - ""

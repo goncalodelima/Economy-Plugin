@@ -1,0 +1,12 @@
+PT:
+  vehicle-max-durability: "§cO veículo já tem a durabilidade máxima"
+  vehicle-repair: "§aVocê reparou o veículo com sucesso! Foi adicionado entre 0-60 durabilidade ao seu veículo!"
+  vehicle-broken: "§cO veículo quebrou! Use um Kit Reparo para voltar a funcionar"
+  durability: "§eDurability: §6%durability%/100.0"
+  received: "§aVocê recebeu um veículo do tipo %type%!"
+EN:
+  vehicle-broken: "§cThe vehicle has broken down! Use a Repair Kit to get it working again"
+  vehicle-repair: "§aYou have successfully repaired your vehicle! 0-60 durability has been added to your vehicle!"
+  durability: "§eDurability: §6%durability%/100.0"
+  received: "§aYou have received a vehicle of type %type%!"
+  vehicle-max-durability: "§cThe vehicle already has maximum durability"

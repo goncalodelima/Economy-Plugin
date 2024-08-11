@@ -1,0 +1,7 @@
+database:
+  type: mysql
+  user: root
+  password: eusoufoda123
+  host: localhost
+  database: rust
+  file: rust.db

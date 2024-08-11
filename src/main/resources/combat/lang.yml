@@ -1,0 +1,12 @@
+PT:
+  enter: "§c§lCUIDADO! §cVocê acabou de entrar em combate, caso deslogue do servidor você será morto!"
+  exit: "§aVocê acabou de sair do combate! Agora está seguro para deslogar do servidor!"
+  bar: "§c§lCOMBATE: %bar% §b• §f%remainingTime%§bs"
+  commands: "§c§lEI! §cVocê não pode executar comandos durante o combate!"
+  disconnect: "§c§lWOW! §cO jogador §f%player% §cse desconectou durante o combate e seus itens foram dropados!"
+EN:
+  enter: "§c§lWARNING! §cYou have just entered combat. If you log out of the server, you will be killed!"
+  exit: "§aYou have just exited combat! It is now safe to log out of the server!"
+  bar: "§c§lCOMBAT: %bar% §b• §f%remainingTime%§bs"
+  commands: "§c§lHEY! §cYou cannot execute commands during combat!"
+  disconnect: "§c§lWOW! §cPlayer §f%player% §cdisconnected during combat and their items were dropped!"

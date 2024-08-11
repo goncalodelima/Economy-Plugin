@@ -1,0 +1,36 @@
+EN:
+  personalAnimals: "§aYou have successfully activated a animal drop buff!"
+  personalResources: "§aYou have successfully activated a resource drop buff!"
+  personalKing: "§aYou have successfully activated a King buff!"
+  personalSuperSerum: "§aYou have successfully activated a resource Super Serum buff!"
+  time: "§cYou need to wait §f%time% §cbefore activating the buff again!"
+  globalAnimals:
+    - ""
+    - "§b§lBUFF"
+    - "§f%player% just used a global animal buff!"
+    - ""
+    - "§b1.25x bonus on animal drops!"
+  globalResources:
+    - ""
+    - "§b§lBUFF"
+    - "§f%player% just used a global resource buff!"
+    - ""
+    - "§b1.25x bonus on resource drops!"
+PT:
+  personalAnimals: "§aVocê ativou com sucesso um buff para drop de animais!"
+  personalResources: "§aVocê ativou com sucesso um buff para drop de recursos!"
+  personalKing: "§aVocê ativou com sucesso King Buff!"
+  personalSuperSerum: "§aVocê ativou com sucesso Super Serum Buff de recursos!"
+  time: "§cVocê precisa esperar §f%time% §cpara ativar o buff novamente!"
+  globalAnimals:
+    - ""
+    - "§b§lBUFF"
+    - "§f%player% acabou de usar um buff global de animais!"
+    - ""
+    - "§b1.25x de bônus nos drops de animais!"
+  globalResources:
+    - ""
+    - "§b§lBUFF"
+    - "§f%player% acabou de usar um buff global de recursos!"
+    - ""
+    - "§b1.25x de bônus nos drops de recursos!"

@@ -1,0 +1,18 @@
+PT:
+  research:
+    title: "Central de Pesquisas"
+    lore:
+      current-level: "§7Nível Atual: §a%level%"
+      cost-per-level: "§7Cada level custa §75 §7pontos."
+      current-points: "§7Você tem: §f%points% §7pontos."
+      click-to-evolve: "§a§l• §aClique para evoluir"
+      insufficient-points: "§c✖ Pontos de pesquisa insuficientes."
+EN:
+  research:
+    title: "Research Center"
+    lore:
+      current-level: "§7Current Level: §a%level%"
+      cost-per-level: "§7Each level costs §75 §7points."
+      current-points: "§7You have: §f%points% §7points."
+      click-to-evolve: "§a§l• §aClick to evolve"
+      insufficient-points: "§c✖ Insufficient research points."

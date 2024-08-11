@@ -1,0 +1,77 @@
+iron-axe-1:
+  name: "§aIron Axe [T1]"
+  efficiency: 1
+  lore:
+    - "§7Enchants:"
+    - "§7• §fEfficiency 1"
+    - ""
+    - "§7Level: §f%level%§8/%max-level%"
+    - "§7XP: §f%progress%"
+    - ""
+    - "§fThe higher the level,"
+    - "§fthe more drops!"
+
+iron-pickaxe-1:
+  name: "§aIron Pickaxe [T1]"
+  efficiency: 1
+  lore:
+    - "§7Enchants:"
+    - "§7• §fEfficiency I"
+    - ""
+    - "§7Level: §f%level%§8/%max-level%"
+    - "§7XP: §f%progress%"
+    - ""
+    - "§fThe higher the level,"
+    - "§fthe more drops!"
+
+iron-axe-2:
+  name: "§aIron Axe [T2]"
+  efficiency: 2
+  lore:
+    - "§7Enchants:"
+    - "§7• §fEfficiency II"
+    - ""
+    - "§7Level: §f%level%§8/%max-level%"
+    - "§7XP: §f%progress%"
+    - ""
+    - "§fThe higher the level,"
+    - "§fthe more drops!"
+
+iron-pickaxe-2:
+  name: "§aIron Pickaxe [T2]"
+  efficiency: 2
+  lore:
+    - "§7Enchants:"
+    - "§7• §fEfficiency II"
+    - ""
+    - "§7Level: §f%level%§8/%max-level%"
+    - "§7XP: §f%progress%"
+    - ""
+    - "§fThe higher the level,"
+    - "§fthe more drops!"
+
+iron-axe-3:
+  name: "§aIron Axe [T3]"
+  efficiency: 3
+  lore:
+    - "§7Enchants:"
+    - "§7• §fEfficiency III"
+    - ""
+    - "§7Level: §f%level%§8/%max-level%"
+    - "§7XP: §f%progress%"
+    - ""
+    - "§fThe higher the level,"
+    - "§fthe more drops!"
+
+iron-pickaxe-3:
+  name: "§aIron Pickaxe [T3]"
+  efficiency: 3
+  lore:
+    - "§7Enchants:"
+    - "§7• §fEfficiency III"
+    - ""
+    - "§7Level: §f%level%§8/%max-level%"
+    - "§7XP: §f%progress%"
+    - ""
+    - "§fThe higher the level,"
+    - "§fthe more drops!"

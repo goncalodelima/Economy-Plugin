@@ -1,0 +1,31 @@
+PT:
+  ranking:
+    size: 4
+    title: "Ranking dos mais ricos"
+    layout:
+      - "         "
+      - " OOOOOOO "
+      - "   OOO   "
+      - "         "
+    nobody: "§cNinguém"
+    nextPage: "§aPágina seguinte"
+    previousPage: "§cPágina anterior"
+    item:
+      name: "§f%position%º §e%player%"
+      lore: "§7Quantidade de %currency_lowercase%: §f%amount%"
+
+EN:
+  ranking:
+    size: 4
+    title: "Richest Players Ranking"
+    layout:
+      - "         "
+      - " OOOOOOO "
+      - "   OOO   "
+      - "         "
+    nobody: "§cNobody"
+    nextPage: "§aNext Page"
+    previousPage: "§cPrevious Page"
+    item:
+      name: "§f%position%º §e%player%"
+      lore: "§7Amount of %currency_lowercase%: §f%amount%"

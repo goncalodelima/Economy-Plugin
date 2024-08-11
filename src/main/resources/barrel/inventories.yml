@@ -1,0 +1,110 @@
+PT:
+  open-barrel:
+    size: 45
+    title: "Abrindo o barril..."
+    green-glass:
+      material: "STAINED_GLASS_PANE"
+      data: 5
+      name: "§8§l"
+      lore:
+        - "§8§l"
+    red-glass:
+      material: "STAINED_GLASS_PANE"
+      data: 14
+      name: "§8§l"
+      lore:
+        - "§8§l"
+    black-glass:
+      material: "STAINED_GLASS_PANE"
+      data: 15
+      name: "§8§l"
+      lore:
+        - "§8§l"
+      slots:
+        - "0"
+        - "1"
+        - "3"
+        - "4"
+        - "5"
+        - "8"
+        - "7"
+        - "9"
+        - "10"
+        - "11"
+        - "13"
+        - "15"
+        - "16"
+        - "17"
+        - "27"
+        - "28"
+        - "29"
+        - "31"
+        - "33"
+        - "34"
+        - "35"
+        - "36"
+        - "37"
+        - "39"
+        - "40"
+        - "41"
+        - "43"
+        - "44"
+
+  opened-barrel:
+    size: 27
+    title: "Tem gente vindo aí... Seja rápido"
+
+EN:
+  open-barrel:
+    size: 45
+    title: "Opening the barrel..."
+    green-glass:
+      material: "STAINED_GLASS_PANE"
+      data: 5
+      name: "§8§l"
+      lore:
+        - "§8§l"
+    red-glass:
+      material: "STAINED_GLASS_PANE"
+      data: 14
+      name: "§8§l"
+      lore:
+        - "§8§l"
+    black-glass:
+      material: "STAINED_GLASS_PANE"
+      data: 15
+      name: "§8§l"
+      lore:
+        - "§8§l"
+      slots:
+        - "0"
+        - "1"
+        - "3"
+        - "4"
+        - "5"
+        - "8"
+        - "7"
+        - "9"
+        - "10"
+        - "11"
+        - "13"
+        - "15"
+        - "16"
+        - "17"
+        - "27"
+        - "28"
+        - "29"
+        - "31"
+        - "33"
+        - "34"
+        - "35"
+        - "36"
+        - "37"
+        - "39"
+        - "40"
+        - "41"
+        - "43"
+        - "44"
+  opened-barrel:
+    size: 27
+    title: "Someone is coming... Be quick"
