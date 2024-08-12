@@ -8,13 +8,13 @@ import com.twins.core.economy.model.user.service.UserFoundationService;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class UserController {
 
-    private final Map<Currency, List<User>> ranking = new HashMap<>();
+    private final Map<Currency, List<User>> ranking = new ConcurrentHashMap<>();
 
     public UserController(CurrencyFoundationService currencyService, UserFoundationService userService) {
 

@@ -98,7 +98,7 @@ public class EconomyPlugin {
             try {
                 this.simplePluginManager = (SimpleCommandMap) field.get(simplePluginManager);
             } catch (Exception e) {
-                CorePlugin.INSTANCE.getLogger().log(Level.SEVERE, "Failed to retrieve simplePLuginManager on field.", e);
+                CorePlugin.INSTANCE.getLogger().log(Level.SEVERE, "Failed to retrieve simplePluginManager on field.", e);
             }
 
         } catch (Exception e) {

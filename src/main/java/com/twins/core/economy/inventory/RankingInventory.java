@@ -14,7 +14,6 @@ import org.bukkit.Material;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Level;
 
 public class RankingInventory extends View {
 
@@ -43,7 +42,7 @@ public class RankingInventory extends View {
                         return;
                     }
 
-                    GlobalPlugin.INSTANCE.getUserService().get(context.getPlayer().getName()).thenAccept(globalUser -> {
+                    GlobalPlugin.INSTANCE.getUserService().get(context.getPlayer().getName()).thenAcceptAsync(globalUser -> {
 
                         if (value.nickname().contains("nobody-")) {
                             builder.withItem(new ItemBuilder(Material.BARRIER).setDisplayName(inventory.getString(globalUser.getLanguageType(), "ranking.nobody").replace("&", "§")).build());
@@ -55,7 +54,8 @@ public class RankingInventory extends View {
                                 .setDisplayName(inventory.getString(globalUser.getLanguageType(), "ranking.item.name").replace("&", "§").replace("%position%", String.valueOf(index)).replace("%player%", value.nickname()).replace("%amount%", CorePlugin.INSTANCE.getFormatter().formatNumber(value.get(currency))).replace("%currency_lowercase%", currency.name().toLowerCase()).replace("%currency_uppercase%", currency.name().toUpperCase()))
                                 .setLore(Collections.singletonList(inventory.getString(globalUser.getLanguageType(), "ranking.item.lore").replace("&", "§").replace("%position%", String.valueOf(index)).replace("%player%", value.nickname()).replace("%amount%", CorePlugin.INSTANCE.getFormatter().formatNumber(value.get(currency))).replace("%currency_lowercase%", currency.name().toLowerCase()).replace("%currency_uppercase%", currency.name().toUpperCase())))
                                 .build());
-                    });
+
+                    }, CorePlugin.INSTANCE.getExecutor());
 
                 }
         );

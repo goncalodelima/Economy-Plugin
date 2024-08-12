@@ -98,6 +98,9 @@ public class UserRepository implements UserFoundationRepository {
                 }
             }
 
+        }).exceptionally(e -> {
+            CorePlugin.INSTANCE.getLogger().log(Level.SEVERE, "Failed to update both currencies data", e);
+            return false;
         });
 
     }
@@ -116,6 +119,9 @@ public class UserRepository implements UserFoundationRepository {
                 return true;
 
             }
+        }).exceptionally(e -> {
+            CorePlugin.INSTANCE.getLogger().log(Level.SEVERE, "Failed to increment currency data", e);
+            return false;
         });
     }
 
@@ -133,6 +139,9 @@ public class UserRepository implements UserFoundationRepository {
                 return true;
 
             }
+        }).exceptionally(e -> {
+            CorePlugin.INSTANCE.getLogger().log(Level.SEVERE, "Failed to decrement currency data", e);
+            return false;
         });
     }
 

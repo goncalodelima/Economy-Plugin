@@ -1,6 +1,7 @@
 package com.twins.core.economy.model.user.service;
 
 import com.minecraftsolutions.database.Database;
+import com.twins.core.CorePlugin;
 import com.twins.core.economy.EconomyPlugin;
 import com.twins.core.economy.model.currency.Currency;
 import com.twins.core.economy.model.user.User;
@@ -14,10 +15,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
 
 public class UserService implements UserFoundationService {
 
-    private final Map<String, User> cache = new HashMap<>();
+    private final Map<String, User> cache = new ConcurrentHashMap<>();
 
     private final UserFoundationRepository userRepository;
     
@@ -73,11 +75,16 @@ public class UserService implements UserFoundationService {
                 cache.put(userRepositoryOne.nickname(), userRepositoryOne);
                 return userRepositoryOne;
             } else {
-                User newUser = new User(nickname, new ConcurrentHashMap<>());
+                User newUser = new User(nickname, new HashMap<>());
                 put(newUser);
                 return newUser;
             }
 
+        }).exceptionally(e -> {
+            CorePlugin.INSTANCE.getLogger().log(Level.SEVERE, "Failed to retrieve global user data", e);
+            User newUser = new User(nickname, new HashMap<>());
+            put(newUser);
+            return newUser;
         });
 
     }
