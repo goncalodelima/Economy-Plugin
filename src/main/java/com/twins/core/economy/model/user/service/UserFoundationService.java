@@ -8,8 +8,6 @@ import java.util.concurrent.CompletableFuture;
 
 public interface UserFoundationService {
 
-    void put(User user);
-
     void update(User user);
 
     CompletableFuture<Boolean> updateCurrencies(String senderNickname, String receiverNickname, Currency currency, double amount);

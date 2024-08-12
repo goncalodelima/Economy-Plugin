@@ -29,12 +29,6 @@ public class UserService implements UserFoundationService {
     }
 
     @Override
-    public void put(User user) {
-        userRepository.insertOrUpdate(user);
-        cache.put(user.nickname(), user);
-    }
-
-    @Override
     public void update(User user) {
         userRepository.insertOrUpdate(user);
     }
@@ -87,7 +81,7 @@ public class UserService implements UserFoundationService {
                         return userRepositoryOne;
                     } else {
                         User newUser = new User(nickname, new HashMap<>());
-                        put(newUser);
+                        cache.put(newUser.nickname(), newUser);
                         return newUser;
                     }
 
@@ -95,7 +89,7 @@ public class UserService implements UserFoundationService {
                 .exceptionally(e -> {
                     CorePlugin.INSTANCE.getLogger().log(Level.SEVERE, "Failed to retrieve economy user data", e);
                     User newUser = new User(nickname, new HashMap<>());
-                    put(newUser);
+                    cache.put(newUser.nickname(), newUser);
                     return newUser;
                 });
 
