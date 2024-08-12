@@ -41,14 +41,12 @@ public class EconomyCommand extends CCommand {
             globalUserFuture.thenAcceptAsync(globalUser -> {
 
                 if (args.length == 0) {
-
                     plugin.getUserService().get(player.getName()).thenAcceptAsync(user -> {
                         double amount = user.get(currency);
                         player.sendMessage(config.getString(globalUser.getLanguageType(), "see-currency").replace("&", "§")
                                 .replace("{currency}", currency.name()).replace("{icon}", currency.icon())
                                 .replace("{amount}", CorePlugin.INSTANCE.getFormatter().formatNumber(amount)));
                     }, CorePlugin.INSTANCE.getMainExecutor());
-
                     return;
                 }
 
@@ -76,29 +74,30 @@ public class EconomyCommand extends CCommand {
                         return;
                     }
 
-                    OfflinePlayer receiver = Bukkit.getOfflinePlayer(args[1]);
+                    Player receiver = Bukkit.getPlayer(args[1]);
 
-                    if (!receiver.hasPlayedBefore()) {
+                    if (receiver == null) {
                         player.sendMessage(config.getString(globalUser.getLanguageType(), "invalid-player").replace("&", "§"));
                         return;
                     }
+
+                    if (receiver.getName().equals(player.getName())) {
+                        player.sendMessage(config.getString(globalUser.getLanguageType(), "pay-yourself").replace("&", "§").replace("{currency}", currency.name()));
+                        return;
+                    }
+
+                    if (plugin.getUserService().containsTemporaryCache(player.getName())) {
+                        player.sendMessage(config.getString(globalUser.getLanguageType(), "wait").replace("&", "§"));
+                        return;
+                    }
+
+                    plugin.getUserService().addTemporaryCache(player.getName());
+                    plugin.getUserService().addTemporaryCache(receiver.getName());
 
                     CompletableFuture<User> senderFuture = plugin.getUserService().get(player.getName());
                     CompletableFuture<User> receiverFuture = plugin.getUserService().get(receiver.getName());
 
                     senderFuture.thenAcceptBothAsync(receiverFuture, (senderUser, receiverUser) -> {
-
-                        if (senderUser.equals(receiverUser)) {
-                            player.sendMessage(config.getString(globalUser.getLanguageType(), "pay-yourself").replace("&", "§").replace("{currency}", currency.name()));
-                            return;
-                        }
-
-                        Player receiverPlayer = Bukkit.getPlayer(receiverUser.nickname());
-
-                        if (receiverPlayer == null) {
-                            player.sendMessage(config.getString(globalUser.getLanguageType(), "invalid-player").replace("&", "§"));
-                            return;
-                        }
 
                         double amount = CorePlugin.INSTANCE.getFormatter().parseFormattedNumber(args[2]);
 
@@ -122,10 +121,13 @@ public class EconomyCommand extends CCommand {
                                 player.sendMessage(config.getString(globalUser.getLanguageType(), "pay-sender").replace("&", "§").replace("{currency}", currency.name()).replace("{icon}", currency.icon()).replace("{amount}", CorePlugin.INSTANCE.getFormatter().formatNumber(amount)).replace("{receiver}", receiverUser.nickname()));
 
                                 if (receiver.isOnline()) {
-                                    GlobalPlugin.INSTANCE.getUserService().get(receiverUser.nickname()).thenAcceptAsync(globalUserReceiver -> receiverPlayer.sendMessage(config.getString(globalUserReceiver.getLanguageType(), "pay-receiver").replace("&", "§").replace("{currency}", currency.name()).replace("{icon}", currency.icon()).replace("{amount}", CorePlugin.INSTANCE.getFormatter().formatNumber(amount)).replace("{sender}", receiverUser.nickname())));
+                                    GlobalPlugin.INSTANCE.getUserService().get(receiverUser.nickname()).thenAcceptAsync(globalUserReceiver -> receiver.sendMessage(config.getString(globalUserReceiver.getLanguageType(), "pay-receiver").replace("&", "§").replace("{currency}", currency.name()).replace("{icon}", currency.icon()).replace("{amount}", CorePlugin.INSTANCE.getFormatter().formatNumber(amount)).replace("{sender}", receiverUser.nickname())));
                                 }
 
                             }
+
+                            plugin.getUserService().removeTemporaryCache(senderUser.nickname());
+                            plugin.getUserService().removeTemporaryCache(receiverUser.nickname());
 
                         }, CorePlugin.INSTANCE.getMainExecutor());
 
@@ -147,7 +149,7 @@ public class EconomyCommand extends CCommand {
                 if (args[0].equalsIgnoreCase("add")) {
 
                     if (args.length != 3) {
-                        sender.sendMessage(config.getString(globalUser.getLanguageType(), "add-syntax-error").replace("&", "§").replace("{command}", currency.command()));
+                        player.sendMessage(config.getString(globalUser.getLanguageType(), "add-syntax-error").replace("&", "§").replace("{command}", currency.command()));
                         return;
                     }
 
@@ -158,14 +160,21 @@ public class EconomyCommand extends CCommand {
                         return;
                     }
 
+                    double amount = CorePlugin.INSTANCE.getFormatter().parseFormattedNumber(args[2]);
+
+                    if (amount <= -1) {
+                        player.sendMessage(config.getString(globalUser.getLanguageType(), "invalid-amount").replace("&", "§"));
+                        return;
+                    }
+
+                    if (plugin.getUserService().containsTemporaryCache(target.getName())) {
+                        player.sendMessage(config.getString(globalUser.getLanguageType(), "wait").replace("&", "§"));
+                        return;
+                    }
+
+                    plugin.getUserService().addTemporaryCache(target.getName());
+
                     plugin.getUserService().get(target.getName()).thenAcceptAsync(targetUser -> {
-
-                        double amount = CorePlugin.INSTANCE.getFormatter().parseFormattedNumber(args[2]);
-
-                        if (amount <= -1) {
-                            sender.sendMessage(config.getString(globalUser.getLanguageType(), "invalid-amount").replace("&", "§"));
-                            return;
-                        }
 
                         double newAmount = targetUser.get(currency) + amount;
 
@@ -173,8 +182,10 @@ public class EconomyCommand extends CCommand {
 
                             if (success) {
                                 targetUser.set(currency, newAmount);
-                                sender.sendMessage(config.getString(globalUser.getLanguageType(), "add-success").replace("&", "§").replace("{currency}", currency.name()).replace("{icon}", currency.icon()).replace("{amount}", CorePlugin.INSTANCE.getFormatter().formatNumber(amount)).replace("{player}", targetUser.nickname()));
+                                player.sendMessage(config.getString(globalUser.getLanguageType(), "add-success").replace("&", "§").replace("{currency}", currency.name()).replace("{icon}", currency.icon()).replace("{amount}", CorePlugin.INSTANCE.getFormatter().formatNumber(amount)).replace("{player}", targetUser.nickname()));
                             }
+
+                            plugin.getUserService().removeTemporaryCache(target.getName());
 
                         }, CorePlugin.INSTANCE.getMainExecutor());
 
@@ -186,7 +197,7 @@ public class EconomyCommand extends CCommand {
                 if (args[0].equalsIgnoreCase("remove")) {
 
                     if (args.length != 3) {
-                        sender.sendMessage(config.getString(globalUser.getLanguageType(), "remove-syntax-error").replace("&", "§").replace("{command}", currency.command()));
+                        player.sendMessage(config.getString(globalUser.getLanguageType(), "remove-syntax-error").replace("&", "§").replace("{command}", currency.command()));
                         return;
                     }
 
@@ -197,12 +208,19 @@ public class EconomyCommand extends CCommand {
                         return;
                     }
 
+                    if (plugin.getUserService().containsTemporaryCache(target.getName())) {
+                        player.sendMessage(config.getString(globalUser.getLanguageType(), "wait").replace("&", "§"));
+                        return;
+                    }
+
+                    plugin.getUserService().addTemporaryCache(target.getName());
+
                     plugin.getUserService().get(target.getName()).thenAcceptAsync(targetUser -> {
 
                         double amount = CorePlugin.INSTANCE.getFormatter().parseFormattedNumber(args[2]);
 
                         if (amount <= -1) {
-                            sender.sendMessage(config.getString(globalUser.getLanguageType(), "invalid-amount").replace("&", "§"));
+                            player.sendMessage(config.getString(globalUser.getLanguageType(), "invalid-amount").replace("&", "§"));
                             return;
                         }
 
@@ -212,8 +230,10 @@ public class EconomyCommand extends CCommand {
 
                             if (success) {
                                 targetUser.set(currency, newAmount);
-                                sender.sendMessage(config.getString(globalUser.getLanguageType(), "remove-success").replace("&", "§").replace("{currency}", currency.name()).replace("{icon}", currency.icon()).replace("{amount}", CorePlugin.INSTANCE.getFormatter().formatNumber(amount)).replace("{player}", targetUser.nickname()));
+                                player.sendMessage(config.getString(globalUser.getLanguageType(), "remove-success").replace("&", "§").replace("{currency}", currency.name()).replace("{icon}", currency.icon()).replace("{amount}", CorePlugin.INSTANCE.getFormatter().formatNumber(amount)).replace("{player}", targetUser.nickname()));
                             }
+
+                            plugin.getUserService().removeTemporaryCache(target.getName());
 
                         }, CorePlugin.INSTANCE.getMainExecutor());
 

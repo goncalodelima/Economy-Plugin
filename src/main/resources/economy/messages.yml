@@ -1,4 +1,5 @@
 PT:
+  wait: "§cAguarde um pouco para que a última transação finalize."
   no-permission: "§cVocê não possui permissão para executar este comando."
   general-error: "§cOcorreu um erro, tente relogar."
   invalid-player: "§cJogador inválido."
@@ -26,6 +27,7 @@ PT:
     - ""
 
 EN:
+  wait: "§cPlease wait a moment for the last transaction to complete."
   no-permission: "§cYou do not have permission to execute this command."
   general-error: "§cAn error occurred, please try relogging."
   invalid-player: "§cInvalid player."

@@ -18,6 +18,12 @@ public interface UserFoundationService {
 
     void remove(String nickname);
 
+    void removeTemporaryCache(String nickname);
+
+    boolean containsTemporaryCache(String nickname);
+
+    void addTemporaryCache(String nickname);
+
     CompletableFuture<User> get(String nickname);
 
     CompletableFuture<List<User>> getTop(Currency currency);

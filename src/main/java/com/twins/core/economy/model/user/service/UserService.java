@@ -10,10 +10,7 @@ import com.twins.core.economy.model.user.adapter.UserAdapter;
 import com.twins.core.economy.model.user.repository.UserFoundationRepository;
 import com.twins.core.economy.model.user.repository.UserRepository;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
@@ -22,8 +19,10 @@ public class UserService implements UserFoundationService {
 
     private final Map<String, User> cache = new ConcurrentHashMap<>();
 
+    private final Set<String> temporaryCache = new HashSet<>();
+
     private final UserFoundationRepository userRepository;
-    
+
     public UserService(EconomyPlugin plugin, Database database) {
         this.userRepository = new UserRepository(database, new UserAdapter(plugin.getCurrencyService()), new RankingAdapter(plugin.getCurrencyService()));
         this.userRepository.setup();
@@ -56,6 +55,21 @@ public class UserService implements UserFoundationService {
     }
 
     @Override
+    public void addTemporaryCache(String nickname) {
+        temporaryCache.add(nickname);
+    }
+
+    @Override
+    public void removeTemporaryCache(String nickname) {
+        temporaryCache.remove(nickname);
+    }
+
+    @Override
+    public boolean containsTemporaryCache(String nickname) {
+        return temporaryCache.contains(nickname);
+    }
+
+    @Override
     public CompletableFuture<User> get(String nickname) {
 
         User user = cache.get(nickname);
@@ -66,32 +80,34 @@ public class UserService implements UserFoundationService {
 
         return CompletableFuture.supplyAsync(() -> {
 
-            User userRepositoryOne = userRepository.findOne(nickname);
+                    User userRepositoryOne = userRepository.findOne(nickname);
 
-            if (userRepositoryOne != null) {
-                cache.put(userRepositoryOne.nickname(), userRepositoryOne);
-                return userRepositoryOne;
-            } else {
-                User newUser = new User(nickname, new HashMap<>());
-                put(newUser);
-                return newUser;
-            }
+                    if (userRepositoryOne != null) {
+                        cache.put(userRepositoryOne.nickname(), userRepositoryOne);
+                        return userRepositoryOne;
+                    } else {
+                        User newUser = new User(nickname, new HashMap<>());
+                        put(newUser);
+                        return newUser;
+                    }
 
-        }, CorePlugin.INSTANCE.getAsyncExecutor()).exceptionally(e -> {
-            CorePlugin.INSTANCE.getLogger().log(Level.SEVERE, "Failed to retrieve economy user data", e);
-            User newUser = new User(nickname, new HashMap<>());
-            put(newUser);
-            return newUser;
-        });
+                }, CorePlugin.INSTANCE.getAsyncExecutor())
+                .exceptionally(e -> {
+                    CorePlugin.INSTANCE.getLogger().log(Level.SEVERE, "Failed to retrieve economy user data", e);
+                    User newUser = new User(nickname, new HashMap<>());
+                    put(newUser);
+                    return newUser;
+                });
 
     }
 
     @Override
     public CompletableFuture<List<User>> getTop(Currency currency) {
-        return CompletableFuture.supplyAsync(() -> userRepository.findTop(currency), CorePlugin.INSTANCE.getAsyncExecutor()).exceptionally(e -> {
-            CorePlugin.INSTANCE.getLogger().log(Level.SEVERE, "Failed to retrieve all economy users data", e);
-            return new ArrayList<>();
-        });
+        return CompletableFuture.supplyAsync(() -> userRepository.findTop(currency), CorePlugin.INSTANCE.getAsyncExecutor())
+                .exceptionally(e -> {
+                    CorePlugin.INSTANCE.getLogger().log(Level.SEVERE, "Failed to retrieve all economy users data", e);
+                    return new ArrayList<>();
+                });
     }
 
 }

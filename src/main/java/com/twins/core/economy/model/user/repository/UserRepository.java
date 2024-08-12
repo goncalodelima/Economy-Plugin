@@ -57,72 +57,74 @@ public class UserRepository implements UserFoundationRepository {
     public CompletableFuture<Boolean> updateCurrencies(String senderNickname, String receiverNickname, Currency currency, double amount) {
         return CompletableFuture.supplyAsync(() -> {
 
-            DatabaseExecutor executor = null;
+                    DatabaseExecutor executor = null;
 
-            try {
+                    try {
 
-                executor = database.execute();
-                executor.startTransaction();
+                        executor = database.execute();
+                        executor.startTransaction();
 
-                executor.query("UPDATE user_economy SET amount = amount - ? WHERE nickname = ? AND currency = ? AND amount >= ?")
-                        .write(statement -> {
-                            statement.set(1, amount);
-                            statement.set(2, senderNickname);
-                            statement.set(3, currency.name().toUpperCase());
-                            statement.set(4, amount);
-                        });
+                        executor.query("UPDATE user_economy SET amount = amount - ? WHERE nickname = ? AND currency = ? AND amount >= ?")
+                                .write(statement -> {
+                                    statement.set(1, amount);
+                                    statement.set(2, senderNickname);
+                                    statement.set(3, currency.name().toUpperCase());
+                                    statement.set(4, amount);
+                                });
 
-                executor.query("UPDATE user_economy SET amount = amount + ? WHERE nickname = ? AND currency = ?")
-                        .write(statement -> {
-                            statement.set(1, amount);
-                            statement.set(2, receiverNickname);
-                            statement.set(3, currency.name().toUpperCase());
-                        });
+                        executor.query("UPDATE user_economy SET amount = amount + ? WHERE nickname = ? AND currency = ?")
+                                .write(statement -> {
+                                    statement.set(1, amount);
+                                    statement.set(2, receiverNickname);
+                                    statement.set(3, currency.name().toUpperCase());
+                                });
 
-                executor.commitTransaction();
-                return true;
+                        executor.commitTransaction();
+                        return true;
 
-            } catch (SQLException e) {
+                    } catch (SQLException e) {
 
-                try {
-                    executor.rollbackTransaction();
-                } catch (SQLException ex) {
-                    CorePlugin.INSTANCE.getLogger().log(Level.SEVERE, e.getMessage());
-                }
+                        try {
+                            executor.rollbackTransaction();
+                        } catch (SQLException ex) {
+                            CorePlugin.INSTANCE.getLogger().log(Level.SEVERE, e.getMessage());
+                        }
 
-                CorePlugin.INSTANCE.getLogger().log(Level.SEVERE, e.getMessage());
-                return false;
-            } finally {
-                if (executor != null) {
-                    executor.close();
-                }
-            }
+                        CorePlugin.INSTANCE.getLogger().log(Level.SEVERE, e.getMessage());
+                        return false;
+                    } finally {
+                        if (executor != null) {
+                            executor.close();
+                        }
+                    }
 
-        }, CorePlugin.INSTANCE.getAsyncExecutor()).exceptionally(e -> {
-            CorePlugin.INSTANCE.getLogger().log(Level.SEVERE, "Failed to update both currencies data", e);
-            return false;
-        });
+                }, CorePlugin.INSTANCE.getAsyncExecutor())
+                .exceptionally(e -> {
+                    CorePlugin.INSTANCE.getLogger().log(Level.SEVERE, "Failed to update both currencies data", e);
+                    return false;
+                });
 
     }
 
     public CompletableFuture<Boolean> setCurrency(String nickname, Currency currency, double amount) {
         return CompletableFuture.supplyAsync(() -> {
-            try (DatabaseExecutor executor = database.execute()) {
+                    try (DatabaseExecutor executor = database.execute()) {
 
-                executor.query("UPDATE user_economy SET amount = ? WHERE nickname = ? AND currency = ?")
-                        .write(statement -> {
-                            statement.set(1, amount);
-                            statement.set(2, nickname);
-                            statement.set(3, currency.name().toUpperCase());
-                        });
+                        executor.query("UPDATE user_economy SET amount = ? WHERE nickname = ? AND currency = ?")
+                                .write(statement -> {
+                                    statement.set(1, amount);
+                                    statement.set(2, nickname);
+                                    statement.set(3, currency.name().toUpperCase());
+                                });
 
-                return true;
+                        return true;
 
-            }
-        }, CorePlugin.INSTANCE.getAsyncExecutor()).exceptionally(e -> {
-            CorePlugin.INSTANCE.getLogger().log(Level.SEVERE, "Failed to set currency data", e);
-            return false;
-        });
+                    }
+                }, CorePlugin.INSTANCE.getAsyncExecutor())
+                .exceptionally(e -> {
+                    CorePlugin.INSTANCE.getLogger().log(Level.SEVERE, "Failed to set currency data", e);
+                    return false;
+                });
     }
 
     @Override
