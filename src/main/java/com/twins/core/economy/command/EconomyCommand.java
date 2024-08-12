@@ -121,7 +121,7 @@ public class EconomyCommand extends CCommand {
                                 player.sendMessage(config.getString(globalUser.getLanguageType(), "pay-sender").replace("&", "§").replace("{currency}", currency.name()).replace("{icon}", currency.icon()).replace("{amount}", CorePlugin.INSTANCE.getFormatter().formatNumber(amount)).replace("{receiver}", receiverUser.nickname()));
 
                                 if (receiver.isOnline()) {
-                                    GlobalPlugin.INSTANCE.getUserService().get(receiverUser.nickname()).thenAcceptAsync(globalUserReceiver -> receiver.sendMessage(config.getString(globalUserReceiver.getLanguageType(), "pay-receiver").replace("&", "§").replace("{currency}", currency.name()).replace("{icon}", currency.icon()).replace("{amount}", CorePlugin.INSTANCE.getFormatter().formatNumber(amount)).replace("{sender}", receiverUser.nickname())));
+                                    GlobalPlugin.INSTANCE.getUserService().get(receiverUser.nickname()).thenAcceptAsync(globalUserReceiver -> receiver.sendMessage(config.getString(globalUserReceiver.getLanguageType(), "pay-receiver").replace("&", "§").replace("{currency}", currency.name()).replace("{icon}", currency.icon()).replace("{amount}", CorePlugin.INSTANCE.getFormatter().formatNumber(amount)).replace("{sender}", receiverUser.nickname())), CorePlugin.INSTANCE.getMainExecutor());
                                 }
 
                             }
@@ -237,7 +237,7 @@ public class EconomyCommand extends CCommand {
 
                         }, CorePlugin.INSTANCE.getMainExecutor());
 
-                    });
+                    }, CorePlugin.INSTANCE.getMainExecutor());
 
                     return;
                 }
