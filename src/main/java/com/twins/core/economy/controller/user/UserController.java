@@ -8,22 +8,24 @@ import com.twins.core.economy.model.user.service.UserFoundationService;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class UserController {
 
-    private final Map<Currency, List<User>> ranking = new ConcurrentHashMap<>();
+    private final Map<Currency, List<User>> ranking = new HashMap<>();
 
     public UserController(CurrencyFoundationService currencyService, UserFoundationService userService) {
 
         new BukkitRunnable() {
             @Override
             public void run() {
-                currencyService.getAll().forEach(currency -> ranking.put(currency, userService.getTop(currency)));
+                currencyService.getAll().forEach(currency -> userService.getTop(currency).thenAcceptAsync(list -> ranking.put(currency, list), CorePlugin.INSTANCE.getMainExecutor()));
             }
-        }.runTaskTimerAsynchronously(CorePlugin.INSTANCE, 0, 20 * 60 * 10);
+        }.runTaskTimer(CorePlugin.INSTANCE, 0, 20 * 60 * 10);
+
+
 
     }
 

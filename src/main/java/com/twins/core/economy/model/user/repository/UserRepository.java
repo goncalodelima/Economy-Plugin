@@ -98,18 +98,18 @@ public class UserRepository implements UserFoundationRepository {
                 }
             }
 
-        }).exceptionally(e -> {
+        }, CorePlugin.INSTANCE.getAsyncExecutor()).exceptionally(e -> {
             CorePlugin.INSTANCE.getLogger().log(Level.SEVERE, "Failed to update both currencies data", e);
             return false;
         });
 
     }
 
-    public CompletableFuture<Boolean> incrementCurrency(String nickname, Currency currency, double amount) {
+    public CompletableFuture<Boolean> setCurrency(String nickname, Currency currency, double amount) {
         return CompletableFuture.supplyAsync(() -> {
             try (DatabaseExecutor executor = database.execute()) {
 
-                executor.query("UPDATE user_economy SET amount = amount + ? WHERE nickname = ? AND currency = ?")
+                executor.query("UPDATE user_economy SET amount = ? WHERE nickname = ? AND currency = ?")
                         .write(statement -> {
                             statement.set(1, amount);
                             statement.set(2, nickname);
@@ -119,28 +119,8 @@ public class UserRepository implements UserFoundationRepository {
                 return true;
 
             }
-        }).exceptionally(e -> {
-            CorePlugin.INSTANCE.getLogger().log(Level.SEVERE, "Failed to increment currency data", e);
-            return false;
-        });
-    }
-
-    public CompletableFuture<Boolean> decrementCurrency(String nickname, Currency currency, double amount) {
-        return CompletableFuture.supplyAsync(() -> {
-            try (DatabaseExecutor executor = database.execute()) {
-
-                executor.query("UPDATE user_economy SET amount = amount - ? WHERE nickname = ? AND currency = ?")
-                        .write(statement -> {
-                            statement.set(1, amount);
-                            statement.set(2, nickname);
-                            statement.set(3, currency.name().toUpperCase());
-                        });
-
-                return true;
-
-            }
-        }).exceptionally(e -> {
-            CorePlugin.INSTANCE.getLogger().log(Level.SEVERE, "Failed to decrement currency data", e);
+        }, CorePlugin.INSTANCE.getAsyncExecutor()).exceptionally(e -> {
+            CorePlugin.INSTANCE.getLogger().log(Level.SEVERE, "Failed to set currency data", e);
             return false;
         });
     }

@@ -14,14 +14,12 @@ public interface UserFoundationService {
 
     CompletableFuture<Boolean> updateCurrencies(String senderNickname, String receiverNickname, Currency currency, double amount);
 
-    CompletableFuture<Boolean> incrementCurrency(String nickname, Currency currency, double amount);
-
-    CompletableFuture<Boolean> decrementCurrency(String nickname, Currency currency, double amount);
+    CompletableFuture<Boolean> setCurrency(String nickname, Currency currency, double amount);
 
     void remove(String nickname);
 
     CompletableFuture<User> get(String nickname);
 
-    List<User> getTop(Currency currency);
+    CompletableFuture<List<User>> getTop(Currency currency);
 
 }

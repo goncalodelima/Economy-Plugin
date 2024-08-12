@@ -10,6 +10,7 @@ import com.twins.core.economy.model.user.adapter.UserAdapter;
 import com.twins.core.economy.model.user.repository.UserFoundationRepository;
 import com.twins.core.economy.model.user.repository.UserRepository;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,13 +46,8 @@ public class UserService implements UserFoundationService {
     }
 
     @Override
-    public CompletableFuture<Boolean> incrementCurrency(String nickname, Currency currency, double amount) {
-        return userRepository.incrementCurrency(nickname, currency, amount);
-    }
-
-    @Override
-    public CompletableFuture<Boolean> decrementCurrency(String nickname, Currency currency, double amount) {
-        return userRepository.decrementCurrency(nickname, currency, amount);
+    public CompletableFuture<Boolean> setCurrency(String nickname, Currency currency, double amount) {
+        return userRepository.setCurrency(nickname, currency, amount);
     }
 
     @Override
@@ -64,8 +60,9 @@ public class UserService implements UserFoundationService {
 
         User user = cache.get(nickname);
 
-        if (user != null)
+        if (user != null) {
             return CompletableFuture.completedFuture(user);
+        }
 
         return CompletableFuture.supplyAsync(() -> {
 
@@ -80,8 +77,8 @@ public class UserService implements UserFoundationService {
                 return newUser;
             }
 
-        }).exceptionally(e -> {
-            CorePlugin.INSTANCE.getLogger().log(Level.SEVERE, "Failed to retrieve global user data", e);
+        }, CorePlugin.INSTANCE.getAsyncExecutor()).exceptionally(e -> {
+            CorePlugin.INSTANCE.getLogger().log(Level.SEVERE, "Failed to retrieve economy user data", e);
             User newUser = new User(nickname, new HashMap<>());
             put(newUser);
             return newUser;
@@ -90,8 +87,11 @@ public class UserService implements UserFoundationService {
     }
 
     @Override
-    public List<User> getTop(Currency currency) {
-        return userRepository.findTop(currency);
+    public CompletableFuture<List<User>> getTop(Currency currency) {
+        return CompletableFuture.supplyAsync(() -> userRepository.findTop(currency), CorePlugin.INSTANCE.getAsyncExecutor()).exceptionally(e -> {
+            CorePlugin.INSTANCE.getLogger().log(Level.SEVERE, "Failed to retrieve all economy users data", e);
+            return new ArrayList<>();
+        });
     }
 
 }

@@ -14,9 +14,7 @@ public interface UserFoundationRepository {
 
     CompletableFuture<Boolean> updateCurrencies(String senderNickname, String receiverNickname, Currency currency, double amount);
 
-    CompletableFuture<Boolean> incrementCurrency(String nickname, Currency currency, double amount);
-
-    CompletableFuture<Boolean> decrementCurrency(String nickname, Currency currency, double amount);
+    CompletableFuture<Boolean> setCurrency(String nickname, Currency currency, double amount);
 
     User findOne(String nickname);
 

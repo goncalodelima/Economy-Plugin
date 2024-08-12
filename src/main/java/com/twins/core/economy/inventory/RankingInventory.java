@@ -55,7 +55,7 @@ public class RankingInventory extends View {
                                 .setLore(Collections.singletonList(inventory.getString(globalUser.getLanguageType(), "ranking.item.lore").replace("&", "§").replace("%position%", String.valueOf(index)).replace("%player%", value.nickname()).replace("%amount%", CorePlugin.INSTANCE.getFormatter().formatNumber(value.get(currency))).replace("%currency_lowercase%", currency.name().toLowerCase()).replace("%currency_uppercase%", currency.name().toUpperCase())))
                                 .build());
 
-                    }, CorePlugin.INSTANCE.getExecutor());
+                    }, CorePlugin.INSTANCE.getMainExecutor());
 
                 }
         );

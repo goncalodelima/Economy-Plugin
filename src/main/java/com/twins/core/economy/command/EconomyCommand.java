@@ -47,7 +47,7 @@ public class EconomyCommand extends CCommand {
                         player.sendMessage(config.getString(globalUser.getLanguageType(), "see-currency").replace("&", "§")
                                 .replace("{currency}", currency.name()).replace("{icon}", currency.icon())
                                 .replace("{amount}", CorePlugin.INSTANCE.getFormatter().formatNumber(amount)));
-                    }, CorePlugin.INSTANCE.getExecutor());
+                    }, CorePlugin.INSTANCE.getMainExecutor());
 
                     return;
                 }
@@ -64,7 +64,7 @@ public class EconomyCommand extends CCommand {
                     plugin.getUserService().get(target.getName()).thenAcceptAsync(targetUser -> {
                         double amount = targetUser.get(currency);
                         player.sendMessage(config.getString(globalUser.getLanguageType(), "see-other-currency").replace("&", "§").replace("{currency}", currency.name()).replace("{icon}", currency.icon()).replace("{amount}", CorePlugin.INSTANCE.getFormatter().formatNumber(amount)).replace("{player}", targetUser.nickname()));
-                    }, CorePlugin.INSTANCE.getExecutor());
+                    }, CorePlugin.INSTANCE.getMainExecutor());
 
                     return;
                 }
@@ -127,9 +127,9 @@ public class EconomyCommand extends CCommand {
 
                             }
 
-                        }, CorePlugin.INSTANCE.getExecutor());
+                        }, CorePlugin.INSTANCE.getMainExecutor());
 
-                    }, CorePlugin.INSTANCE.getExecutor());
+                    }, CorePlugin.INSTANCE.getMainExecutor());
 
                     return;
                 }
@@ -167,16 +167,18 @@ public class EconomyCommand extends CCommand {
                             return;
                         }
 
-                        plugin.getUserService().incrementCurrency(targetUser.nickname(), currency, amount).thenAcceptAsync(success -> {
+                        double newAmount = targetUser.get(currency) + amount;
+
+                        plugin.getUserService().setCurrency(targetUser.nickname(), currency, newAmount).thenAcceptAsync(success -> {
 
                             if (success) {
-                                targetUser.add(currency, amount);
+                                targetUser.set(currency, newAmount);
                                 sender.sendMessage(config.getString(globalUser.getLanguageType(), "add-success").replace("&", "§").replace("{currency}", currency.name()).replace("{icon}", currency.icon()).replace("{amount}", CorePlugin.INSTANCE.getFormatter().formatNumber(amount)).replace("{player}", targetUser.nickname()));
                             }
 
-                        }, CorePlugin.INSTANCE.getExecutor());
+                        }, CorePlugin.INSTANCE.getMainExecutor());
 
-                    }, CorePlugin.INSTANCE.getExecutor());
+                    }, CorePlugin.INSTANCE.getMainExecutor());
 
                     return;
                 }
@@ -204,14 +206,16 @@ public class EconomyCommand extends CCommand {
                             return;
                         }
 
-                        plugin.getUserService().decrementCurrency(targetUser.nickname(), currency, amount).thenAcceptAsync(success -> {
+                        double newAmount = targetUser.get(currency) - amount;
+
+                        plugin.getUserService().setCurrency(targetUser.nickname(), currency, newAmount).thenAcceptAsync(success -> {
 
                             if (success) {
-                                targetUser.remove(currency, amount);
+                                targetUser.set(currency, newAmount);
                                 sender.sendMessage(config.getString(globalUser.getLanguageType(), "remove-success").replace("&", "§").replace("{currency}", currency.name()).replace("{icon}", currency.icon()).replace("{amount}", CorePlugin.INSTANCE.getFormatter().formatNumber(amount)).replace("{player}", targetUser.nickname()));
                             }
 
-                        }, CorePlugin.INSTANCE.getExecutor());
+                        }, CorePlugin.INSTANCE.getMainExecutor());
 
                     });
 
@@ -220,7 +224,7 @@ public class EconomyCommand extends CCommand {
 
                 config.getStringList(globalUser.getLanguageType(), "help").forEach(string -> player.sendMessage(string.replace("&", "§")));
 
-            }, CorePlugin.INSTANCE.getExecutor());
+            }, CorePlugin.INSTANCE.getMainExecutor());
 
         }
 
