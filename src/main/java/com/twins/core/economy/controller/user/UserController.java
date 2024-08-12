@@ -23,7 +23,7 @@ public class UserController {
             public void run() {
                 currencyService.getAll().forEach(currency -> userService.getTop(currency).thenAcceptAsync(list -> ranking.put(currency, list), CorePlugin.INSTANCE.getMainExecutor()));
             }
-        }.runTaskTimer(CorePlugin.INSTANCE, 0, 20 * 60 * 10);
+        }.runTaskTimer(CorePlugin.INSTANCE, 0, 20 * 60 * 5);
 
 
 
