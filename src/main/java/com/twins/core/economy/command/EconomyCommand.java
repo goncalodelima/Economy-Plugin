@@ -206,8 +206,14 @@ public class EconomyCommand extends CCommand {
                             return;
                         }
 
-                        plugin.getUserService().decrementCurrency(targetUser.nickname(), currency, amount);
-                        targetUser.remove(currency, amount);
+                        plugin.getUserService().decrementCurrency(targetUser.nickname(), currency, amount).thenAccept(success -> {
+
+                            if (success) {
+                                targetUser.remove(currency, amount);
+                                sender.sendMessage(config.getString(globalUser.getLanguageType(), "remove-success").replace("&", "§").replace("{currency}", currency.name()).replace("{icon}", currency.icon()).replace("{amount}", CorePlugin.INSTANCE.getFormatter().formatNumber(amount)).replace("{player}", targetUser.nickname()));
+                            }
+
+                        });
 
                         sender.sendMessage(config.getString(globalUser.getLanguageType(), "remove-success").replace("&", "§").replace("{currency}", currency.name()).replace("{icon}", currency.icon()).replace("{amount}", CorePlugin.INSTANCE.getFormatter().formatNumber(amount)).replace("{player}", targetUser.nickname()));
                     });
@@ -217,9 +223,6 @@ public class EconomyCommand extends CCommand {
 
                 config.getStringList(globalUser.getLanguageType(), "help").forEach(string -> player.sendMessage(string.replace("&", "§")));
 
-            }).exceptionally(e -> {
-                CorePlugin.INSTANCE.getLogger().log(Level.SEVERE, "Failed to retrieve global user data.", e);
-                return null;
             });
 
         }
