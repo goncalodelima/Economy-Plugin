@@ -65,9 +65,9 @@ public class RankingInventory extends View {
     public void onInit(ViewConfigBuilder config) {
 
         config
-                .title(inventory.getString("PT.ranking.title").replace("&", "§"))
-                .size(inventory.getInt("PT.ranking.size"))
-                .layout(inventory.getStringList("PT.ranking.layout").toArray(new String[0]))
+                .title(inventory.getString("EN.ranking.title").replace("&", "§"))
+                .size(inventory.getInt("EN.ranking.size"))
+                .layout(inventory.getStringList("EN.ranking.layout").toArray(new String[0]))
                 .cancelOnClick()
                 .cancelOnDrag()
                 .cancelOnDrop()
