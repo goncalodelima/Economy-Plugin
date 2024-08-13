@@ -100,7 +100,7 @@ public class UserService implements UserFoundationService {
         return CompletableFuture.supplyAsync(() -> userRepository.findTop(currency), CorePlugin.INSTANCE.getAsyncExecutor())
                 .exceptionally(e -> {
                     CorePlugin.INSTANCE.getLogger().log(Level.SEVERE, "Failed to retrieve all economy users data", e);
-                    return new ArrayList<>();
+                    return null;
                 });
     }
 

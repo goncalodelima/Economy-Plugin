@@ -21,7 +21,15 @@ public class UserController {
         new BukkitRunnable() {
             @Override
             public void run() {
-                currencyService.getAll().forEach(currency -> userService.getTop(currency).thenAcceptAsync(list -> ranking.put(currency, list), CorePlugin.INSTANCE.getMainExecutor()));
+                currencyService.getAll().forEach(currency -> userService.getTop(currency).thenAcceptAsync(list -> {
+
+                    if (list != null) {
+                        ranking.put(currency, list);
+                    } else {
+                        ranking.remove(currency);
+                    }
+
+                }, CorePlugin.INSTANCE.getMainExecutor()));
             }
         }.runTaskTimer(CorePlugin.INSTANCE, 20 * 5, 20 * 60 * 5);
 
