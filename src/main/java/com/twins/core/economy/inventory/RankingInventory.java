@@ -5,7 +5,7 @@ import com.twins.core.CorePlugin;
 import com.twins.core.economy.controller.user.UserController;
 import com.twins.core.economy.model.currency.Currency;
 import com.twins.core.economy.model.user.User;
-import com.twins.core.global.GlobalPlugin;
+import com.twins.core.global.model.user.GlobalUser;
 import com.twins.core.utils.Configuration;
 import me.devnatan.inventoryframework.View;
 import me.devnatan.inventoryframework.ViewConfigBuilder;
@@ -14,6 +14,7 @@ import org.bukkit.Material;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class RankingInventory extends View {
 
@@ -25,9 +26,8 @@ public class RankingInventory extends View {
 
         computedPaginationState(context -> {
 
-                    if (!(context.getInitialData() instanceof Currency currency)) {
-                        return Collections.emptyList();
-                        }
+                    Map<String, Object> initialData = (Map<String, Object>) context.getInitialData();
+                    Currency currency = (Currency) initialData.get("currency");
 
                     List<User> users = userController.getRanking(currency);
 
@@ -42,20 +42,19 @@ public class RankingInventory extends View {
                         return;
                     }
 
-                    GlobalPlugin.INSTANCE.getUserService().get(context.getPlayer().getName()).thenAcceptAsync(globalUser -> {
+                    Map<String, Object> initialData = (Map<String, Object>) context.getInitialData();
+                    GlobalUser globalUser = (GlobalUser) initialData.get("user");
 
-                        if (value.nickname().contains("nobody-")) {
-                            builder.withItem(new ItemBuilder(Material.BARRIER).setDisplayName(inventory.getString(globalUser.getLanguageType(), "ranking.nobody").replace("&", "§")).build());
-                            return;
-                        }
+                    if (value.nickname().contains("nobody-")) {
+                        builder.withItem(new ItemBuilder(Material.BARRIER).setDisplayName(inventory.getString(globalUser.getLanguageType(), "ranking.nobody").replace("&", "§")).build());
+                        return;
+                    }
 
-                        builder.withItem(new ItemBuilder(Material.SKULL_ITEM, 1, (byte) 3)
-                                .changeSkull(meta -> meta.setOwner(value.nickname()))
-                                .setDisplayName(inventory.getString(globalUser.getLanguageType(), "ranking.item.name").replace("&", "§").replace("%position%", String.valueOf(index)).replace("%player%", value.nickname()).replace("%amount%", CorePlugin.INSTANCE.getFormatter().formatNumber(value.get(currency))).replace("%currency_lowercase%", currency.name().toLowerCase()).replace("%currency_uppercase%", currency.name().toUpperCase()))
-                                .setLore(Collections.singletonList(inventory.getString(globalUser.getLanguageType(), "ranking.item.lore").replace("&", "§").replace("%position%", String.valueOf(index)).replace("%player%", value.nickname()).replace("%amount%", CorePlugin.INSTANCE.getFormatter().formatNumber(value.get(currency))).replace("%currency_lowercase%", currency.name().toLowerCase()).replace("%currency_uppercase%", currency.name().toUpperCase())))
-                                .build());
-
-                    }, CorePlugin.INSTANCE.getMainExecutor());
+                    builder.withItem(new ItemBuilder(Material.SKULL_ITEM, 1, (byte) 3)
+                            .changeSkull(meta -> meta.setOwner(value.nickname()))
+                            .setDisplayName(inventory.getString(globalUser.getLanguageType(), "ranking.item.name").replace("&", "§").replace("%position%", String.valueOf(index)).replace("%player%", value.nickname()).replace("%amount%", CorePlugin.INSTANCE.getFormatter().formatNumber(value.get(currency))).replace("%currency_lowercase%", currency.name().toLowerCase()).replace("%currency_uppercase%", currency.name().toUpperCase()))
+                            .setLore(Collections.singletonList(inventory.getString(globalUser.getLanguageType(), "ranking.item.lore").replace("&", "§").replace("%position%", String.valueOf(index)).replace("%player%", value.nickname()).replace("%amount%", CorePlugin.INSTANCE.getFormatter().formatNumber(value.get(currency))).replace("%currency_lowercase%", currency.name().toLowerCase()).replace("%currency_uppercase%", currency.name().toUpperCase())))
+                            .build());
 
                 }
         );
