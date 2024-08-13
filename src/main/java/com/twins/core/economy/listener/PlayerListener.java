@@ -15,7 +15,7 @@ public class PlayerListener implements Listener {
     }
 
     @EventHandler
-    void onPlayerQuit(PlayerQuitEvent event){
+    public void onPlayerQuit(PlayerQuitEvent event){
         Player player = event.getPlayer();
         userService.remove(player.getName());
     }
