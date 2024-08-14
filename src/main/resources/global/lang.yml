@@ -1,4 +1,5 @@
 PT:
+  wait: "§cAguarde até que os dados da sua mochila sejam salvos..."
   no-kill-beginner: "§cVocê não pode matar iniciantes!"
   beginnerFinished: "§e§lCUIDADO! §cO tempo de iniciante acabou! Agora o PvP, invasões, etc estão ativados!"
   backpack-cooldown: "§cAguarde alguns segundos para abrir a mochila novamente."
@@ -33,6 +34,7 @@ PT:
     - "§fVocê está na área de tutorial, mas antes de tudo, certifique-se que esteja com a linguagem correta. Foi detectado que você prefere português do que inglês (apenas suportamos 2 idiomas). Para mudar, digite '/lang en'."
     - ""
 EN:
+  wait: "§cPlease wait until your backpack data is saved..."
   no-kill-beginner: "§cYou can't kill beginners!"
   beginnerFinished: "§e§lWARNING! §cYour beginner time has ended! PvP, invasions, etc, are now enabled!"
   backpack-cooldown: "§cPlease wait a few seconds before opening the backpack again."

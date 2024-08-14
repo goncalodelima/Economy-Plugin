@@ -88,9 +88,7 @@ public class UserService implements UserFoundationService {
                 }, CorePlugin.INSTANCE.getAsyncExecutor())
                 .exceptionally(e -> {
                     CorePlugin.INSTANCE.getLogger().log(Level.SEVERE, "Failed to retrieve economy user data", e);
-                    User newUser = new User(nickname, new HashMap<>());
-                    cache.put(newUser.nickname(), newUser);
-                    return newUser;
+                    return null;
                 });
 
     }

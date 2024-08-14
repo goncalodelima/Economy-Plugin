@@ -45,7 +45,14 @@ public class EconomyCommand extends CCommand {
             }
 
             if (args.length == 0) {
+
                 plugin.getUserService().get(player.getName()).thenAcceptAsync(user -> {
+
+                    if (user == null) {
+                        player.kickPlayer("§cTry logging in. If you can't, ask an administrator at www.discord.twinsmc.com.");
+                        return;
+                    }
+
                     double amount = user.get(currency);
                     player.sendMessage(config.getString(globalUser.getLanguageType(), "see-currency").replace("&", "§")
                             .replace("{currency}", currency.name()).replace("{icon}", currency.icon())
@@ -64,6 +71,12 @@ public class EconomyCommand extends CCommand {
                 }
 
                 plugin.getUserService().get(target.getName()).thenAcceptAsync(targetUser -> {
+
+                    if (targetUser == null) {
+                        player.kickPlayer("§cTry logging in. If you can't, ask an administrator at www.discord.twinsmc.com.");
+                        return;
+                    }
+
                     double amount = targetUser.get(currency);
                     player.sendMessage(config.getString(globalUser.getLanguageType(), "see-other-currency").replace("&", "§").replace("{currency}", currency.name()).replace("{icon}", currency.icon()).replace("{amount}", CorePlugin.INSTANCE.getFormatter().formatNumber(amount)).replace("{player}", targetUser.nickname()));
                 }, CorePlugin.INSTANCE.getMainExecutor());
@@ -102,6 +115,16 @@ public class EconomyCommand extends CCommand {
                 CompletableFuture<User> receiverFuture = plugin.getUserService().get(receiver.getName());
 
                 senderFuture.thenAcceptBothAsync(receiverFuture, (senderUser, receiverUser) -> {
+
+                    if (senderUser == null) {
+                        player.kickPlayer("§cTry logging in. If you can't, ask an administrator at www.discord.twinsmc.com.");
+                        return;
+                    }
+
+                    if (receiverUser == null) {
+                        player.sendMessage(config.getString(globalUser.getLanguageType(), "invalid-player").replace("&", "§"));
+                        return;
+                    }
 
                     double amount = CorePlugin.INSTANCE.getFormatter().parseFormattedNumber(args[2]);
 
@@ -189,6 +212,11 @@ public class EconomyCommand extends CCommand {
 
                 plugin.getUserService().get(target.getName()).thenAcceptAsync(targetUser -> {
 
+                    if (targetUser == null) {
+                        player.sendMessage(config.getString(globalUser.getLanguageType(), "invalid-player").replace("&", "§"));
+                        return;
+                    }
+
                     double newAmount = targetUser.get(currency) + amount;
 
                     plugin.getUserService().setCurrency(targetUser.nickname(), currency, newAmount).thenAcceptAsync(success -> {
@@ -229,6 +257,11 @@ public class EconomyCommand extends CCommand {
                 plugin.getUserService().addTemporaryCache(target.getName());
 
                 plugin.getUserService().get(target.getName()).thenAcceptAsync(targetUser -> {
+
+                    if (targetUser == null) {
+                        player.sendMessage(config.getString(globalUser.getLanguageType(), "invalid-player").replace("&", "§"));
+                        return;
+                    }
 
                     double amount = CorePlugin.INSTANCE.getFormatter().parseFormattedNumber(args[2]);
 
