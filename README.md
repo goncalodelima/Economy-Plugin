@@ -69,14 +69,21 @@ Click the image to watch the video on YouTube.
         - Place the `EconomyPlugin-Velocity.jar` in the `plugins` folder of your Velocity server.
         - This jar only works on Velocity.
         - Even when using Velocity, it is recommended to use Redis for better performance and reliability.
+        - Even if you don’t use Redis as a messaging service, it is required for synchronizing pending transactions with the cache in a multi-server setup. Make sure Redis is installed and running.
     - **Without Velocity**:
         - You can use **BungeeCord messaging service**.
         - No extra plugin is required.
         - Using Redis as the messaging service is still recommended for optimal performance.
 
-4. Configure all Bukkit servers to use the **same MySQL database** to ensure all servers are synchronized.
+4. Database setup:
+    - All servers must connect to the same MySQL database to ensure proper synchronization.
+    - MySQL is mandatory (the only officially supported database), but compatible variants like MariaDB can also be used.
 
-5. Restart **all servers** where the plugin has been installed to apply the configuration and enable full synchronization.
+5. Configure the plugin:
+    - After placing the plugin and starting your server once, open the config.yml.
+    - Set your MySQL credentials and select which messaging service to use (Redis or BungeeCord).
+    - Enable multi-server option if you want to use Redis to synchronize pending transactions across servers. (⚠️ Using Redis is mandatory for multi-server mode, even if you don’t use it as a messaging service)
+    - Restart the server again to save and apply these changes.
 
 ---
 
