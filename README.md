@@ -82,7 +82,7 @@ Click the image to watch the video on YouTube.
 5. Configure the plugin:
     - After placing the plugin and starting your server once, open the config.yml.
     - Set your MySQL credentials and select which messaging service to use (Redis or BungeeCord).
-    - Enable multi-server option if you want to use Redis to synchronize pending transactions across servers. (⚠️ Using Redis is mandatory for multi-server mode, even if you don’t use it as a messaging service)
+    - Enable multi-server option if you want to use Redis to synchronize pending transactions across servers. ⚠️ (Using Redis is mandatory for multi-server mode, even if you don’t use it as a messaging service)
     - Restart the server again to save and apply these changes.
 
 ---
