@@ -382,12 +382,13 @@ public class EconomyCommand extends BaseCommand {
                         }
 
                         User targetUser = userService.get(s.uuid());
-                        boolean isTargetOnline = targetUser.isOnline();
+                        boolean isTargetOnline = targetUser != null;
 
                         if (isTargetOnline) {
                             uuids.add(targetUser.getUuid());
                         } else if (messaging != null) {
-                            UUID targetUuid = targetUser.getUuid();
+                            UUID targetUuid = s.uuid();
+                            new TransactionMessage(null, targetUuid);
                             transactions.publishAsync(new TransactionMessage(null, targetUuid));
                         }
 

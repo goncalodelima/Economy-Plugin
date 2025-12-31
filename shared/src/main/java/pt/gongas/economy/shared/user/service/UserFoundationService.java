@@ -22,6 +22,7 @@
 package pt.gongas.economy.shared.user.service;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import pt.gongas.economy.shared.user.QueryUserResult;
 import pt.gongas.economy.shared.user.RankingUser;
 import pt.gongas.economy.shared.util.Result;
@@ -61,7 +62,7 @@ public interface UserFoundationService {
 
     void put(User user);
 
-    User get(@NotNull UUID uuid);
+    @Nullable User get(@NotNull UUID uuid);
 
     User getOrCreateDataAndUpdate(UUID uuid, String nickname);
 

@@ -122,8 +122,6 @@ public class BukkitEconomyPlugin extends JavaPlugin {
             messaging = null;
         }
 
-        Set<UUID> uuids = ConcurrentHashMap.newKeySet();
-
         RTopic transactions;
 
         if (messaging != null) {
@@ -146,6 +144,8 @@ public class BukkitEconomyPlugin extends JavaPlugin {
 
         BukkitCommandManager commandManager = new BukkitCommandManager(this);
         commandManager.enableUnstableAPI("help");
+
+        Set<UUID> uuids = ConcurrentHashMap.newKeySet();
 
         for (Currency economy : currencyService.getAll()) {
             commandManager.getCommandReplacements().addReplacement("currency", economy.name().toLowerCase());
