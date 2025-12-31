@@ -1,0 +1,8 @@
+1:
+  name: "Money"
+  command: "money"
+  icon: "<dark_green><bold>$"
+2:
+  name: "Coins"
+  command: "coins"
+  icon: "<gold><bold>✪"
