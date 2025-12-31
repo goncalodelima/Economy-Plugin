@@ -109,7 +109,7 @@ public class BukkitEconomyPlugin extends JavaPlugin {
                 getConfig().getInt("hikari.keepaliveTime")
         );
 
-        String messagingConfig = getConfig().getString("messaging-service", "bungeecord");
+        String messagingConfig = getConfig().getString("messaging-service", "none");
         Messaging messaging;
 
         if (messagingConfig.equalsIgnoreCase("bungeecord")) {
@@ -123,7 +123,14 @@ public class BukkitEconomyPlugin extends JavaPlugin {
         }
 
         Set<UUID> uuids = ConcurrentHashMap.newKeySet();
-        RTopic transactions = RedisManager.getClient().getTopic("economy:transactions");
+
+        RTopic transactions;
+
+        if (messaging != null) {
+            transactions = RedisManager.getClient().getTopic("economy:transactions");
+        } else {
+            transactions = null;
+        }
 
         int cores = Runtime.getRuntime().availableProcessors();
         databaseExecutor = Executors.newFixedThreadPool(Math.min(cores / 2, Math.max(1, getConfig().getInt("database.executorThreads"))));
@@ -148,32 +155,36 @@ public class BukkitEconomyPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerListener(lang, userService), this);
         new PlayerBalanceRunnable(userService, uuids).runTaskTimer(this, 20, 20);
 
-        transactions.addListener(TransactionMessage.class, (channel, msg) -> {
+        if (transactions != null) {
 
-            UUID senderUuid = msg.getSender();
-            UUID targetUuid = msg.getTarget();
+            transactions.addListener(TransactionMessage.class, (channel, msg) -> {
 
-            if (senderUuid != null) {
+                UUID senderUuid = msg.getSender();
+                UUID targetUuid = msg.getTarget();
 
-                User sender = userService.get(senderUuid);
+                if (senderUuid != null) {
 
-                if (sender != null) {
-                    uuids.add(senderUuid);
+                    User sender = userService.get(senderUuid);
+
+                    if (sender != null) {
+                        uuids.add(senderUuid);
+                    }
+
                 }
 
-            }
+                if (targetUuid != null) {
 
-            if (targetUuid != null) {
+                    User target = userService.get(targetUuid);
 
-                User target = userService.get(targetUuid);
+                    if (target != null) {
+                        uuids.add(targetUuid);
+                    }
 
-                if (target != null) {
-                    uuids.add(targetUuid);
                 }
 
-            }
+            });
 
-        });
+        }
 
         // BStats Metrics
         metrics = new Metrics(this, 28595);

@@ -355,8 +355,6 @@ public class RankingView implements Listener {
         boolean hasNextPage = false;
         int slot = 0;
 
-        long current = System.currentTimeMillis();
-
         for (RankingUser user : users) {
 
             if (slot == usersPerPage) {
@@ -369,7 +367,6 @@ public class RankingView implements Listener {
             slot++;
         }
 
-        System.out.println(System.currentTimeMillis() - current + " ms");
         return hasNextPage;
     }
 
