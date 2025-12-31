@@ -36,19 +36,19 @@ hikari:
   # connection from the pool, before timing out.
   connectionTimeout: 5000 # 5 seconds
 
-
-
 # Messaging service for cross-server transactions.
 #
-# Use **BungeeCord** or **Redis** to handle cross-server communication.
+# Use BungeeCord or Redis to handle cross-server communication.
 #
 # Notes:
 # - If a player sends money to another player on a different server, timing issues may occur.
 # - If the sender logs out before the database operation is completed, the receiver may not be notified.
-# - Using **Redis** solves this problem and ensures all transactions are delivered reliably.
+#   ⚠️ This only happens when using BungeeCord as the messaging service.
+# - When using BungeeCord, Redis is required to update the cache for pending transactions
+#   and ensure consistency across servers.
 #
 # Options:
-# - "BungeeCord" → uses BungeeCord messaging for cross-server notifications.
-# - "Redis" → requires the plugin to be installed on the proxy; ensures instant and reliable updates.
+# - "BungeeCord" → uses BungeeCord messaging for cross-server notifications (requires Redis for pending transactions)
+# - "Redis" → requires the plugin to be installed on the proxy; ensures instant and reliable updates
 # - "none" → disables sending money to players on other servers
 messaging-service: "none" # BungeeCord, Redis, or none

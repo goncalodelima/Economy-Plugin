@@ -117,11 +117,12 @@ public class EconomyCommand extends BaseCommand {
 
             switch (result) {
 
-                case QueryUserResult.Success s -> player.sendRichMessage(lang.getString("view-other-balance", "<green>The player <white><target> <green>has <white><balance><icon></bold><green>."),
-                        Placeholder.unparsed("target", s.nickname()),
-                        Placeholder.unparsed("balance", getFormatted(s.cents() / 100D)),
-                        Placeholder.parsed("icon", currency.icon())
-                );
+                case QueryUserResult.Success s ->
+                        player.sendRichMessage(lang.getString("view-other-balance", "<green>The player <white><target> <green>has <white><balance><icon></bold><green>."),
+                                Placeholder.unparsed("target", s.nickname()),
+                                Placeholder.unparsed("balance", getFormatted(s.cents() / 100D)),
+                                Placeholder.parsed("icon", currency.icon())
+                        );
 
                 case QueryUserResult.Error e -> {
 
@@ -205,7 +206,7 @@ public class EconomyCommand extends BaseCommand {
                             uuids.add(targetUser.getUuid());
                         }
 
-                        if (!isUserOnline || !isTargetOnline) {
+                        if (messaging != null && (!isUserOnline || !isTargetOnline)) {
                             UUID senderUuid = isUserOnline ? null : user.getUuid();
                             UUID receiverUuid = isTargetOnline ? null : targetUser.getUuid();
                             transactions.publishAsync(new TransactionMessage(senderUuid, receiverUuid));
@@ -221,7 +222,7 @@ public class EconomyCommand extends BaseCommand {
 
             }, Bukkit.getScheduler().getMainThreadExecutor(BukkitEconomyPlugin.plugin));
 
-        } else if (messaging != null) {
+        } else {
 
             userService.updateCurrencies(player.getUniqueId(), target, currency, cents).thenAcceptAsync(result -> {
 
@@ -235,11 +236,13 @@ public class EconomyCommand extends BaseCommand {
                                 Placeholder.parsed("icon", currency.icon())
                         );
 
-                        messaging.sendMessage(target, lang.getString("transaction-received-successful", "<green>You have successfully received <white><amount><icon></bold> <green>from the player <white><sender><green>!")
-                                .replace("<sender>", player.getName())
-                                .replace("<amount>", getFormatted(amount))
-                                .replace("<icon>", currency.icon())
-                        );
+                        if (messaging != null) {
+                            messaging.sendMessage(target, lang.getString("transaction-received-successful", "<green>You have successfully received <white><amount><icon></bold> <green>from the player <white><sender><green>!")
+                                    .replace("<sender>", player.getName())
+                                    .replace("<amount>", getFormatted(amount))
+                                    .replace("<icon>", currency.icon())
+                            );
+                        }
 
                         User targetUser = userService.get(s.uuid());
 
@@ -254,7 +257,7 @@ public class EconomyCommand extends BaseCommand {
                             uuids.add(targetUser.getUuid());
                         }
 
-                        if (!isUserOnline || !isTargetOnline) {
+                        if (messaging != null && (!isUserOnline || !isTargetOnline)) {
                             UUID senderUuid = isUserOnline ? null : user.getUuid();
                             UUID receiverUuid = isTargetOnline ? null : s.uuid();
                             transactions.publishAsync(new TransactionMessage(senderUuid, receiverUuid));
@@ -341,7 +344,7 @@ public class EconomyCommand extends BaseCommand {
 
                         if (isTargetOnline) {
                             uuids.add(targetUser.getUuid());
-                        } else {
+                        } else if (messaging != null) {
                             UUID targetUuid = targetUser.getUuid();
                             transactions.publishAsync(new TransactionMessage(null, targetUuid));
                         }
@@ -356,7 +359,7 @@ public class EconomyCommand extends BaseCommand {
 
             }, Bukkit.getScheduler().getMainThreadExecutor(BukkitEconomyPlugin.plugin));
 
-        } else if (messaging != null) {
+        } else {
 
             userService.setCurrency(target, currency, cents).thenAcceptAsync(result -> {
 
@@ -370,18 +373,20 @@ public class EconomyCommand extends BaseCommand {
                                 Placeholder.parsed("icon", currency.icon())
                         );
 
-                        messaging.sendMessage(s.nickname(), lang.getString("set-transaction-received-successful", "<green>Your balance was set to <white><amount><icon></bold> <green>by <white><sender><green>.")
-                                .replace("<sender>", player.getName())
-                                .replace("<amount>", getFormatted(amount))
-                                .replace("<icon>", currency.icon())
-                        );
+                        if (messaging != null) {
+                            messaging.sendMessage(s.nickname(), lang.getString("set-transaction-received-successful", "<green>Your balance was set to <white><amount><icon></bold> <green>by <white><sender><green>.")
+                                    .replace("<sender>", player.getName())
+                                    .replace("<amount>", getFormatted(amount))
+                                    .replace("<icon>", currency.icon())
+                            );
+                        }
 
                         User targetUser = userService.get(s.uuid());
                         boolean isTargetOnline = targetUser.isOnline();
 
                         if (isTargetOnline) {
                             uuids.add(targetUser.getUuid());
-                        } else {
+                        } else if (messaging != null) {
                             UUID targetUuid = targetUser.getUuid();
                             transactions.publishAsync(new TransactionMessage(null, targetUuid));
                         }
@@ -468,7 +473,7 @@ public class EconomyCommand extends BaseCommand {
                             uuids.add(targetUser.getUuid());
                         }
 
-                        if (!isUserOnline || !isTargetOnline) {
+                        if (messaging != null && (!isUserOnline || !isTargetOnline)) {
                             UUID senderUuid = isUserOnline ? null : user.getUuid();
                             UUID receiverUuid = isTargetOnline ? null : targetUser.getUuid();
                             transactions.publishAsync(new TransactionMessage(senderUuid, receiverUuid));
@@ -484,7 +489,7 @@ public class EconomyCommand extends BaseCommand {
 
             }, Bukkit.getScheduler().getMainThreadExecutor(BukkitEconomyPlugin.plugin));
 
-        } else if (messaging != null) {
+        } else {
 
             userService.addCurrency(target, currency, cents).thenAcceptAsync(result -> {
 
@@ -498,11 +503,13 @@ public class EconomyCommand extends BaseCommand {
                                 Placeholder.parsed("icon", currency.icon())
                         );
 
-                        messaging.sendMessage(target, lang.getString("add-transaction-received-successful", "<green>You have successfully received <white><amount><icon></bold> <green>from <white><sender><green>.")
-                                .replace("<sender>", player.getName())
-                                .replace("<amount>", getFormatted(amount))
-                                .replace("<icon>", currency.icon())
-                        );
+                        if (messaging != null) {
+                            messaging.sendMessage(target, lang.getString("add-transaction-received-successful", "<green>You have successfully received <white><amount><icon></bold> <green>from <white><sender><green>.")
+                                    .replace("<sender>", player.getName())
+                                    .replace("<amount>", getFormatted(amount))
+                                    .replace("<icon>", currency.icon())
+                            );
+                        }
 
                         User targetUser = userService.get(s.uuid());
 
@@ -517,7 +524,7 @@ public class EconomyCommand extends BaseCommand {
                             uuids.add(targetUser.getUuid());
                         }
 
-                        if (!isUserOnline || !isTargetOnline) {
+                        if (messaging != null && (!isUserOnline || !isTargetOnline)) {
                             UUID senderUuid = isUserOnline ? null : user.getUuid();
                             UUID receiverUuid = isTargetOnline ? null : s.uuid();
                             transactions.publishAsync(new TransactionMessage(senderUuid, receiverUuid));
@@ -611,7 +618,7 @@ public class EconomyCommand extends BaseCommand {
                             uuids.add(targetUser.getUuid());
                         }
 
-                        if (!isUserOnline || !isTargetOnline) {
+                        if (messaging != null && (!isUserOnline || !isTargetOnline)) {
                             UUID senderUuid = isUserOnline ? null : user.getUuid();
                             UUID receiverUuid = isTargetOnline ? null : targetUser.getUuid();
                             transactions.publishAsync(new TransactionMessage(senderUuid, receiverUuid));
@@ -627,7 +634,7 @@ public class EconomyCommand extends BaseCommand {
 
             }, Bukkit.getScheduler().getMainThreadExecutor(BukkitEconomyPlugin.plugin));
 
-        } else if (messaging != null) {
+        } else {
 
             userService.removeCurrency(target, currency, cents).thenAcceptAsync(result -> {
 
@@ -641,11 +648,13 @@ public class EconomyCommand extends BaseCommand {
                                 Placeholder.parsed("icon", currency.icon())
                         );
 
-                        messaging.sendMessage(target, lang.getString("remove-transaction-received-successful", "<green><white><amount><icon></bold> <green>was successfully removed from your balance by <white><sender><green>.")
-                                .replace("<sender>", player.getName())
-                                .replace("<amount>", getFormatted(amount))
-                                .replace("<icon>", currency.icon())
-                        );
+                        if (messaging != null) {
+                            messaging.sendMessage(target, lang.getString("remove-transaction-received-successful", "<green><white><amount><icon></bold> <green>was successfully removed from your balance by <white><sender><green>.")
+                                    .replace("<sender>", player.getName())
+                                    .replace("<amount>", getFormatted(amount))
+                                    .replace("<icon>", currency.icon())
+                            );
+                        }
 
                         User targetUser = userService.get(s.uuid());
 
@@ -660,7 +669,7 @@ public class EconomyCommand extends BaseCommand {
                             uuids.add(targetUser.getUuid());
                         }
 
-                        if (!isUserOnline || !isTargetOnline) {
+                        if (messaging != null && (!isUserOnline || !isTargetOnline)) {
                             UUID senderUuid = isUserOnline ? null : user.getUuid();
                             UUID receiverUuid = isTargetOnline ? null : s.uuid();
                             transactions.publishAsync(new TransactionMessage(senderUuid, receiverUuid));
