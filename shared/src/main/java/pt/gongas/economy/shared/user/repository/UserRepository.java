@@ -548,11 +548,18 @@ public class UserRepository implements UserFoundationRepository {
         int offset = (page - 1) * pageSize;
 
         try (DatabaseExecutor executor = database.execute()) {
-            return executor.query("SELECT ue.*, ua.nickname, ua.last_login_date FROM user_economy ue " + "JOIN user_account ua ON ue.uuid = ua.uuid " + "WHERE currency = ? " + "ORDER BY ue.cents DESC, ua.last_login_date DESC " + "LIMIT ? OFFSET ?").readMany(statement -> {
-                statement.set(1, currency.name().toLowerCase());
-                statement.set(2, pageSize + 1); // this is for the inventory to know if there is a next page or not
-                statement.set(3, offset);
-            }, this.rankingAdapter, ArrayList::new);
+            return executor.query("""
+                            SELECT ue.*, ua.nickname, ua.last_login_date
+                            FROM user_economy ue
+                            JOIN user_account ua ON ue.uuid = ua.uuid
+                            WHERE currency = ?
+                            ORDER BY ue.cents DESC, ua.last_login_date DESC LIMIT ? OFFSET ?
+                            """)
+                    .readMany(statement -> {
+                        statement.set(1, currency.name().toLowerCase());
+                        statement.set(2, pageSize + 1); // this is for the inventory to know if there is a next page or not
+                        statement.set(3, offset);
+                    }, this.rankingAdapter, ArrayList::new);
         }
 
     }
