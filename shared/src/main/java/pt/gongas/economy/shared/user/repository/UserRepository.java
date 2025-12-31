@@ -1,0 +1,616 @@
+/*
+ *
+ *  * This file is part of Economy-Plugin - https://github.com/goncalodelima/Economy-Plugin
+ *  * Copyright (c) 2025 goncalodelima and contributors
+ *  *
+ *  * This program is free software: you can redistribute it and/or modify
+ *  * it under the terms of the GNU General Public License as published by
+ *  * the Free Software Foundation, either version 3 of the License, or
+ *  * (at your option) any later version.
+ *  *
+ *  * This program is distributed in the hope that it will be useful,
+ *  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  * GNU General Public License for more details.
+ *  *
+ *  * You should have received a copy of the GNU General Public License
+ *  * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ *
+ */
+
+package pt.gongas.economy.shared.user.repository;
+
+import pt.gongas.database.Database;
+import pt.gongas.database.executor.DatabaseExecutor;
+import pt.gongas.economy.shared.currency.Currency;
+import pt.gongas.economy.shared.currency.service.CurrencyFoundationService;
+import pt.gongas.economy.shared.user.*;
+import pt.gongas.economy.shared.user.adapter.RankingAdapter;
+import pt.gongas.economy.shared.user.adapter.UserAdapter;
+import pt.gongas.economy.shared.util.Pair;
+import pt.gongas.economy.shared.util.Result;
+import pt.gongas.economy.shared.util.UUIDConverter;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+public class UserRepository implements UserFoundationRepository {
+
+    private final Logger logger;
+
+    private final ExecutorService databaseExecutor;
+
+    private final Database database;
+
+    private final CurrencyFoundationService currencyService;
+
+    private final UserAdapter userAdapter;
+
+    private final RankingAdapter rankingAdapter;
+
+    public UserRepository(Logger logger, ExecutorService databaseExecutor, Database database, CurrencyFoundationService currencyService, UserAdapter userAdapter, RankingAdapter rankingAdapter) {
+        this.logger = logger;
+        this.databaseExecutor = databaseExecutor;
+        this.database = database;
+        this.currencyService = currencyService;
+        this.userAdapter = userAdapter;
+        this.rankingAdapter = rankingAdapter;
+    }
+
+    @Override
+    public void setup() {
+
+        try (DatabaseExecutor executor = database.execute(); Connection connection = executor.getHikariConnection().getConnection()) {
+
+            executor.query("""
+                            CREATE TABLE IF NOT EXISTS user_account (
+                                uuid BINARY(16) NOT NULL,
+                                nickname VARCHAR(16) NOT NULL,
+                                last_login_date DATETIME NOT NULL,
+                                PRIMARY KEY (uuid)
+                            );
+                            """)
+                    .write(connection);
+
+            executor.query("""
+                            CREATE TABLE IF NOT EXISTS user_economy (
+                                uuid BINARY(16) NOT NULL,
+                                currency VARCHAR(36) NOT NULL,
+                                cents BIGINT NOT NULL,
+                                PRIMARY KEY (uuid, currency),
+                                CONSTRAINT fk_user_economy_account
+                                    FOREIGN KEY (uuid)
+                                    REFERENCES user_account(uuid)
+                                    ON DELETE CASCADE
+                            );
+                            """)
+                    .write(connection);
+
+            executor.query("""
+                            CREATE INDEX IF NOT EXISTS idx_currency_amount
+                            ON user_economy (currency, cents DESC, uuid)
+                            """)
+                    .write(connection);
+
+            executor.query("""
+                            CREATE INDEX IF NOT EXISTS idx_uuid_lastlogin
+                            ON user_account (uuid, last_login_date DESC)
+                            """)
+                    .write(connection);
+
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Error creating tables", e);
+        }
+
+    }
+
+    @Override
+    public CompletableFuture<Result<Boolean>> updateCurrencies(UUID senderUuid, UUID receiverUuid, Currency currency, long cents) {
+        return CompletableFuture.supplyAsync(() -> {
+
+            try (DatabaseExecutor executor = database.execute(); Connection connection = executor.getHikariConnection().getConnection()) {
+
+                executor.startTransaction(connection);
+
+                int updated = executor
+                        .query("UPDATE user_economy SET cents = cents - ? WHERE uuid = ? AND currency = ? AND cents >= ?")
+                        .writeAndReturnRowCount(statement -> {
+                            statement.set(1, cents);
+                            statement.set(2, UUIDConverter.convert(senderUuid));
+                            statement.set(3, currency.name().toLowerCase());
+                            statement.set(4, cents);
+                        }, connection);
+
+                if (updated == 0) {
+                    executor.rollbackTransaction(connection);
+                    return Result.ok(false);
+                }
+
+                executor.query("INSERT INTO user_economy (uuid, currency, cents) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE cents = cents + ?")
+                        .write(statement -> {
+                            statement.set(1, UUIDConverter.convert(receiverUuid));
+                            statement.set(2, currency.name().toLowerCase());
+                            statement.set(3, cents);
+                            statement.set(4, cents);
+                        }, connection);
+
+                executor.commitTransaction(connection);
+                return Result.ok(true);
+            } catch (SQLException e) {
+                logger.log(Level.SEVERE, "Failed to get connection on update both currencies data", e);
+                return Result.<Boolean>fail("Failed to get connection on update both currencies data " + e.getMessage());
+            }
+
+        }, databaseExecutor).exceptionally(e -> {
+            logger.log(Level.SEVERE, "Failed to update both currencies data", e);
+            return Result.fail("Failed to update both currencies data " + e.getMessage());
+        });
+    }
+
+    @Override
+    public CompletableFuture<QueryUserResult> updateCurrencies(UUID senderUuid, String receiverNickname, Currency currency, long cents) {
+        return CompletableFuture.<QueryUserResult>supplyAsync(() -> {
+
+            try (DatabaseExecutor executor = database.execute(); Connection connection = executor.getHikariConnection().getConnection()) {
+
+                executor.startTransaction(connection);
+
+                Pair<byte[], String> pair = executor.query("SELECT uuid,nickname FROM user_account WHERE nickname = ? ORDER BY last_login_date DESC LIMIT 1")
+                        .readOne(statement -> statement.set(1, receiverNickname), query -> {
+                            byte[] uuid = (byte[]) query.get("uuid");
+                            String nickname = (String) query.get("nickname");
+                            return new Pair<>(uuid, nickname);
+                        }, connection).orElse(null);
+
+                if (pair == null) {
+                    executor.rollbackTransaction(connection);
+                    return new QueryUserResult.Error(ErrorType.NOT_FOUND);
+                }
+
+                int updated = executor.query("UPDATE user_economy SET cents = cents - ? WHERE uuid = ? AND currency = ? AND cents >= ?")
+                        .writeAndReturnRowCount(statement -> {
+                            statement.set(1, cents);
+                            statement.set(2, UUIDConverter.convert(senderUuid));
+                            statement.set(3, currency.name().toLowerCase());
+                            statement.set(4, cents);
+                        }, connection);
+
+                if (updated == 0) {
+                    executor.rollbackTransaction(connection);
+                    return new QueryUserResult.Error(ErrorType.NOT_ENOUGH_BALANCE);
+                }
+
+                executor.query("INSERT INTO user_economy (uuid, currency, cents) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE cents = cents + ?").write(statement -> {
+                    statement.set(1, pair.key());
+                    statement.set(2, currency.name().toLowerCase());
+                    statement.set(3, cents);
+                    statement.set(4, cents);
+                }, connection);
+
+                executor.commitTransaction(connection);
+                return new QueryUserResult.Success(UUIDConverter.convert(pair.key()), pair.value(), 0);
+            } catch (SQLException e) {
+                logger.log(Level.SEVERE, "Failed to get connection on update both currencies data", e);
+                return new QueryUserResult.Error(ErrorType.EXCEPTION);
+            }
+
+        }, databaseExecutor).exceptionally(e -> {
+            logger.log(Level.SEVERE, "Failed to update both currencies data", e);
+            return new QueryUserResult.Error(ErrorType.EXCEPTION);
+        });
+    }
+
+    @Override
+    public CompletableFuture<Map<UUID, Map<Currency, Long>>> fetchPlayerBalances(Collection<UUID> uuids) {
+        return CompletableFuture.supplyAsync(() -> {
+
+            Map<UUID, Map<Currency, Long>> result = new HashMap<>();
+
+            try (DatabaseExecutor executor = database.execute()) {
+
+                StringBuilder placeholders = new StringBuilder();
+
+                for (int i = 0; i < uuids.size(); i++) {
+
+                    placeholders.append("?");
+
+                    if (i < uuids.size() - 1) {
+                        placeholders.append(",");
+                    }
+
+                }
+
+                executor.query("SELECT uuid, currency, cents FROM user_economy WHERE uuid IN (" + placeholders + ")").readMany(statement -> {
+
+                    int index = 1;
+
+                    for (UUID uuid : uuids) {
+                        statement.set(index++, UUIDConverter.convert(uuid));
+                    }
+
+                }, query -> {
+
+                    byte[] uuidBytes = (byte[]) query.get("uuid");
+                    String currencyName = ((String) query.get("currency")).toLowerCase();
+                    long cents = (Long) query.get("cents");
+
+                    UUID uuid = UUIDConverter.convert(uuidBytes);
+                    Currency currency = currencyService.get(currencyName);
+
+                    if (currency == null) {
+                        return null;
+                    }
+
+                    result.computeIfAbsent(uuid, k -> new HashMap<>()).put(currency, cents);
+                    return null;
+                });
+
+                return result;
+
+            }
+
+        }, databaseExecutor).exceptionally(e -> {
+            logger.log(Level.SEVERE, "Failed to fetch player balances", e);
+            return null;
+        });
+
+    }
+
+    @Override
+    public CompletableFuture<Result<Boolean>> setCurrency(UUID uuid, Currency currency, long cents) {
+        return CompletableFuture.supplyAsync(() -> {
+            try (DatabaseExecutor executor = database.execute()) {
+
+                int rows = executor.query("UPDATE user_economy SET cents = ? WHERE uuid = ? AND currency = ?")
+                        .writeAndReturnRowCount(statement -> {
+                            statement.set(1, cents);
+                            statement.set(2, UUIDConverter.convert(uuid));
+                            statement.set(3, currency.name().toLowerCase());
+                        });
+
+                if (rows == 0) {
+                    return Result.ok(false);
+                }
+
+                return Result.ok(true);
+
+            }
+        }, databaseExecutor).exceptionally(e -> {
+            logger.log(Level.SEVERE, "Failed to set currency data", e);
+            return Result.fail("Failed to set currency data: " + e.getMessage());
+        });
+    }
+
+    @Override
+    public CompletableFuture<QueryUserResult> setCurrency(String nickname, Currency currency, long cents) {
+        return CompletableFuture.<QueryUserResult>supplyAsync(() -> {
+            try (DatabaseExecutor executor = database.execute(); Connection connection = executor.getHikariConnection().getConnection()) {
+
+                Pair<byte[], String> pair = executor.query("SELECT uuid,nickname FROM user_account WHERE nickname = ? ORDER BY last_login_date DESC LIMIT 1")
+                        .readOne(statement -> statement.set(1, nickname), query -> {
+                            byte[] uuid = (byte[]) query.get("uuid");
+                            String name = (String) query.get("nickname");
+                            return new Pair<>(uuid, name);
+                        }, connection).orElse(null);
+
+                if (pair == null) {
+                    return new QueryUserResult.Error(ErrorType.NOT_FOUND);
+                }
+
+                int rows = executor.query("UPDATE user_economy ue JOIN user_account ua ON ua.uuid = ue.uuid SET ue.cents = ? WHERE ua.nickname = ? AND ue.currency = ? ORDER BY ua.last_login_date DESC LIMIT 1")
+                        .writeAndReturnRowCount(statement -> {
+                            statement.set(1, cents);
+                            statement.set(2, nickname);
+                            statement.set(3, currency.name().toLowerCase());
+                        }, connection);
+
+                if (rows == 0) {
+                    return new QueryUserResult.Error(ErrorType.NOT_FOUND);
+                }
+
+                return new QueryUserResult.Success(UUIDConverter.convert(pair.key()), pair.value(), cents);
+
+            } catch (SQLException e) {
+                logger.log(Level.SEVERE, "Failed to set currency data", e);
+                return new QueryUserResult.Error(ErrorType.EXCEPTION);
+            }
+
+        }, databaseExecutor).exceptionally(e -> {
+            logger.log(Level.SEVERE, "Failed to set currency data", e);
+            return new QueryUserResult.Error(ErrorType.EXCEPTION);
+        });
+    }
+
+    @Override
+    public CompletableFuture<Result<Boolean>> addCurrency(UUID uuid, Currency currency, long cents) {
+        return CompletableFuture.supplyAsync(() -> {
+            try (DatabaseExecutor executor = database.execute()) {
+
+                int rows = executor.query("UPDATE user_economy SET cents = cents + ? WHERE uuid = ? AND currency = ?")
+                        .writeAndReturnRowCount(statement -> {
+                            statement.set(1, cents);
+                            statement.set(2, UUIDConverter.convert(uuid));
+                            statement.set(3, currency.name().toLowerCase());
+                        });
+
+                if (rows == 0) {
+                    return Result.ok(false);
+                }
+
+                return Result.ok(true);
+
+            }
+        }, databaseExecutor).exceptionally(e -> {
+            logger.log(Level.SEVERE, "Failed to add currency data", e);
+            return Result.fail("Failed to add currency data: " + e.getMessage());
+        });
+    }
+
+    @Override
+    public CompletableFuture<QueryUserResult> addCurrency(String nickname, Currency currency, long cents) {
+        return CompletableFuture.<QueryUserResult>supplyAsync(() -> {
+            try (DatabaseExecutor executor = database.execute(); Connection connection = executor.getHikariConnection().getConnection()) {
+
+                Pair<byte[], String> pair = executor.query("SELECT uuid,nickname FROM user_account WHERE nickname = ? ORDER BY last_login_date DESC LIMIT 1")
+                        .readOne(statement -> statement.set(1, nickname), query -> {
+                            byte[] uuid = (byte[]) query.get("uuid");
+                            String name = (String) query.get("nickname");
+                            return new Pair<>(uuid, name);
+                        }, connection).orElse(null);
+
+                if (pair == null) {
+                    return new QueryUserResult.Error(ErrorType.NOT_FOUND);
+                }
+
+                int rows = executor.query("UPDATE user_economy SET cents = cents + ? WHERE uuid = ? AND currency = ?")
+                        .writeAndReturnRowCount(statement -> {
+                            statement.set(1, cents);
+                            statement.set(2, pair.key());
+                            statement.set(3, currency.name().toLowerCase());
+                        }, connection);
+
+                if (rows == 0) {
+                    return new QueryUserResult.Error(ErrorType.NOT_FOUND);
+                }
+
+                return new QueryUserResult.Success(UUIDConverter.convert(pair.key()), pair.value(), cents);
+
+            } catch (SQLException e) {
+                logger.log(Level.SEVERE, "Failed to add currency data", e);
+                return new QueryUserResult.Error(ErrorType.EXCEPTION);
+            }
+
+        }, databaseExecutor).exceptionally(e -> {
+            logger.log(Level.SEVERE, "Failed to add currency data", e);
+            return new QueryUserResult.Error(ErrorType.EXCEPTION);
+        });
+    }
+
+    @Override
+    public CompletableFuture<QueryUserResult> getCurrency(String nickname, Currency currency) {
+        return CompletableFuture.supplyAsync(() -> {
+            try (DatabaseExecutor executor = database.execute()) {
+
+                Optional<QueryUserResult> result = executor.query("SELECT ua.nickname, ue.cents FROM user_account ua LEFT JOIN user_economy ue ON ua.uuid = ue.uuid AND ue.currency = ? WHERE ua.nickname = ? ORDER BY ua.last_login_date DESC LIMIT 1")
+                        .readOne(statement -> {
+                            statement.set(1, currency.name().toLowerCase());
+                            statement.set(2, nickname);
+                        }, query -> new QueryUserResult.Success(null, (String) query.get("nickname"), (long) query.get("cents")));
+
+                return result.orElse(new QueryUserResult.Error(ErrorType.NOT_FOUND));
+
+            } catch (Exception e) {
+                logger.log(Level.SEVERE, "Failed to get currency for nickname: " + nickname, e);
+                return new QueryUserResult.Error(ErrorType.EXCEPTION);
+            }
+        }, databaseExecutor);
+    }
+
+    @Override
+    public CompletableFuture<Result<Boolean>> removeCurrency(UUID uuid, Currency currency, long cents) {
+        return CompletableFuture.supplyAsync(() -> {
+            try (DatabaseExecutor executor = database.execute()) {
+
+                int rows = executor.query("UPDATE user_economy SET cents = cents - LEAST(cents, ?) WHERE uuid = ? AND currency = ?")
+                        .writeAndReturnRowCount(statement -> {
+                            statement.set(1, cents);
+                            statement.set(2, UUIDConverter.convert(uuid));
+                            statement.set(3, currency.name().toLowerCase());
+                        });
+
+                if (rows == 0) {
+                    return Result.ok(false);
+                }
+
+                return Result.ok(true);
+
+            }
+        }, databaseExecutor).exceptionally(e -> {
+            logger.log(Level.SEVERE, "Failed to remove currency data", e);
+            return Result.fail("Failed to remove currency data: " + e.getMessage());
+        });
+    }
+
+    @Override
+    public CompletableFuture<QueryUserResult> removeCurrency(String nickname, Currency currency, long cents) {
+        return CompletableFuture.<QueryUserResult>supplyAsync(() -> {
+            try (DatabaseExecutor executor = database.execute(); Connection connection = executor.getHikariConnection().getConnection()) {
+
+                Pair<byte[], String> pair = executor.query("SELECT uuid,nickname FROM user_account WHERE nickname = ? ORDER BY last_login_date DESC LIMIT 1")
+                        .readOne(statement -> statement.set(1, nickname), query -> {
+                            byte[] uuid = (byte[]) query.get("uuid");
+                            String name = (String) query.get("nickname");
+                            return new Pair<>(uuid, name);
+                        }, connection).orElse(null);
+
+                if (pair == null) {
+                    return new QueryUserResult.Error(ErrorType.NOT_FOUND);
+                }
+
+                int rows = executor.query("UPDATE user_economy SET cents = cents - LEAST(cents, ?) WHERE uuid = ? AND currency = ?")
+                        .writeAndReturnRowCount(statement -> {
+                            statement.set(1, cents);
+                            statement.set(2, pair.key());
+                            statement.set(3, currency.name().toLowerCase());
+                        }, connection);
+
+                if (rows == 0) {
+                    return new QueryUserResult.Error(ErrorType.NOT_FOUND);
+                }
+
+                return new QueryUserResult.Success(UUIDConverter.convert(pair.key()), pair.value(), cents);
+
+            } catch (SQLException e) {
+                logger.log(Level.SEVERE, "Failed to add currency data", e);
+                return new QueryUserResult.Error(ErrorType.EXCEPTION);
+            }
+
+        }, databaseExecutor).exceptionally(e -> {
+            logger.log(Level.SEVERE, "Failed to add currency data", e);
+            return new QueryUserResult.Error(ErrorType.EXCEPTION);
+        });
+    }
+
+    @Override
+    public Result<User> findOrCreateAndUpdate(UUID uuid, String nickname) {
+
+        try (DatabaseExecutor executor = database.execute(); Connection connection = executor.getHikariConnection().getConnection()) {
+
+            byte[] uuidBytes = UUIDConverter.convert(uuid);
+
+            executor.query("""
+                            INSERT INTO user_account (uuid, nickname, last_login_date)
+                            VALUES (?, ?, ?)
+                            ON DUPLICATE KEY UPDATE
+                                nickname = VALUES(nickname),
+                                last_login_date = VALUES(last_login_date)
+                            """)
+                    .write(statement -> {
+                        statement.set(1, uuidBytes);
+                        statement.set(2, nickname);
+                        statement.set(3, LocalDateTime.now());
+                    }, connection);
+
+            StringBuilder insertCurrencies = new StringBuilder("INSERT IGNORE INTO user_economy (uuid, currency, cents) VALUES");
+
+            Set<Currency> currencies = currencyService.getAll();
+
+            for (int i = 0; i < currencies.size(); i++) {
+
+                insertCurrencies.append("(?, ?, 0)");
+
+                if (i < currencies.size() - 1) {
+                    insertCurrencies.append(", ");
+                }
+
+            }
+
+            executor.query(insertCurrencies.toString()).write(statement -> {
+
+                int index = 1;
+
+                for (Currency currency : currencies) {
+                    statement.set(index++, uuidBytes);
+                    statement.set(index++, currency.name().toLowerCase());
+                }
+
+            }, connection);
+
+            User user = executor.query("""
+                            SELECT ua.uuid, ua.nickname, ua.last_login_date,
+                            ue.currency, ue.cents
+                            FROM user_account ua
+                            LEFT JOIN user_economy ue ON ua.uuid = ue.uuid
+                            WHERE ua.uuid = ?
+                            """)
+                    .readOne(statement -> statement.set(1, uuidBytes), this.userAdapter, connection).orElse(null);
+
+            return Result.ok(user);
+
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Failed to retrieve economy user data", e);
+            return Result.fail("Failed to fetch user from database: " + e.getMessage());
+        }
+
+    }
+
+    @Override
+    public List<RankingUser> findTop(Currency currency, int page) {
+
+        int pageSize = 45;
+        int offset = (page - 1) * pageSize;
+
+        try (DatabaseExecutor executor = database.execute()) {
+            return executor.query("SELECT ue.*, ua.nickname, ua.last_login_date FROM user_economy ue " + "JOIN user_account ua ON ue.uuid = ua.uuid " + "WHERE currency = ? " + "ORDER BY ue.cents DESC, ua.last_login_date DESC " + "LIMIT ? OFFSET ?").readMany(statement -> {
+                statement.set(1, currency.name().toLowerCase());
+                statement.set(2, pageSize + 1); // this is for the inventory to know if there is a next page or not
+                statement.set(3, offset);
+            }, this.rankingAdapter, ArrayList::new);
+        }
+
+    }
+
+    @Override
+    public List<RankingUser> findTopSeek(Currency currency, Long lastAmount, LocalDateTime lastLogin, UUID lastUuid) {
+
+        int pageSize = 45;
+
+        try (DatabaseExecutor executor = database.execute()) {
+            return executor.query("""
+                    SELECT ue.*, ua.nickname, ua.last_login_date
+                    FROM user_economy ue
+                    JOIN user_account ua ON ue.uuid = ua.uuid
+                    WHERE ue.currency = ?
+                    AND (ue.cents < ? OR (ue.cents = ? AND ua.last_login_date < ?) OR (ue.cents = ? AND ua.last_login_date = ? AND ua.uuid < ?))
+                    ORDER BY ue.cents DESC, ua.last_login_date DESC, ua.uuid DESC LIMIT ?
+                    """
+            ).readMany(statement -> {
+                statement.set(1, currency.name().toLowerCase());
+                statement.set(2, lastAmount);
+                statement.set(3, lastAmount);
+                statement.set(4, lastLogin);
+                statement.set(5, lastAmount);
+                statement.set(6, lastLogin);
+                statement.set(7, UUIDConverter.convert(lastUuid));
+                statement.set(8, pageSize + 1); // this is for the inventory to know if there is a next page or not
+            }, this.rankingAdapter, ArrayList::new);
+        }
+
+    }
+
+    @Override
+    public List<RankingUser> findTopSeekBackward(Currency currency, Long firstAmount, LocalDateTime firstLogin, UUID firstUuid) {
+
+        int pageSize = 45;
+
+        try (DatabaseExecutor executor = database.execute()) {
+            return executor.query("""
+                    SELECT ue.*, ua.nickname, ua.last_login_date
+                    FROM user_economy ue
+                    JOIN user_account ua ON ue.uuid = ua.uuid
+                    WHERE ue.currency = ?
+                    AND (ue.cents > ? OR (ue.cents = ? AND ua.last_login_date > ?) OR (ue.cents = ? AND ua.last_login_date = ? AND ua.uuid > ?))
+                    ORDER BY ue.cents ASC, ua.last_login_date ASC, ua.uuid ASC LIMIT ?
+                    """
+            ).readMany(statement -> {
+                statement.set(1, currency.name().toLowerCase());
+                statement.set(2, firstAmount);
+                statement.set(3, firstAmount);
+                statement.set(4, firstLogin);
+                statement.set(5, firstAmount);
+                statement.set(6, firstLogin);
+                statement.set(7, UUIDConverter.convert(firstUuid));
+                statement.set(8, pageSize + 1); // this is for the inventory to know if there is a previous page or not
+            }, this.rankingAdapter, ArrayList::new);
+        }
+
+    }
+
+}

@@ -1,0 +1,29 @@
+ranking:
+  title: "Most <currency> (Page <page>)"
+  size: 54
+  usersPerPage: 45 # Basic rule: If you change this value, change the seek (option below) proportionally.
+
+  # From page 100 onwards, the plugin uses seek pagination. Seek pagination is a strategy to quickly fetch users on high pages.
+  # Do not change this value unless you know what you are doing.
+  #
+  # Explanation for the curious:
+  # Suppose you are on page 1000 and go back to page 999. Without seek pagination, the database would have to scan
+  # usersPerPage * 999 users, which is slow. With seek pagination, it only scans usersPerPage users starting from the
+  # richest user on page 1000. Seek works like: "Give me users richer than the richest user on page 1000."
+  # The only downside is extremely rare: if all users in the previous 100 pages happen to have zero balance while someone is viewing page 1000,
+  # the previous page may contain fewer than the expected number of users.
+  # In practice, this will essentially never happen, because it would require usersPerPage * 100 users
+  # to spend all their money at the exact time the page is being viewed.
+  # Seek pagination handles users with the same balance correctly, and the plugin can automatically adjust if such a situation ever occurs.
+  seek: 100
+
+  item:
+    name: "<color:#4D5DD7><name>"
+    lore:
+      - "<gray><currency>: <white><balance><icon></bold> <color:#4D5DD7>(#<position>)"
+  back:
+    name: "<red>Back"
+    slot: 45
+  next:
+    name: "<green>Next"
+    slot: 53
