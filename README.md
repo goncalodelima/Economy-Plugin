@@ -61,7 +61,7 @@ Click the image to watch the video on YouTube.
     - [GitHub Releases](https://github.com/goncalodelima/Economy-Plugin/releases)
     - [SpigotMC](https://www.spigotmc.org/resources/free-multi-economy-plugin-with-multi-server-support.131260/)
 
-2. Install required dependencies (if any) as specified in the documentation.
+2. Install required dependencies (libs.zip)
 
 3. Place the `.jar` files in your server's `plugins` folder:
     - For a **Bukkit/Spigot/Paper server**, place the main `Economy-Plugin.jar` in `plugins`.
