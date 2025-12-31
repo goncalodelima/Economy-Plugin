@@ -37,7 +37,7 @@ public class PlayerBalanceRunnable extends BukkitRunnable {
 
     private final Set<UUID> uuidsToUpdate;
 
-    private static final int UPDATE_INTERVAL = 60;
+    private static final int UPDATE_INTERVAL = 60 * 60;
 
     private int i = 0;
 

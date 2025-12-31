@@ -22,6 +22,7 @@
 package pt.gongas.economy.shared.user.service;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import pt.gongas.database.Database;
 import pt.gongas.economy.shared.currency.Currency;
 import pt.gongas.economy.shared.currency.service.CurrencyFoundationService;
@@ -115,6 +116,7 @@ public class UserService implements UserFoundationService {
     }
 
     @Override
+    @Nullable
     public User get(@NotNull UUID uuid) {
         return cache.get(uuid);
     }
