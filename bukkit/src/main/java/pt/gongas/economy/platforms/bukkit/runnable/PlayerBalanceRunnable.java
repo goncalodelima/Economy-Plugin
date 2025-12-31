@@ -49,12 +49,13 @@ public class PlayerBalanceRunnable extends BukkitRunnable {
     @Override
     public void run() {
 
-        if (i == UPDATE_INTERVAL) { // Every hour, the cache is forcibly updated from the database for all players.
+        if (i++ == UPDATE_INTERVAL) { // Every hour, the cache is forcibly updated from the database for all players.
 
             for (Player player : Bukkit.getOnlinePlayers()) {
                 uuidsToUpdate.add(player.getUniqueId());
             }
 
+            i = 0;
         }
 
         if (uuidsToUpdate.isEmpty()) {
@@ -95,8 +96,6 @@ public class PlayerBalanceRunnable extends BukkitRunnable {
         // to ensure that the snapshot size is not empty if the set is not empty.
         // Furthermore, it's to avoid updating the same UUIDs on the next runnable call.
         uuidsToUpdate.removeAll(snapshot);
-
-        i++;
     }
 
 }
