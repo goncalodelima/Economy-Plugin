@@ -21,6 +21,7 @@
 
 package pt.gongas.economy.shared.user.service;
 
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pt.gongas.database.Database;
@@ -32,7 +33,6 @@ import pt.gongas.economy.shared.user.User;
 import pt.gongas.economy.shared.user.adapter.RankingAdapter;
 import pt.gongas.economy.shared.user.adapter.UserAdapter;
 import pt.gongas.economy.shared.user.repository.UserFoundationRepository;
-import pt.gongas.economy.shared.util.Result;
 import pt.gongas.economy.shared.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
@@ -61,7 +61,7 @@ public class UserService implements UserFoundationService {
     }
 
     @Override
-    public CompletableFuture<Result<Boolean>> updateCurrencies(UUID senderUuid, UUID receiverUuid, Currency currency, long cents) {
+    public CompletableFuture<QueryUserResult> updateCurrencies(UUID senderUuid, UUID receiverUuid, Currency currency, long cents) {
         return userRepository.updateCurrencies(senderUuid, receiverUuid, currency, cents);
     }
 
@@ -76,7 +76,7 @@ public class UserService implements UserFoundationService {
     }
 
     @Override
-    public CompletableFuture<Result<Boolean>> setCurrency(UUID uuid, Currency currency, long cents) {
+    public CompletableFuture<QueryUserResult> setCurrency(UUID uuid, Currency currency, long cents) {
         return userRepository.setCurrency(uuid, currency, cents);
     }
 
@@ -86,7 +86,7 @@ public class UserService implements UserFoundationService {
     }
 
     @Override
-    public CompletableFuture<Result<Boolean>> addCurrency(UUID uuid, Currency currency, long cents) {
+    public CompletableFuture<QueryUserResult> addCurrency(UUID uuid, Currency currency, long cents) {
         return userRepository.addCurrency(uuid, currency, cents);
     }
 
@@ -96,7 +96,7 @@ public class UserService implements UserFoundationService {
     }
 
     @Override
-    public CompletableFuture<Result<Boolean>> removeCurrency(UUID uuid, Currency currency, long cents) {
+    public CompletableFuture<QueryUserResult> removeCurrency(UUID uuid, Currency currency, long cents) {
         return userRepository.removeCurrency(uuid, currency, cents);
     }
 
@@ -106,11 +106,23 @@ public class UserService implements UserFoundationService {
     }
 
     @Override
+    public CompletableFuture<QueryUserResult> withdrawCurrency(UUID uuid, Currency currency, long cents) {
+        return userRepository.withdrawCurrency(uuid, currency, cents);
+    }
+
+    @Override
+    public CompletableFuture<QueryUserResult> withdrawCurrency(String nickname, Currency currency, long cents) {
+        return userRepository.withdrawCurrency(nickname, currency, cents);
+    }
+
+    @Override
+    @ApiStatus.Internal
     public User remove(UUID uuid) {
         return cache.remove(uuid);
     }
 
     @Override
+    @ApiStatus.Internal
     public void put(User user) {
         cache.put(user.getUuid(), user);
     }
@@ -122,16 +134,9 @@ public class UserService implements UserFoundationService {
     }
 
     @Override
+    @Nullable
     public User getOrCreateDataAndUpdate(UUID uuid, String nickname) {
-
-        Result<User> result = userRepository.findOrCreateAndUpdate(uuid, nickname);
-
-        if (result.success()) {
-            User userRepositoryOne = result.value();
-            return Objects.requireNonNullElseGet(userRepositoryOne, () -> new User(uuid, nickname));
-        }
-
-        return null;
+        return userRepository.findOrCreateAndUpdate(uuid, nickname);
     }
 
     @Override
