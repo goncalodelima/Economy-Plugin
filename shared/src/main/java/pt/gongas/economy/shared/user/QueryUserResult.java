@@ -26,4 +26,5 @@ import java.util.UUID;
 sealed public interface QueryUserResult {
     record Error(ErrorType type) implements QueryUserResult {}
     record Success(UUID uuid, String nickname, long cents) implements QueryUserResult {}
+    record SuccessNoData() implements QueryUserResult {}
 }

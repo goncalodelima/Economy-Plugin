@@ -21,6 +21,7 @@
 
 package pt.gongas.economy.shared.user.repository;
 
+import org.jetbrains.annotations.Nullable;
 import pt.gongas.database.Database;
 import pt.gongas.database.executor.DatabaseExecutor;
 import pt.gongas.economy.shared.currency.Currency;
@@ -29,7 +30,6 @@ import pt.gongas.economy.shared.user.*;
 import pt.gongas.economy.shared.user.adapter.RankingAdapter;
 import pt.gongas.economy.shared.user.adapter.UserAdapter;
 import pt.gongas.economy.shared.util.Pair;
-import pt.gongas.economy.shared.util.Result;
 import pt.gongas.economy.shared.util.UUIDConverter;
 
 import java.sql.Connection;
@@ -112,10 +112,12 @@ public class UserRepository implements UserFoundationRepository {
     }
 
     @Override
-    public CompletableFuture<Result<Boolean>> updateCurrencies(UUID senderUuid, UUID receiverUuid, Currency currency, long cents) {
-        return CompletableFuture.supplyAsync(() -> {
+    public CompletableFuture<QueryUserResult> updateCurrencies(UUID senderUuid, UUID receiverUuid, Currency currency, long cents) {
+        return CompletableFuture.<QueryUserResult>supplyAsync(() -> {
 
             try (DatabaseExecutor executor = database.execute(); Connection connection = executor.getHikariConnection().getConnection()) {
+
+                String currencyName = currency.name().toLowerCase();
 
                 executor.startTransaction(connection);
 
@@ -124,33 +126,37 @@ public class UserRepository implements UserFoundationRepository {
                         .writeAndReturnRowCount(statement -> {
                             statement.set(1, cents);
                             statement.set(2, UUIDConverter.convert(senderUuid));
-                            statement.set(3, currency.name().toLowerCase());
+                            statement.set(3, currencyName);
                             statement.set(4, cents);
                         }, connection);
 
                 if (updated == 0) {
                     executor.rollbackTransaction(connection);
-                    return Result.ok(false);
+                    return new QueryUserResult.Error(ErrorType.NOT_ENOUGH_BALANCE);
                 }
 
-                executor.query("INSERT INTO user_economy (uuid, currency, cents) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE cents = cents + ?")
-                        .write(statement -> {
-                            statement.set(1, UUIDConverter.convert(receiverUuid));
-                            statement.set(2, currency.name().toLowerCase());
-                            statement.set(3, cents);
-                            statement.set(4, cents);
+                int updated1 = executor.query("UPDATE user_economy SET cents = cents + ? WHERE uuid = ? and currency = ?")
+                        .writeAndReturnRowCount(statement -> {
+                            statement.set(1, cents);
+                            statement.set(2, UUIDConverter.convert(senderUuid));
+                            statement.set(3, currencyName);
                         }, connection);
 
+                if (updated1 == 0) {
+                    executor.rollbackTransaction(connection);
+                    return new QueryUserResult.Error(ErrorType.NOT_FOUND);
+                }
+
                 executor.commitTransaction(connection);
-                return Result.ok(true);
+                return new QueryUserResult.SuccessNoData();
             } catch (SQLException e) {
                 logger.log(Level.SEVERE, "Failed to get connection on update both currencies data", e);
-                return Result.<Boolean>fail("Failed to get connection on update both currencies data " + e.getMessage());
+                return new QueryUserResult.Error(ErrorType.EXCEPTION);
             }
 
         }, databaseExecutor).exceptionally(e -> {
             logger.log(Level.SEVERE, "Failed to update both currencies data", e);
-            return Result.fail("Failed to update both currencies data " + e.getMessage());
+            return new QueryUserResult.Error(ErrorType.EXCEPTION);
         });
     }
 
@@ -159,6 +165,8 @@ public class UserRepository implements UserFoundationRepository {
         return CompletableFuture.<QueryUserResult>supplyAsync(() -> {
 
             try (DatabaseExecutor executor = database.execute(); Connection connection = executor.getHikariConnection().getConnection()) {
+
+                String currencyName = currency.name().toLowerCase();
 
                 executor.startTransaction(connection);
 
@@ -178,7 +186,7 @@ public class UserRepository implements UserFoundationRepository {
                         .writeAndReturnRowCount(statement -> {
                             statement.set(1, cents);
                             statement.set(2, UUIDConverter.convert(senderUuid));
-                            statement.set(3, currency.name().toLowerCase());
+                            statement.set(3, currencyName);
                             statement.set(4, cents);
                         }, connection);
 
@@ -187,12 +195,13 @@ public class UserRepository implements UserFoundationRepository {
                     return new QueryUserResult.Error(ErrorType.NOT_ENOUGH_BALANCE);
                 }
 
-                executor.query("INSERT INTO user_economy (uuid, currency, cents) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE cents = cents + ?").write(statement -> {
-                    statement.set(1, pair.key());
-                    statement.set(2, currency.name().toLowerCase());
-                    statement.set(3, cents);
-                    statement.set(4, cents);
-                }, connection);
+                executor.query("INSERT INTO user_economy (uuid, currency, cents) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE cents = cents + ?")
+                        .write(statement -> {
+                            statement.set(1, pair.key());
+                            statement.set(2, currencyName);
+                            statement.set(3, cents);
+                            statement.set(4, cents);
+                        }, connection);
 
                 executor.commitTransaction(connection);
                 return new QueryUserResult.Success(UUIDConverter.convert(pair.key()), pair.value(), 0);
@@ -205,6 +214,7 @@ public class UserRepository implements UserFoundationRepository {
             logger.log(Level.SEVERE, "Failed to update both currencies data", e);
             return new QueryUserResult.Error(ErrorType.EXCEPTION);
         });
+
     }
 
     @Override
@@ -227,30 +237,31 @@ public class UserRepository implements UserFoundationRepository {
 
                 }
 
-                executor.query("SELECT uuid, currency, cents FROM user_economy WHERE uuid IN (" + placeholders + ")").readMany(statement -> {
+                executor.query("SELECT uuid, currency, cents FROM user_economy WHERE uuid IN (" + placeholders + ")")
+                        .readMany(statement -> {
 
-                    int index = 1;
+                            int index = 1;
 
-                    for (UUID uuid : uuids) {
-                        statement.set(index++, UUIDConverter.convert(uuid));
-                    }
+                            for (UUID uuid : uuids) {
+                                statement.set(index++, UUIDConverter.convert(uuid));
+                            }
 
-                }, query -> {
+                        }, query -> {
 
-                    byte[] uuidBytes = (byte[]) query.get("uuid");
-                    String currencyName = ((String) query.get("currency")).toLowerCase();
-                    long cents = (Long) query.get("cents");
+                            byte[] uuidBytes = (byte[]) query.get("uuid");
+                            String currencyName = ((String) query.get("currency")).toLowerCase();
+                            long cents = (Long) query.get("cents");
 
-                    UUID uuid = UUIDConverter.convert(uuidBytes);
-                    Currency currency = currencyService.get(currencyName);
+                            UUID uuid = UUIDConverter.convert(uuidBytes);
+                            Currency currency = currencyService.get(currencyName);
 
-                    if (currency == null) {
-                        return null;
-                    }
+                            if (currency == null) {
+                                return null;
+                            }
 
-                    result.computeIfAbsent(uuid, k -> new HashMap<>()).put(currency, cents);
-                    return null;
-                });
+                            result.computeIfAbsent(uuid, k -> new HashMap<>()).put(currency, cents);
+                            return null;
+                        });
 
                 return result;
 
@@ -264,8 +275,8 @@ public class UserRepository implements UserFoundationRepository {
     }
 
     @Override
-    public CompletableFuture<Result<Boolean>> setCurrency(UUID uuid, Currency currency, long cents) {
-        return CompletableFuture.supplyAsync(() -> {
+    public CompletableFuture<QueryUserResult> setCurrency(UUID uuid, Currency currency, long cents) {
+        return CompletableFuture.<QueryUserResult>supplyAsync(() -> {
             try (DatabaseExecutor executor = database.execute()) {
 
                 int rows = executor.query("UPDATE user_economy SET cents = ? WHERE uuid = ? AND currency = ?")
@@ -276,15 +287,15 @@ public class UserRepository implements UserFoundationRepository {
                         });
 
                 if (rows == 0) {
-                    return Result.ok(false);
+                    return new QueryUserResult.Error(ErrorType.NOT_FOUND);
                 }
 
-                return Result.ok(true);
+                return new QueryUserResult.SuccessNoData();
 
             }
         }, databaseExecutor).exceptionally(e -> {
             logger.log(Level.SEVERE, "Failed to set currency data", e);
-            return Result.fail("Failed to set currency data: " + e.getMessage());
+            return new QueryUserResult.Error(ErrorType.EXCEPTION);
         });
     }
 
@@ -304,10 +315,11 @@ public class UserRepository implements UserFoundationRepository {
                     return new QueryUserResult.Error(ErrorType.NOT_FOUND);
                 }
 
-                int rows = executor.query("UPDATE user_economy ue JOIN user_account ua ON ua.uuid = ue.uuid SET ue.cents = ? WHERE ua.nickname = ? AND ue.currency = ? ORDER BY ua.last_login_date DESC LIMIT 1")
+
+                int rows = executor.query("UPDATE user_economy SET cents = ? WHERE uuid = ? AND currency = ?")
                         .writeAndReturnRowCount(statement -> {
                             statement.set(1, cents);
-                            statement.set(2, nickname);
+                            statement.set(2, pair.key());
                             statement.set(3, currency.name().toLowerCase());
                         }, connection);
 
@@ -329,8 +341,8 @@ public class UserRepository implements UserFoundationRepository {
     }
 
     @Override
-    public CompletableFuture<Result<Boolean>> addCurrency(UUID uuid, Currency currency, long cents) {
-        return CompletableFuture.supplyAsync(() -> {
+    public CompletableFuture<QueryUserResult> addCurrency(UUID uuid, Currency currency, long cents) {
+        return CompletableFuture.<QueryUserResult>supplyAsync(() -> {
             try (DatabaseExecutor executor = database.execute()) {
 
                 int rows = executor.query("UPDATE user_economy SET cents = cents + ? WHERE uuid = ? AND currency = ?")
@@ -341,15 +353,15 @@ public class UserRepository implements UserFoundationRepository {
                         });
 
                 if (rows == 0) {
-                    return Result.ok(false);
+                    return new QueryUserResult.Error(ErrorType.NOT_FOUND);
                 }
 
-                return Result.ok(true);
+                return new QueryUserResult.SuccessNoData();
 
             }
         }, databaseExecutor).exceptionally(e -> {
             logger.log(Level.SEVERE, "Failed to add currency data", e);
-            return Result.fail("Failed to add currency data: " + e.getMessage());
+            return new QueryUserResult.Error(ErrorType.EXCEPTION);
         });
     }
 
@@ -414,8 +426,8 @@ public class UserRepository implements UserFoundationRepository {
     }
 
     @Override
-    public CompletableFuture<Result<Boolean>> removeCurrency(UUID uuid, Currency currency, long cents) {
-        return CompletableFuture.supplyAsync(() -> {
+    public CompletableFuture<QueryUserResult> removeCurrency(UUID uuid, Currency currency, long cents) {
+        return CompletableFuture.<QueryUserResult>supplyAsync(() -> {
             try (DatabaseExecutor executor = database.execute()) {
 
                 int rows = executor.query("UPDATE user_economy SET cents = cents - LEAST(cents, ?) WHERE uuid = ? AND currency = ?")
@@ -426,15 +438,15 @@ public class UserRepository implements UserFoundationRepository {
                         });
 
                 if (rows == 0) {
-                    return Result.ok(false);
+                    return new QueryUserResult.Error(ErrorType.NOT_FOUND);
                 }
 
-                return Result.ok(true);
+                return new QueryUserResult.SuccessNoData();
 
             }
         }, databaseExecutor).exceptionally(e -> {
             logger.log(Level.SEVERE, "Failed to remove currency data", e);
-            return Result.fail("Failed to remove currency data: " + e.getMessage());
+            return new QueryUserResult.Error(ErrorType.EXCEPTION);
         });
     }
 
@@ -479,7 +491,126 @@ public class UserRepository implements UserFoundationRepository {
     }
 
     @Override
-    public Result<User> findOrCreateAndUpdate(UUID uuid, String nickname) {
+    public CompletableFuture<QueryUserResult> withdrawCurrency(UUID uuid, Currency currency, long cents) {
+        return CompletableFuture.<QueryUserResult>supplyAsync(() -> {
+            try (DatabaseExecutor executor = database.execute(); Connection connection = executor.getHikariConnection().getConnection()) {
+
+                String currencyName = currency.name().toLowerCase();
+
+                executor.startTransaction(connection);
+
+                long databaseCents = executor.query("SELECT cents FROM user_economy WHERE uuid = ? AND currency = ? FOR UPDATE")
+                        .readOne(statement -> {
+                                    statement.set(1, UUIDConverter.convert(uuid));
+                                    statement.set(2, currencyName);
+                                },
+                                query -> (long) query.get("cents"), connection)
+                        .orElse(0L);
+
+                if (databaseCents < cents) {
+                    executor.rollbackTransaction(connection);
+                    return new QueryUserResult.Error(ErrorType.NOT_ENOUGH_BALANCE);
+                }
+
+                // The `cents >= ?` check here is not strictly necessary because we already perform
+                // a SELECT ... FOR UPDATE within a transaction (auto-commit = false),
+                // which locks the row until the transaction either commits, rolls back,
+                // or the connection is returned to the HikariCP pool (Hikari will automatically roll back
+                // any uncommitted transaction when the connection is returned, releasing the lock).
+                int rows = executor.query("UPDATE user_economy SET cents = cents - ? WHERE uuid = ? AND currency = ?")
+                        .writeAndReturnRowCount(statement -> {
+                            statement.set(1, cents);
+                            statement.set(2, UUIDConverter.convert(uuid));
+                            statement.set(3, currencyName);
+                        }, connection);
+
+                if (rows == 0) {
+                    executor.rollbackTransaction(connection);
+                    return new QueryUserResult.Error(ErrorType.NOT_FOUND);
+                }
+
+                executor.commitTransaction(connection);
+                return new QueryUserResult.SuccessNoData();
+
+            } catch (SQLException e) {
+                logger.log(Level.SEVERE, "Failed to withdraw currency data", e);
+                return new QueryUserResult.Error(ErrorType.EXCEPTION);
+            }
+
+        }, databaseExecutor).exceptionally(e -> {
+            logger.log(Level.SEVERE, "Failed to withdraw currency data", e);
+            return new QueryUserResult.Error(ErrorType.EXCEPTION);
+        });
+    }
+
+    @Override
+    public CompletableFuture<QueryUserResult> withdrawCurrency(String nickname, Currency currency, long cents) {
+        return CompletableFuture.<QueryUserResult>supplyAsync(() -> {
+            try (DatabaseExecutor executor = database.execute(); Connection connection = executor.getHikariConnection().getConnection()) {
+
+                String currencyName = currency.name().toLowerCase();
+
+                executor.startTransaction(connection);
+
+                Pair<byte[], String> pair = executor.query("SELECT uuid,nickname FROM user_account WHERE nickname = ? ORDER BY last_login_date DESC LIMIT 1")
+                        .readOne(statement -> statement.set(1, nickname), query -> {
+                            byte[] uuid = (byte[]) query.get("uuid");
+                            String name = (String) query.get("nickname");
+                            return new Pair<>(uuid, name);
+                        }, connection).orElse(null);
+
+                if (pair == null) {
+                    executor.rollbackTransaction(connection);
+                    return new QueryUserResult.Error(ErrorType.NOT_FOUND);
+                }
+
+                long databaseCents = executor.query("SELECT cents FROM user_economy WHERE uuid = ? AND currency = ? FOR UPDATE")
+                        .readOne(statement -> {
+                                    statement.set(1, pair.key());
+                                    statement.set(2, currencyName);
+                                },
+                                query -> (long) query.get("cents"), connection)
+                        .orElse(0L);
+
+                if (databaseCents < cents) {
+                    executor.rollbackTransaction(connection);
+                    return new QueryUserResult.Error(ErrorType.NOT_ENOUGH_BALANCE);
+                }
+
+                // The `cents >= ?` check here is not strictly necessary because we already perform
+                // a SELECT ... FOR UPDATE within a transaction (auto-commit = false),
+                // which locks the row until the transaction either commits, rolls back,
+                // or the connection is returned to the HikariCP pool (Hikari will automatically roll back
+                // any uncommitted transaction when the connection is returned, releasing the lock).
+                int rows = executor.query("UPDATE user_economy SET cents = cents - ? WHERE uuid = ? AND currency = ?")
+                        .writeAndReturnRowCount(statement -> {
+                            statement.set(1, cents);
+                            statement.set(2, pair.key());
+                            statement.set(3, currencyName);
+                        }, connection);
+
+                if (rows == 0) {
+                    executor.rollbackTransaction(connection);
+                    return new QueryUserResult.Error(ErrorType.NOT_FOUND);
+                }
+
+                executor.commitTransaction(connection);
+                return new QueryUserResult.Success(UUIDConverter.convert(pair.key()), pair.value(), cents);
+
+            } catch (SQLException e) {
+                logger.log(Level.SEVERE, "Failed to withdraw currency data", e);
+                return new QueryUserResult.Error(ErrorType.EXCEPTION);
+            }
+
+        }, databaseExecutor).exceptionally(e -> {
+            logger.log(Level.SEVERE, "Failed to withdraw currency data", e);
+            return new QueryUserResult.Error(ErrorType.EXCEPTION);
+        });
+    }
+
+    @Override
+    @Nullable
+    public User findOrCreateAndUpdate(UUID uuid, String nickname) {
 
         try (DatabaseExecutor executor = database.execute(); Connection connection = executor.getHikariConnection().getConnection()) {
 
@@ -523,7 +654,7 @@ public class UserRepository implements UserFoundationRepository {
 
             }, connection);
 
-            User user = executor.query("""
+            return executor.query("""
                             SELECT ua.uuid, ua.nickname, ua.last_login_date,
                             ue.currency, ue.cents
                             FROM user_account ua
@@ -532,11 +663,9 @@ public class UserRepository implements UserFoundationRepository {
                             """)
                     .readOne(statement -> statement.set(1, uuidBytes), this.userAdapter, connection).orElse(null);
 
-            return Result.ok(user);
-
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Failed to retrieve economy user data", e);
-            return Result.fail("Failed to fetch user from database: " + e.getMessage());
+            return null;
         }
 
     }

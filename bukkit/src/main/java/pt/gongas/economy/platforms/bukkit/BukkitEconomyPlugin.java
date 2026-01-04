@@ -23,16 +23,19 @@ package pt.gongas.economy.platforms.bukkit;
 
 import co.aikar.commands.BukkitCommandManager;
 import org.bstats.bukkit.Metrics;
+import org.bukkit.entity.Player;
 import pt.gongas.database.Database;
 import pt.gongas.database.DatabaseType;
 import pt.gongas.database.connection.CustomDatabaseConnection;
 import pt.gongas.database.credentials.impl.DatabaseCredentialsImpl;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.redisson.api.RTopic;
+import pt.gongas.economy.platforms.bukkit.api.BukkitEconomyApi;
 import pt.gongas.economy.platforms.bukkit.command.EconomyCommand;
 import pt.gongas.economy.platforms.bukkit.listener.PlayerListener;
 import pt.gongas.economy.platforms.bukkit.runnable.PlayerBalanceRunnable;
 import pt.gongas.economy.platforms.bukkit.view.RankingView;
+import pt.gongas.economy.shared.api.EconomyApi;
 import pt.gongas.economy.shared.currency.service.CurrencyFoundationService;
 import pt.gongas.economy.shared.messaging.Messaging;
 import pt.gongas.economy.platforms.bukkit.messaging.MessagingBungee;
@@ -67,6 +70,8 @@ public class BukkitEconomyPlugin extends JavaPlugin {
     private CurrencyFoundationService currencyService;
 
     private UserFoundationService userService;
+
+    private EconomyApi<Player> economyApi;
 
     public Formatter formatter;
 
@@ -146,10 +151,11 @@ public class BukkitEconomyPlugin extends JavaPlugin {
         commandManager.enableUnstableAPI("help");
 
         Set<UUID> uuids = ConcurrentHashMap.newKeySet();
+        economyApi = new BukkitEconomyApi(lang, userService, messaging, transactions, uuids);
 
         for (Currency economy : currencyService.getAll()) {
             commandManager.getCommandReplacements().addReplacement("currency", economy.name().toLowerCase());
-            commandManager.registerCommand(new EconomyCommand(lang, economy, userService, view, messaging, transactions, uuids));
+            commandManager.registerCommand(new EconomyCommand(lang, economy, userService, view, economyApi));
         }
 
         getServer().getPluginManager().registerEvents(new PlayerListener(lang, userService), this);
@@ -231,6 +237,10 @@ public class BukkitEconomyPlugin extends JavaPlugin {
 
     public UserFoundationService getUserService() {
         return userService;
+    }
+
+    public EconomyApi<Player> getEconomyApi() {
+        return economyApi;
     }
 
 }

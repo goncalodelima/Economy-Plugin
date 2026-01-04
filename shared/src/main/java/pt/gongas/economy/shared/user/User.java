@@ -21,6 +21,7 @@
 
 package pt.gongas.economy.shared.user;
 
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import pt.gongas.economy.shared.currency.Currency;
 
@@ -87,7 +88,7 @@ public class User {
         return online;
     }
 
-    public void setOnline(boolean online) {
+    public @ApiStatus.Internal void setOnline(boolean online) {
         this.online = online;
     }
 
