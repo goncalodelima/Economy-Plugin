@@ -26,6 +26,7 @@ import com.google.common.io.ByteStreams;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.json.JSONComponentSerializer;
 import org.bukkit.Bukkit;
+import org.jetbrains.annotations.NotNull;
 import pt.gongas.economy.platforms.bukkit.BukkitEconomyPlugin;
 import pt.gongas.economy.shared.messaging.Messaging;
 
@@ -37,7 +38,7 @@ public class MessagingBungee implements Messaging {
     }
 
     @Override
-    public void sendMessage(String target, String message) {
+    public void sendMessage(@NotNull String target, @NotNull String message) {
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF("MessageRaw");
         out.writeUTF(target);

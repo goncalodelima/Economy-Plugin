@@ -27,7 +27,7 @@ plugins {
 
 allprojects {
     group = "pt.gongas"
-    version = "1.0.1"
+    version = "1.0.2"
     description = "Economy plugin system"
     ext.set("id", "economyplugin")
     ext.set("website", "https://github.com/goncalodelima/Economy-Plugin")

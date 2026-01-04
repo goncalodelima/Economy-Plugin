@@ -21,9 +21,37 @@
 
 package pt.gongas.economy.shared.messaging;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-public record TransactionMessage(@Nullable UUID sender, @Nullable UUID target) {
+// Records are not supported by this Redis codec because the library does not depend on the shared project.
+// Only classes registered in the codec can be deserialized without a no-arg constructor or @JsonCreator.
+public class TransactionMessage {
+
+    @Nullable
+    private final UUID sender;
+
+    @Nullable
+    private final UUID target;
+
+    @JsonCreator
+    public TransactionMessage(
+            @JsonProperty("sender") @Nullable UUID sender,
+            @JsonProperty("target") @Nullable UUID target
+    ) {
+        this.sender = sender;
+        this.target = target;
+    }
+
+    public @Nullable UUID getSender() {
+        return sender;
+    }
+
+    public @Nullable UUID getTarget() {
+        return target;
+    }
+
 }
