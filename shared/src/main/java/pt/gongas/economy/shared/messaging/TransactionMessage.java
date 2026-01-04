@@ -25,27 +25,5 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-public class TransactionMessage {
-
-    @Nullable
-    private UUID sender;
-
-    @Nullable
-    private UUID target;
-
-    public TransactionMessage() {}
-
-    public TransactionMessage(@Nullable UUID sender, @Nullable UUID target) {
-        this.sender = sender;
-        this.target = target;
-    }
-
-    public @Nullable UUID getSender() {
-        return sender;
-    }
-
-    public @Nullable UUID getTarget() {
-        return target;
-    }
-
+public record TransactionMessage(@Nullable UUID sender, @Nullable UUID target) {
 }

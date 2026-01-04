@@ -33,7 +33,7 @@ import org.bstats.velocity.Metrics;
 import pt.gongas.economy.shared.messaging.EconomyMessage;
 import pt.gongas.redis.redis.RedisManager;
 
-@Plugin(id = "economy-plugin", name = "Economy Plugin", version = "1.0.0",
+@Plugin(id = "economy-plugin", name = "Economy Plugin", version = "1.0.1",
         url = "https://github.com/goncalodelima/Economy-Plugin", description = "Free Multi-economy plugin with multi-server support", authors = {"ReeachyZ_"},
         dependencies = {@Dependency(id = "redisplugin")})
 public class VelocityEconomyPlugin {
@@ -55,8 +55,8 @@ public class VelocityEconomyPlugin {
 
         RedisManager.getClient().getTopic("economy-plugin")
                 .addListener(EconomyMessage.class, (channel, msg) ->
-                        server.getPlayer(msg.getTarget()).ifPresent(player ->
-                                player.sendMessage(MiniMessage.miniMessage().deserialize(msg.getMessage())))
+                        server.getPlayer(msg.target()).ifPresent(player ->
+                                player.sendMessage(MiniMessage.miniMessage().deserialize(msg.message())))
                 );
 
         // BStats Metrics
