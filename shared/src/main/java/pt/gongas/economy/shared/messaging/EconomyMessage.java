@@ -21,19 +21,7 @@
 
 package pt.gongas.economy.shared.messaging;
 
-public class EconomyMessage {
+import org.jetbrains.annotations.Nullable;
 
-    private String target;
-    private String message;
-
-    public EconomyMessage() {}
-
-    public EconomyMessage(String target, String message) {
-        this.target = target;
-        this.message = message;
-    }
-
-    public String getTarget() { return target; }
-    public String getMessage() { return message; }
-
+public record EconomyMessage(@Nullable String target, @Nullable String message) {
 }

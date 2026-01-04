@@ -165,8 +165,8 @@ public class BukkitEconomyPlugin extends JavaPlugin {
 
             transactions.addListener(TransactionMessage.class, (channel, msg) -> {
 
-                UUID senderUuid = msg.getSender();
-                UUID targetUuid = msg.getTarget();
+                UUID senderUuid = msg.sender();
+                UUID targetUuid = msg.target();
 
                 if (senderUuid != null) {
 
