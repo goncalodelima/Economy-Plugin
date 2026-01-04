@@ -21,7 +21,35 @@
 
 package pt.gongas.economy.shared.messaging;
 
-import org.jetbrains.annotations.Nullable;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.jetbrains.annotations.NotNull;
 
-public record EconomyMessage(@Nullable String target, @Nullable String message) {
+// Records are not supported by this Redis codec because the library does not depend on the shared project.
+// Only classes registered in the codec can be deserialized without a no-arg constructor or @JsonCreator.
+public class EconomyMessage {
+
+    @NotNull
+    private final String target;
+
+    @NotNull
+    private final String message;
+
+    @JsonCreator
+    public EconomyMessage(
+            @JsonProperty("target") @NotNull String target,
+            @JsonProperty("message") @NotNull String message
+    ) {
+        this.target = target;
+        this.message = message;
+    }
+
+    public @NotNull String getTarget() {
+        return target;
+    }
+
+    public @NotNull String getMessage() {
+        return message;
+    }
+
 }

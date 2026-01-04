@@ -21,10 +21,12 @@
 
 package pt.gongas.economy.shared.messaging;
 
+import org.jetbrains.annotations.NotNull;
+
 public interface Messaging {
 
     void setup();
 
-    void sendMessage(String target, String message);
+    void sendMessage(@NotNull String target, @NotNull String message);
 
 }

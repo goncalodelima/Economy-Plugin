@@ -21,6 +21,7 @@
 
 package pt.gongas.economy.shared.messaging;
 
+import org.jetbrains.annotations.NotNull;
 import org.redisson.api.RTopic;
 import pt.gongas.redis.redis.RedisManager;
 
@@ -34,7 +35,7 @@ public class MessagingRedis implements Messaging {
     }
 
     @Override
-    public void sendMessage(String target, String message) {
+    public void sendMessage(@NotNull String target, @NotNull String message) {
         topic.publishAsync(new EconomyMessage(target, message));
     }
 
