@@ -33,7 +33,7 @@ import org.bstats.velocity.Metrics;
 import pt.gongas.economy.shared.messaging.EconomyMessage;
 import pt.gongas.redis.redis.RedisManager;
 
-@Plugin(id = "economy-plugin", name = "Economy Plugin", version = "1.0.2",
+@Plugin(id = "economy-plugin", name = "Economy Plugin", version = "1.0.3",
         url = "https://github.com/goncalodelima/Economy-Plugin", description = "Free Multi-economy plugin with multi-server support", authors = {"ReeachyZ_"},
         dependencies = {@Dependency(id = "redisplugin")})
 public class VelocityEconomyPlugin {

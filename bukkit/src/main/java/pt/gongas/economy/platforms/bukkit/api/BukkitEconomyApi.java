@@ -31,6 +31,7 @@ import pt.gongas.economy.platforms.bukkit.BukkitEconomyPlugin;
 import pt.gongas.economy.platforms.bukkit.util.config.Configuration;
 import pt.gongas.economy.shared.api.EconomyApi;
 import pt.gongas.economy.shared.currency.Currency;
+import pt.gongas.economy.shared.currency.service.CurrencyFoundationService;
 import pt.gongas.economy.shared.messaging.Messaging;
 import pt.gongas.economy.shared.messaging.TransactionMessage;
 import pt.gongas.economy.shared.user.ErrorType;
@@ -46,6 +47,8 @@ public class BukkitEconomyApi implements EconomyApi<Player> {
 
     private final Configuration lang;
 
+    private final CurrencyFoundationService currencyService;
+
     private final UserFoundationService userService;
 
     private final Messaging messaging;
@@ -54,12 +57,23 @@ public class BukkitEconomyApi implements EconomyApi<Player> {
 
     private final Set<UUID> uuids;
 
-    public BukkitEconomyApi(Configuration lang, UserFoundationService userService, Messaging messaging, RTopic transactions, Set<UUID> uuids) {
+    public BukkitEconomyApi(Configuration lang, CurrencyFoundationService currencyService, UserFoundationService userService, Messaging messaging, RTopic transactions, Set<UUID> uuids) {
         this.lang = lang;
+        this.currencyService = currencyService;
         this.userService = userService;
         this.messaging = messaging;
         this.transactions = transactions;
         this.uuids = uuids;
+    }
+
+    @Override
+    public CurrencyFoundationService getCurrencyService() {
+        return currencyService;
+    }
+
+    @Override
+    public UserFoundationService getUserService() {
+        return userService;
     }
 
     @Override
@@ -247,7 +261,7 @@ public class BukkitEconomyApi implements EconomyApi<Player> {
     }
 
     @Override
-    public CompletableFuture<QueryUserResult> setCurrencyAndNotifyIfNeeded(@NotNull Player senderPlayer, @NotNull Player targetPlayer, @NotNull User targetUser, @NotNull Currency currency, double amount, boolean notify) {
+    public CompletableFuture<QueryUserResult> setCurrencyAndNotifyIfNeeded(@Nullable Player senderPlayer, @NotNull Player targetPlayer, @NotNull User targetUser, @NotNull Currency currency, double amount) {
 
         long cents = (long) (amount * 100);
 
@@ -257,7 +271,7 @@ public class BukkitEconomyApi implements EconomyApi<Player> {
 
                 case QueryUserResult.SuccessNoData ignored -> {
 
-                    if (notify) {
+                    if (senderPlayer != null) {
 
                         senderPlayer.sendRichMessage(lang.getString("set-transaction-successful", "<green>You have successfully set <white><amount><icon></bold> <green>for <white><target><green>."),
                                 Placeholder.unparsed("target", targetPlayer.getName()),
@@ -273,11 +287,9 @@ public class BukkitEconomyApi implements EconomyApi<Player> {
 
                     }
 
-                    boolean isTargetOnline = targetUser.isOnline();
-
-                    if (isTargetOnline) {
+                    if (targetUser.isOnline()) {
                         uuids.add(targetUser.getUuid());
-                    } else if (notify && messaging != null) {
+                    } else if (senderPlayer != null && messaging != null) {
                         UUID targetUuid = targetUser.getUuid();
                         transactions.publishAsync(new TransactionMessage(null, targetUuid));
                     }
@@ -286,7 +298,7 @@ public class BukkitEconomyApi implements EconomyApi<Player> {
 
                 case QueryUserResult.Error e -> {
 
-                    if (notify) {
+                    if (senderPlayer != null) {
 
                         if (e.type() == ErrorType.NOT_FOUND) {
                             senderPlayer.sendRichMessage(lang.getString("database-not-found", "<red>No player with the entered name was found in the database."));
@@ -308,7 +320,7 @@ public class BukkitEconomyApi implements EconomyApi<Player> {
     }
 
     @Override
-    public CompletableFuture<QueryUserResult> setCurrencyAndNotifyIfNeeded(@NotNull Player senderPlayer, @NotNull String target, @NotNull Currency currency, double amount, boolean notify) {
+    public CompletableFuture<QueryUserResult> setCurrencyAndNotifyIfNeeded(@Nullable Player senderPlayer, @NotNull String target, @NotNull Currency currency, double amount) {
 
         long cents = (long) (amount * 100);
 
@@ -318,7 +330,7 @@ public class BukkitEconomyApi implements EconomyApi<Player> {
 
                 case QueryUserResult.Success s -> {
 
-                    if (notify) {
+                    if (senderPlayer != null) {
 
                         senderPlayer.sendRichMessage(lang.getString("set-transaction-successful", "<green>You have successfully set <white><amount><icon></bold> <green>for <white><target><green>."),
                                 Placeholder.unparsed("target", s.nickname()),
@@ -341,9 +353,8 @@ public class BukkitEconomyApi implements EconomyApi<Player> {
 
                     if (isTargetOnline) {
                         uuids.add(targetUser.getUuid());
-                    } else if (notify && messaging != null) {
+                    } else if (senderPlayer != null && messaging != null) {
                         UUID targetUuid = s.uuid();
-                        new TransactionMessage(null, targetUuid);
                         transactions.publishAsync(new TransactionMessage(null, targetUuid));
                     }
 
@@ -351,7 +362,7 @@ public class BukkitEconomyApi implements EconomyApi<Player> {
 
                 case QueryUserResult.Error e -> {
 
-                    if (notify) {
+                    if (senderPlayer != null) {
 
                         if (e.type() == ErrorType.NOT_FOUND) {
                             senderPlayer.sendRichMessage(lang.getString("database-not-found", "<red>No player with the entered name was found in the database."));
@@ -373,7 +384,7 @@ public class BukkitEconomyApi implements EconomyApi<Player> {
     }
 
     @Override
-    public CompletableFuture<QueryUserResult> addCurrencyAndNotifyIfNeeded(@NotNull Player senderPlayer, @NotNull Player targetPlayer, @NotNull User senderUser, @NotNull User targetUser, @NotNull Currency currency, double amount, boolean notify) {
+    public CompletableFuture<QueryUserResult> addCurrencyAndNotifyIfNeeded(@Nullable Player senderPlayer, @NotNull Player targetPlayer, @NotNull User targetUser, @NotNull Currency currency, double amount) {
 
         long cents = (long) (amount * 100);
 
@@ -383,7 +394,7 @@ public class BukkitEconomyApi implements EconomyApi<Player> {
 
                 case QueryUserResult.SuccessNoData ignored -> {
 
-                    if (notify) {
+                    if (senderPlayer != null) {
 
                         senderPlayer.sendRichMessage(lang.getString("add-transaction-successful", "<green>You have successfully added <white><amount><icon></bold> <green>to <white><target><green>."),
                                 Placeholder.unparsed("target", targetPlayer.getName()),
@@ -399,28 +410,18 @@ public class BukkitEconomyApi implements EconomyApi<Player> {
 
                     }
 
-                    boolean isUserOnline = senderUser.isOnline();
-                    boolean isTargetOnline = targetUser.isOnline();
-
-                    if (isUserOnline) {
-                        uuids.add(senderUser.getUuid());
-                    }
-
-                    if (isTargetOnline) {
+                    if (targetUser.isOnline()) {
                         uuids.add(targetUser.getUuid());
-                    }
-
-                    if (notify && messaging != null && (!isUserOnline || !isTargetOnline)) {
-                        UUID senderUuid = isUserOnline ? null : senderUser.getUuid();
-                        UUID receiverUuid = isTargetOnline ? null : targetUser.getUuid();
-                        transactions.publishAsync(new TransactionMessage(senderUuid, receiverUuid));
+                    } else if (senderPlayer != null && messaging != null) {
+                        UUID receiverUuid = targetUser.getUuid();
+                        transactions.publishAsync(new TransactionMessage(null, receiverUuid));
                     }
 
                 }
 
                 case QueryUserResult.Error e -> {
 
-                    if (notify) {
+                    if (senderPlayer != null) {
 
                         if (e.type() == ErrorType.NOT_ENOUGH_BALANCE) {
                             senderPlayer.sendRichMessage(lang.getString("not-enough-balance", "<red>You don't have enough balance to complete this transaction!"));
@@ -442,7 +443,7 @@ public class BukkitEconomyApi implements EconomyApi<Player> {
     }
 
     @Override
-    public CompletableFuture<QueryUserResult> addCurrencyAndNotifyIfNeeded(@NotNull Player senderPlayer, @NotNull String target, @NotNull User senderUser, @NotNull Currency currency, double amount, boolean notify) {
+    public CompletableFuture<QueryUserResult> addCurrencyAndNotifyIfNeeded(@Nullable Player senderPlayer, @NotNull String target, @NotNull Currency currency, double amount) {
 
         long cents = (long) (amount * 100);
 
@@ -452,7 +453,7 @@ public class BukkitEconomyApi implements EconomyApi<Player> {
 
                 case QueryUserResult.Success s -> {
 
-                    if (notify) {
+                    if (senderPlayer != null) {
 
                         senderPlayer.sendRichMessage(lang.getString("add-transaction-successful", "<green>You have successfully added <white><amount><icon></bold> <green>to <white><target><green>."),
                                 Placeholder.unparsed("target", s.nickname()),
@@ -471,29 +472,19 @@ public class BukkitEconomyApi implements EconomyApi<Player> {
                     }
 
                     User targetUser = userService.get(s.uuid());
-
-                    boolean isUserOnline = senderUser.isOnline();
                     boolean isTargetOnline = targetUser != null;
-
-                    if (isUserOnline) {
-                        uuids.add(senderUser.getUuid());
-                    }
 
                     if (isTargetOnline) {
                         uuids.add(targetUser.getUuid());
-                    }
-
-                    if (notify && messaging != null && (!isUserOnline || !isTargetOnline)) {
-                        UUID senderUuid = isUserOnline ? null : senderUser.getUuid();
-                        UUID receiverUuid = isTargetOnline ? null : s.uuid();
-                        transactions.publishAsync(new TransactionMessage(senderUuid, receiverUuid));
+                    } else if (senderPlayer != null && messaging != null) {
+                        transactions.publishAsync(new TransactionMessage(null, s.uuid()));
                     }
 
                 }
 
                 case QueryUserResult.Error e -> {
 
-                    if (notify) {
+                    if (senderPlayer != null) {
 
                         if (e.type() == ErrorType.NOT_FOUND) {
                             senderPlayer.sendRichMessage(lang.getString("database-not-found", "<red>No player with the entered name was found in the database."));
@@ -517,7 +508,7 @@ public class BukkitEconomyApi implements EconomyApi<Player> {
     }
 
     @Override
-    public CompletableFuture<QueryUserResult> removeCurrencyAndNotifyIfNeeded(@NotNull Player senderPlayer, @NotNull Player targetPlayer, @NotNull User senderUser, @NotNull User targetUser, @NotNull Currency currency, double amount, boolean notify) {
+    public CompletableFuture<QueryUserResult> removeCurrencyAndNotifyIfNeeded(@Nullable Player senderPlayer, @NotNull Player targetPlayer, @NotNull User targetUser, @NotNull Currency currency, double amount) {
 
         long cents = (long) (amount * 100);
 
@@ -527,7 +518,7 @@ public class BukkitEconomyApi implements EconomyApi<Player> {
 
                 case QueryUserResult.SuccessNoData ignored -> {
 
-                    if (notify) {
+                    if (senderPlayer != null) {
 
                         senderPlayer.sendRichMessage(lang.getString("remove-transaction-successful", "<green>You have successfully removed <white><amount><icon></bold> <green>from <white><target><green>."),
                                 Placeholder.unparsed("target", targetPlayer.getName()),
@@ -541,33 +532,28 @@ public class BukkitEconomyApi implements EconomyApi<Player> {
                                 Placeholder.parsed("icon", currency.icon())
                         );
 
-                    }
+                        boolean isTargetOnline = targetUser.isOnline();
 
-                    boolean isUserOnline = senderUser.isOnline();
-                    boolean isTargetOnline = targetUser.isOnline();
+                        if (isTargetOnline) {
+                            uuids.add(targetUser.getUuid());
+                        } else if (messaging != null) {
+                            transactions.publishAsync(new TransactionMessage(null, targetUser.getUuid()));
+                        }
 
-                    if (isUserOnline) {
-                        uuids.add(senderUser.getUuid());
-                    }
-
-                    if (isTargetOnline) {
-                        uuids.add(targetUser.getUuid());
-                    }
-
-                    if (notify && messaging != null && (!isUserOnline || !isTargetOnline)) {
-                        UUID senderUuid = isUserOnline ? null : senderUser.getUuid();
-                        UUID receiverUuid = isTargetOnline ? null : targetUser.getUuid();
-                        transactions.publishAsync(new TransactionMessage(senderUuid, receiverUuid));
                     }
 
                 }
 
                 case QueryUserResult.Error e -> {
 
-                    if (e.type() == ErrorType.NOT_FOUND) {
-                        senderPlayer.sendRichMessage(lang.getString("database-not-found", "<red>No player with the entered name was found in the database."));
-                    } else { // Exception Error
-                        senderPlayer.sendRichMessage(lang.getString("payment-error", "<red>An unexpected error occurred while attempting to complete a transaction. Please try again, and if the problem persists, contact an administrator."));
+                    if (senderPlayer != null) {
+
+                        if (e.type() == ErrorType.NOT_FOUND) {
+                            senderPlayer.sendRichMessage(lang.getString("database-not-found", "<red>No player with the entered name was found in the database."));
+                        } else { // Exception Error
+                            senderPlayer.sendRichMessage(lang.getString("payment-error", "<red>An unexpected error occurred while attempting to complete a transaction. Please try again, and if the problem persists, contact an administrator."));
+                        }
+
                     }
 
                 }
@@ -582,7 +568,7 @@ public class BukkitEconomyApi implements EconomyApi<Player> {
     }
 
     @Override
-    public CompletableFuture<QueryUserResult> removeCurrencyAndNotifyIfNeeded(@NotNull Player senderPlayer, @NotNull String target, @NotNull User senderUser, @NotNull Currency currency, double amount, boolean notify) {
+    public CompletableFuture<QueryUserResult> removeCurrencyAndNotifyIfNeeded(@Nullable Player senderPlayer, @NotNull String target, @NotNull Currency currency, double amount) {
 
         long cents = (long) (amount * 100);
 
@@ -592,7 +578,7 @@ public class BukkitEconomyApi implements EconomyApi<Player> {
 
                 case QueryUserResult.Success s -> {
 
-                    if (notify) {
+                    if (senderPlayer != null) {
 
                         senderPlayer.sendRichMessage(lang.getString("remove-transaction-successful", "<green>You have successfully removed <white><amount><icon></bold> <green>from <white><target><green>."),
                                 Placeholder.unparsed("target", s.nickname()),
@@ -611,29 +597,19 @@ public class BukkitEconomyApi implements EconomyApi<Player> {
                     }
 
                     User targetUser = userService.get(s.uuid());
-
-                    boolean isUserOnline = senderUser.isOnline();
                     boolean isTargetOnline = targetUser != null;
-
-                    if (isUserOnline) {
-                        uuids.add(senderUser.getUuid());
-                    }
 
                     if (isTargetOnline) {
                         uuids.add(targetUser.getUuid());
-                    }
-
-                    if (notify && messaging != null && (!isUserOnline || !isTargetOnline)) {
-                        UUID senderUuid = isUserOnline ? null : senderUser.getUuid();
-                        UUID receiverUuid = isTargetOnline ? null : s.uuid();
-                        transactions.publishAsync(new TransactionMessage(senderUuid, receiverUuid));
+                    } else if (senderPlayer != null && messaging != null) {
+                        transactions.publishAsync(new TransactionMessage(null, s.uuid()));
                     }
 
                 }
 
                 case QueryUserResult.Error e -> {
 
-                    if (notify) {
+                    if (senderPlayer != null) {
 
                         if (e.type() == ErrorType.NOT_FOUND) {
                             senderPlayer.sendRichMessage(lang.getString("database-not-found", "<red>No player with the entered name was found in the database."));
@@ -657,7 +633,7 @@ public class BukkitEconomyApi implements EconomyApi<Player> {
     }
 
     @Override
-    public CompletableFuture<QueryUserResult> withdrawCurrencyAndNotifyIfNeeded(@NotNull Player senderPlayer, @NotNull Player targetPlayer, @NotNull User senderUser, @NotNull User targetUser, @NotNull Currency currency, double amount, boolean notify) {
+    public CompletableFuture<QueryUserResult> withdrawCurrencyAndNotifyIfNeeded(@Nullable Player senderPlayer, @NotNull Player targetPlayer, @NotNull User targetUser, @NotNull Currency currency, double amount) {
 
         long cents = (long) (amount * 100);
 
@@ -667,7 +643,7 @@ public class BukkitEconomyApi implements EconomyApi<Player> {
 
                 case QueryUserResult.SuccessNoData ignored -> {
 
-                    if (notify) {
+                    if (senderPlayer != null) {
 
                         senderPlayer.sendRichMessage(lang.getString("remove-transaction-successful", "<green>You have successfully removed <white><amount><icon></bold> <green>from <white><target><green>."),
                                 Placeholder.unparsed("target", targetPlayer.getName()),
@@ -683,33 +659,28 @@ public class BukkitEconomyApi implements EconomyApi<Player> {
 
                     }
 
-                    boolean isUserOnline = senderUser.isOnline();
                     boolean isTargetOnline = targetUser.isOnline();
-
-                    if (isUserOnline) {
-                        uuids.add(senderUser.getUuid());
-                    }
 
                     if (isTargetOnline) {
                         uuids.add(targetUser.getUuid());
-                    }
-
-                    if (notify && messaging != null && (!isUserOnline || !isTargetOnline)) {
-                        UUID senderUuid = isUserOnline ? null : senderUser.getUuid();
-                        UUID receiverUuid = isTargetOnline ? null : targetUser.getUuid();
-                        transactions.publishAsync(new TransactionMessage(senderUuid, receiverUuid));
+                    } else if (senderPlayer != null && messaging != null) {
+                        transactions.publishAsync(new TransactionMessage(null, targetUser.getUuid()));
                     }
 
                 }
 
                 case QueryUserResult.Error e -> {
 
-                    if (e.type() == ErrorType.NOT_ENOUGH_BALANCE) {
-                        senderPlayer.sendRichMessage(lang.getString("not-enough-balance", "<red>You don't have enough balance to complete this transaction!"));
-                    } else if (e.type() == ErrorType.NOT_FOUND) {
-                        senderPlayer.sendRichMessage(lang.getString("database-not-found", "<red>No player with the entered name was found in the database."));
-                    } else { // Exception Error
-                        senderPlayer.sendRichMessage(lang.getString("payment-error", "<red>An unexpected error occurred while attempting to complete a transaction. Please try again, and if the problem persists, contact an administrator."));
+                    if (senderPlayer != null) {
+
+                        if (e.type() == ErrorType.NOT_ENOUGH_BALANCE) {
+                            senderPlayer.sendRichMessage(lang.getString("not-enough-balance", "<red>You don't have enough balance to complete this transaction!"));
+                        } else if (e.type() == ErrorType.NOT_FOUND) {
+                            senderPlayer.sendRichMessage(lang.getString("database-not-found", "<red>No player with the entered name was found in the database."));
+                        } else { // Exception Error
+                            senderPlayer.sendRichMessage(lang.getString("payment-error", "<red>An unexpected error occurred while attempting to complete a transaction. Please try again, and if the problem persists, contact an administrator."));
+                        }
+
                     }
 
                 }
@@ -724,7 +695,7 @@ public class BukkitEconomyApi implements EconomyApi<Player> {
     }
 
     @Override
-    public CompletableFuture<QueryUserResult> withdrawCurrencyAndNotifyIfNeeded(@NotNull Player senderPlayer, @NotNull String target, @NotNull User senderUser, @NotNull Currency currency, double amount, boolean notify) {
+    public CompletableFuture<QueryUserResult> withdrawCurrencyAndNotifyIfNeeded(@Nullable Player senderPlayer, @NotNull String target, @NotNull Currency currency, double amount) {
 
         long cents = (long) (amount * 100);
 
@@ -734,7 +705,7 @@ public class BukkitEconomyApi implements EconomyApi<Player> {
 
                 case QueryUserResult.Success s -> {
 
-                    if (notify) {
+                    if (senderPlayer != null) {
 
                         senderPlayer.sendRichMessage(lang.getString("remove-transaction-successful", "<green>You have successfully removed <white><amount><icon></bold> <green>from <white><target><green>."),
                                 Placeholder.unparsed("target", s.nickname()),
@@ -753,29 +724,19 @@ public class BukkitEconomyApi implements EconomyApi<Player> {
                     }
 
                     User targetUser = userService.get(s.uuid());
-
-                    boolean isUserOnline = senderUser.isOnline();
                     boolean isTargetOnline = targetUser != null;
-
-                    if (isUserOnline) {
-                        uuids.add(senderUser.getUuid());
-                    }
 
                     if (isTargetOnline) {
                         uuids.add(targetUser.getUuid());
-                    }
-
-                    if (notify && messaging != null && (!isUserOnline || !isTargetOnline)) {
-                        UUID senderUuid = isUserOnline ? null : senderUser.getUuid();
-                        UUID receiverUuid = isTargetOnline ? null : s.uuid();
-                        transactions.publishAsync(new TransactionMessage(senderUuid, receiverUuid));
+                    } else if (senderPlayer != null && messaging != null) {
+                        transactions.publishAsync(new TransactionMessage(null, s.uuid()));
                     }
 
                 }
 
                 case QueryUserResult.Error e -> {
 
-                    if (notify) {
+                    if (senderPlayer != null) {
 
                         if (e.type() == ErrorType.NOT_FOUND) {
                             senderPlayer.sendRichMessage(lang.getString("database-not-found", "<red>No player with the entered name was found in the database."));
