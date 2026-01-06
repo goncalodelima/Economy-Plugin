@@ -68,7 +68,7 @@ public class EconomyCommand extends BaseCommand {
         }
 
         player.sendRichMessage(lang.getString("view-own-balance", "<green>You have <white><balance><icon></bold><green>."),
-                Placeholder.unparsed("balance", getFormatted(user.get(currency) / 100)),
+                Placeholder.unparsed("balance", getFormatted(user.get(currency) / 100D)),
                 Placeholder.parsed("icon", currency.icon())
         );
 
@@ -93,7 +93,7 @@ public class EconomyCommand extends BaseCommand {
 
             player.sendRichMessage(lang.getString("view-other-balance", "<green>The player <white><target> <green>has <white><balance><icon></bold><green>."),
                     Placeholder.unparsed("target", targetPlayer.getName()),
-                    Placeholder.unparsed("balance", getFormatted(user.get(currency) / 100)),
+                    Placeholder.unparsed("balance", getFormatted(user.get(currency) / 100D)),
                     Placeholder.parsed("icon", currency.icon())
             );
 

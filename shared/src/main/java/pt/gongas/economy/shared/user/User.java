@@ -52,20 +52,20 @@ public class User {
         this.currencies = currencies;
     }
 
-    public double get(Currency currency) {
+    public long get(Currency currency) {
         return currencies.getOrDefault(currency, 0L);
     }
 
-    public void set(Currency currency, long amount) {
-        currencies.put(currency, amount);
+    public void set(Currency currency, long cents) {
+        currencies.put(currency, cents);
     }
 
-    public void add(Currency currency, long amount) {
-        set(currency, currencies.getOrDefault(currency, 0L) + amount);
+    public void add(Currency currency, long cents) {
+        set(currency, currencies.getOrDefault(currency, 0L) + cents);
     }
 
-    public void remove(Currency currency, long amount) {
-        set(currency, currencies.getOrDefault(currency, 0L) - amount);
+    public void remove(Currency currency, long cents) {
+        set(currency, currencies.getOrDefault(currency, 0L) - cents);
     }
 
     public @NotNull UUID getUuid() {
