@@ -24,13 +24,29 @@ package pt.gongas.economy.shared.api;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pt.gongas.economy.shared.currency.Currency;
+import pt.gongas.economy.shared.currency.service.CurrencyFoundationService;
 import pt.gongas.economy.shared.user.QueryUserResult;
 import pt.gongas.economy.shared.user.User;
+import pt.gongas.economy.shared.user.service.UserFoundationService;
 
 import java.util.concurrent.CompletableFuture;
 
 @SuppressWarnings({"UnusedReturnValue", "UnusedDeclaration"})
 public interface EconomyApi<P> {
+
+    /**
+     * Returns the currency service instance.
+     *
+     * @return the CurrencyFoundationService
+     */
+    CurrencyFoundationService getCurrencyService();
+
+    /**
+     * Returns the user service instance.
+     *
+     * @return the UserFoundationService
+     */
+    UserFoundationService getUserService();
 
     /**
      * Gets the current balance of a specific currency for a target player.
@@ -73,61 +89,54 @@ public interface EconomyApi<P> {
 
     /**
      * Sets the currency amount for another player.
-     * <p>
-     * If {@code notify} is true, both the performing player and the target player are notified.
+     * If `senderPlayer` is not null, both the performing player and the target player are notified.
      *
-     * @param senderPlayer The player performing the action (non-null)
+     * @param senderPlayer The player performing the action (nullable). If null, no notification is sent.
      * @param targetPlayer The target player's object (non-null)
      * @param targetUser   The target's user data (non-null)
      * @param currency     The currency to set
      * @param amount       The new amount
-     * @param notify       If true, notify both senderPlayer and targetPlayer; otherwise, no notification
      * @return CompletableFuture containing the result of the operation
      */
-    CompletableFuture<QueryUserResult> setCurrencyAndNotifyIfNeeded(@NotNull P senderPlayer, @NotNull P targetPlayer, @NotNull User targetUser, @NotNull Currency currency, double amount, boolean notify);
+    CompletableFuture<QueryUserResult> setCurrencyAndNotifyIfNeeded(@Nullable P senderPlayer, @NotNull P targetPlayer, @NotNull User targetUser, @NotNull Currency currency, double amount);
 
     /**
      * Sets the currency amount for another player by name.
-     * If `notify` is true, both the performing player and the target are notified.
+     * If `senderPlayer` is not null, both the performing player and the target are notified.
      *
-     * @param senderPlayer The player performing the action (non-null)
-     * @param target The target player's name (non-null)
-     * @param currency The currency to set
-     * @param amount The new amount
-     * @param notify If true, notify both player and target; otherwise, no notification
+     * @param senderPlayer The player performing the action (nullable). If null, no notification is sent.
+     * @param target       The target player's name (non-null)
+     * @param currency     The currency to set
+     * @param amount       The new amount
      * @return CompletableFuture with the result of the operation
      */
-    CompletableFuture<QueryUserResult> setCurrencyAndNotifyIfNeeded(@NotNull P senderPlayer, @NotNull String target, @NotNull Currency currency, double amount, boolean notify);
+    CompletableFuture<QueryUserResult> setCurrencyAndNotifyIfNeeded(@Nullable P senderPlayer, @NotNull String target, @NotNull Currency currency, double amount);
 
     /**
      * Adds currency to another player.
-     * <p>
-     * If {@code notify} is true, both the performing player and the target player are notified.
+     * If `senderPlayer` is not null, both the performing player and the target player are notified.
      *
-     * @param senderPlayer The player performing the action (non-null)
+     * @param senderPlayer The player performing the action (nullable). If null, no notification is sent.
      * @param targetPlayer The target player's object (non-null)
-     * @param senderUser   The sender's user data (non-null)
      * @param targetUser   The target's user data (non-null)
      * @param currency     The currency to add
      * @param amount       The amount to add
-     * @param notify       If true, notify both senderPlayer and targetPlayer; otherwise, no notification
      * @return CompletableFuture containing the result of the operation
      */
-    CompletableFuture<QueryUserResult> addCurrencyAndNotifyIfNeeded(@NotNull P senderPlayer, @NotNull P targetPlayer, @NotNull User senderUser, @NotNull User targetUser, @NotNull Currency currency, double amount, boolean notify);
+
+    CompletableFuture<QueryUserResult> addCurrencyAndNotifyIfNeeded(@Nullable P senderPlayer, @NotNull P targetPlayer, @NotNull User targetUser, @NotNull Currency currency, double amount);
 
     /**
      * Adds currency to another player by name.
-     * If `notify` is true, both the performing player and the target are notified.
+     * If `senderPlayer` is not null, both the performing player and the target are notified.
      *
-     * @param senderPlayer The player performing the action (non-null)
-     * @param target The target player's name (non-null)
-     * @param senderUser The sender's user data
-     * @param currency The currency to add
-     * @param amount The amount to add
-     * @param notify If true, notify both player and target; otherwise, no notification
+     * @param senderPlayer The player performing the action (nullable). If null, no notification is sent.
+     * @param target       The target player's name (non-null)
+     * @param currency     The currency to add
+     * @param amount       The amount to add
      * @return CompletableFuture with the result of the operation
      */
-    CompletableFuture<QueryUserResult> addCurrencyAndNotifyIfNeeded(@NotNull P senderPlayer, @NotNull String target, @NotNull User senderUser, @NotNull Currency currency, double amount, boolean notify);
+    CompletableFuture<QueryUserResult> addCurrencyAndNotifyIfNeeded(@Nullable P senderPlayer, @NotNull String target, @NotNull Currency currency, double amount);
 
     /**
      * Removes currency from another player, subtracting up to the available balance.
@@ -136,57 +145,48 @@ public interface EconomyApi<P> {
      *
      * @param senderPlayer The player performing the action (non-null)
      * @param targetPlayer The target player's object (non-null)
-     * @param senderUser   The sender's user data (non-null)
      * @param targetUser   The target's user data (non-null)
      * @param currency     The currency to remove
      * @param amount       The amount to remove
-     * @param notify       If true, notify both senderPlayer and targetPlayer; otherwise, no notification
      * @return CompletableFuture containing the result of the operation
      */
-    CompletableFuture<QueryUserResult> removeCurrencyAndNotifyIfNeeded(@NotNull P senderPlayer, @NotNull P targetPlayer, @NotNull User senderUser, @NotNull User targetUser, @NotNull Currency currency, double amount, boolean notify);
+    CompletableFuture<QueryUserResult> removeCurrencyAndNotifyIfNeeded(@Nullable P senderPlayer, @NotNull P targetPlayer, @NotNull User targetUser, @NotNull Currency currency, double amount);
 
     /**
      * Removes currency from another player by name, subtracting up to the available balance.
-     * If `notify` is true, both the performing player and the target are notified.
+     * If `senderPlayer` is not null, both the performing player and the target are notified.
      *
-     * @param senderPlayer The player performing the action (non-null)
-     * @param target The target player's name (non-null)
-     * @param senderUser The sender's user data
-     * @param currency The currency to remove
-     * @param amount The amount to remove
-     * @param notify If true, notify both player and target; otherwise, no notification
+     * @param senderPlayer The player performing the action (nullable). If null, no notification is sent.
+     * @param target       The target player's name (non-null)
+     * @param currency     The currency to remove
+     * @param amount       The amount to remove
      * @return CompletableFuture with the result of the operation
      */
-    CompletableFuture<QueryUserResult> removeCurrencyAndNotifyIfNeeded(@NotNull P senderPlayer, @NotNull String target, @NotNull User senderUser, @NotNull Currency currency, double amount, boolean notify);
+    CompletableFuture<QueryUserResult> removeCurrencyAndNotifyIfNeeded(@Nullable P senderPlayer, @NotNull String target, @NotNull Currency currency, double amount);
 
     /**
      * Withdraws currency from another player, only if sufficient balance is available.
-     * <p>
-     * If {@code notify} is true, both the performing player and the target player are notified.
+     * If `senderPlayer` and `senderUser` are not null, both the performing player and the target are notified.
      *
-     * @param senderPlayer The player performing the action (non-null)
+     * @param senderPlayer The player performing the action (nullable). If null, no notification is sent.
      * @param targetPlayer The target player's object (non-null)
-     * @param senderUser   The sender's user data (non-null)
      * @param targetUser   The target's user data (non-null)
      * @param currency     The currency to withdraw
      * @param amount       The amount to withdraw
-     * @param notify       If true, notify both senderPlayer and targetPlayer; otherwise, no notification
      * @return CompletableFuture containing the result of the operation
      */
-    CompletableFuture<QueryUserResult> withdrawCurrencyAndNotifyIfNeeded(@NotNull P senderPlayer, @NotNull P targetPlayer, @NotNull User senderUser, @NotNull User targetUser, @NotNull Currency currency, double amount, boolean notify);
+    CompletableFuture<QueryUserResult> withdrawCurrencyAndNotifyIfNeeded(@Nullable P senderPlayer, @NotNull P targetPlayer, @NotNull User targetUser, @NotNull Currency currency, double amount);
 
     /**
      * Withdraws currency from another player by name, only if sufficient balance is available.
-     * If `notify` is true, both the performing player and the target are notified.
+     * If `senderPlayer` is not null, both the performing player and the target are notified.
      *
-     * @param senderPlayer The player performing the action (non-null)
+     * @param senderPlayer The player performing the action (nullable). If null, no notification is sent.
      * @param target The target player's name (non-null)
-     * @param senderUser The sender's user data
      * @param currency The currency to withdraw
      * @param amount The amount to withdraw
-     * @param notify If true, notify both player and target; otherwise, no notification
      * @return CompletableFuture with the result of the operation
      */
-    CompletableFuture<QueryUserResult> withdrawCurrencyAndNotifyIfNeeded(@NotNull P senderPlayer, @NotNull String target, @NotNull User senderUser, @NotNull Currency currency, double amount, boolean notify);
+    CompletableFuture<QueryUserResult> withdrawCurrencyAndNotifyIfNeeded(@Nullable P senderPlayer, @NotNull String target, @NotNull Currency currency, double amount);
 
 }

@@ -178,10 +178,10 @@ public class EconomyCommand extends BaseCommand {
                 return;
             }
 
-            economyApi.setCurrencyAndNotifyIfNeeded(player, targetPlayer, targetUser, currency, amount, true);
+            economyApi.setCurrencyAndNotifyIfNeeded(player, targetPlayer, targetUser, currency, amount);
 
         } else {
-            economyApi.setCurrencyAndNotifyIfNeeded(player, target, currency, amount, true);
+            economyApi.setCurrencyAndNotifyIfNeeded(player, target, currency, amount);
         }
 
     }
@@ -218,10 +218,10 @@ public class EconomyCommand extends BaseCommand {
                 return;
             }
 
-            economyApi.addCurrencyAndNotifyIfNeeded(player, targetPlayer, user, targetUser, currency, amount, true);
+            economyApi.addCurrencyAndNotifyIfNeeded(player, targetPlayer, targetUser, currency, amount);
 
         } else {
-            economyApi.addCurrencyAndNotifyIfNeeded(player, target, user, currency, amount, true);
+            economyApi.addCurrencyAndNotifyIfNeeded(player, target, currency, amount);
         }
 
     }
@@ -258,10 +258,10 @@ public class EconomyCommand extends BaseCommand {
                 return;
             }
 
-            economyApi.removeCurrencyAndNotifyIfNeeded(player, targetPlayer, user, targetUser, currency, amount, true);
+            economyApi.removeCurrencyAndNotifyIfNeeded(player, targetPlayer, targetUser, currency, amount);
 
         } else {
-            economyApi.removeCurrencyAndNotifyIfNeeded(player, target, user, currency, amount, true);
+            economyApi.removeCurrencyAndNotifyIfNeeded(player, target, currency, amount);
         }
 
     }

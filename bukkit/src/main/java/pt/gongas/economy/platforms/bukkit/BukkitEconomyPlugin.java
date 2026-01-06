@@ -67,10 +67,6 @@ public class BukkitEconomyPlugin extends JavaPlugin {
 
     private Metrics metrics;
 
-    private CurrencyFoundationService currencyService;
-
-    private UserFoundationService userService;
-
     private EconomyApi<Player> economyApi;
 
     public Formatter formatter;
@@ -95,7 +91,7 @@ public class BukkitEconomyPlugin extends JavaPlugin {
 
         formatter = new Formatter();
 
-        currencyService = new CurrencyService();
+        CurrencyFoundationService currencyService = new CurrencyService();
         new BukkitCurrencyLoader(currency).setup().forEach(currencyService::put);
 
         datacenter = new CustomDatabaseConnection(
@@ -142,7 +138,7 @@ public class BukkitEconomyPlugin extends JavaPlugin {
             getLogger().log(Level.WARNING, "The plugin is running on a machine that provides less than 4 cores to the JVM, which is very low. The general rule is to switch machines when you deploy the server to production.");
         }
 
-        userService = new UserService(getLogger(), databaseExecutor, currencyService, datacenter);
+        UserFoundationService userService = new UserService(getLogger(), databaseExecutor, currencyService, datacenter);
 
         RankingView view = new RankingView(inventory, userService);
         getServer().getPluginManager().registerEvents(view, this);
@@ -151,7 +147,7 @@ public class BukkitEconomyPlugin extends JavaPlugin {
         commandManager.enableUnstableAPI("help");
 
         Set<UUID> uuids = ConcurrentHashMap.newKeySet();
-        economyApi = new BukkitEconomyApi(lang, userService, messaging, transactions, uuids);
+        economyApi = new BukkitEconomyApi(lang, currencyService, userService, messaging, transactions, uuids);
 
         for (Currency economy : currencyService.getAll()) {
             commandManager.getCommandReplacements().addReplacement("currency", economy.name().toLowerCase());
@@ -229,14 +225,6 @@ public class BukkitEconomyPlugin extends JavaPlugin {
             metrics.shutdown();
         }
 
-    }
-
-    public CurrencyFoundationService getCurrencyService() {
-        return currencyService;
-    }
-
-    public UserFoundationService getUserService() {
-        return userService;
     }
 
     public EconomyApi<Player> getEconomyApi() {
