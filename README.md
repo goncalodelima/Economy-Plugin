@@ -85,6 +85,155 @@ Click the image to watch the video on YouTube.
     - If "none" is selected, Redis is not required, but cross-server transactions and synchronization will be disabled.
     - Restart the server to save and apply these changes.
 
+---
+
+## 📚 Documentation (Developer API)
+
+#### 📦 Using Economy-Plugin as a dependency
+
+<details>
+<summary><strong>Gradle (Kotlin DSL)</strong></summary>
+
+```kotlin
+repositories {
+    maven("https://repo.codemc.io/repository/goncalodelima/")
+}
+
+dependencies {
+    implementation("pt.gongas:EconomyPlugin-bukkit:1.0.5")
+}
+```
+
+</details> 
+
+<details> <summary><strong>Gradle (Groovy DSL)</strong></summary>
+
+```groovy
+repositories {
+    maven {
+        url "https://repo.codemc.io/repository/goncalodelima/"
+    }
+}
+
+dependencies {
+    implementation "pt.gongas:EconomyPlugin-bukkit:1.0.5"
+}
+```
+
+</details> 
+
+<details> <summary><strong>Maven</strong></summary>
+
+```maven
+<repositories>
+    <repository>
+        <id>codemc-goncalodelima</id>
+        <url>https://repo.codemc.io/repository/goncalodelima/</url>
+    </repository>
+</repositories>
+
+<dependencies>
+    <dependency>
+        <groupId>pt.gongas</groupId>
+        <artifactId>EconomyPlugin-bukkit</artifactId>
+        <version>1.0.5</version>
+    </dependency>
+</dependencies>
+```
+
+</details>
+
+#### Withdraw money securely using the API (Bukkit)
+
+```java
+// Simple lock to prevent duplicate operations
+private final Set<UUID> upgradeCache = new HashMap<>();
+
+private final Pair<EconomyApi, Currency> economyApi = (...)
+
+public void upgradeIsland(Island island, Player player) {
+   
+   EconomyUser economyUser = economyApi.key().getUserService().get(player.getUniqueId());
+   
+   if (economyUser == null) {
+       // Something strange happened. The player will have to log in again.
+       return;
+   }
+
+   // Prevents ugprades at the same time for the same island
+   if (upgradeCache.containsKey(island.getId())) {
+      return; // Already processing
+   }
+
+   long cents = economyUser.get(economyApi.value());
+   double balance = cents / 100D;
+   
+   int requiredBalance = island.getRequiredBalanceForUpgrade();
+
+   // This cache is not strictly necessary, but it is recommended 
+   // because it prevents cases where a user floods clicks in the 
+   // menu—for example, trying to upgrade the island without having 
+   // enough balance. If the cache exists, it will be updated within
+   // moments, allowing the MySQL query to succeed. In the worst 
+   // case, it will just perform an extra lookup in the Map.
+   if (balance < requiredBalance) {
+       // Not enough money
+      return;
+   }
+
+   economyApi
+           .key()
+           .withdrawCurrencyAndNotifyIfNeeded(
+                   null,               // Who removes it? In this case, the console, so null.
+                   player,             // Player to withdraw the balance
+                   economyUser,        // Economy user
+                   economyApi.value(), // Currency
+                   requiredBalance     // Amount (not in cents)
+           )
+           .thenAcceptAsync(result -> {
+
+              // Always release the lock
+              upgradeCache.remove(player.getUniqueId());
+
+              switch (result) {
+
+                 case QueryUserResult.SuccessNoData -> {
+                     
+                    // Withdrawal successful!
+                    // Perform island upgrade logic
+                    
+                 }
+
+                 case QueryUserResult.Error -> {
+                    
+                    // An error occurred, such as MySQL being offline, 
+                    // insufficient balance, etc. It's normal to report 
+                    // 'insufficient balance' even if the cache doesn't show it, 
+                    // because the plugin runs across multiple processes.
+                     
+                 }
+
+                 
+                 // The default block is necessary because, in theory, it could still return Success.
+                 // Methods like this one will never actually return Success. You can always check 
+                 // the implementation to be sure what values can be returned.
+                 // Success is only returned by methods that expect a value—like removeCurrency. 
+                 // For example, if you try to remove 100 coins but the user only has 70, 
+                 // the method returns Success with information from the query showing how much was actually removed.
+                 // This method, however, only removes currency if the balance is sufficient and requires a UUID. 
+                 // Therefore, it will only ever return SuccessNoData or Error.
+                 // In other methods (e.g., removeCurrency(...)), Success is returned, but SuccessNoData is not.
+                 
+                 default -> throw new IllegalStateException(
+                         "Unexpected result: " + result
+                 );
+                 
+              }
+
+           }, Bukkit.getScheduler().getMainThreadExecutor(YourPlugin.INSTANCE));
+}
+
+```
 
 ---
 
