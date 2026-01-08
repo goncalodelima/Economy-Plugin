@@ -146,14 +146,31 @@ dependencies {
 #### Withdraw money securely using the API (Bukkit)
 
 ```java
+Main.class:
+
+public static Pair<EconomyApi<Player>, Currency> economyApi;
+
+@Override
+public void onEnable() {
+
+   Currency currency = BukkitEconomyPlugin.plugin.getEconomyApi().getCurrencyService().get(getConfig().getString("currency", "money"));
+
+   if (currency == null) {
+      throw new RuntimeException("The currency provided do not exist in the Economy-Plugin plugin.");
+   }
+
+   economyApi = new Pair<>(BukkitEconomyPlugin.plugin.getEconomyApi(), currency);
+
+}
+
+Upgrade.class:
+
 // Simple lock to prevent duplicate operations
 private final Set<UUID> upgradeCache = new HashMap<>();
 
-private final Pair<EconomyApi, Currency> economyApi = (...)
-
 public void upgradeIsland(Island island, Player player) {
    
-   EconomyUser economyUser = economyApi.key().getUserService().get(player.getUniqueId());
+   EconomyUser economyUser = Main.economyApi.key().getUserService().get(player.getUniqueId());
    
    if (economyUser == null) {
        // Something strange happened. The player will have to log in again.
@@ -165,7 +182,7 @@ public void upgradeIsland(Island island, Player player) {
       return; // Already processing
    }
 
-   long cents = economyUser.get(economyApi.value());
+   long cents = economyUser.get(Main.economyApi.value());
    double balance = cents / 100D;
    
    int requiredBalance = island.getRequiredBalanceForUpgrade();
@@ -181,13 +198,13 @@ public void upgradeIsland(Island island, Player player) {
       return;
    }
 
-   economyApi
+   Main.economyApi
            .key()
            .withdrawCurrencyAndNotifyIfNeeded(
                    null,               // Who removes it? In this case, the console, so null.
                    player,             // Player to withdraw the balance
                    economyUser,        // Economy user
-                   economyApi.value(), // Currency
+                   Main.economyApi.value(), // Currency
                    requiredBalance     // Amount (not in cents)
            )
            .thenAcceptAsync(result -> {
