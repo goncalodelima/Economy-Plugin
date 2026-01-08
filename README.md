@@ -178,7 +178,7 @@ public void upgradeIsland(Island island, Player player) {
    }
 
    // Prevents ugprades at the same time for the same island
-   if (upgradeCache.containsKey(island.getId())) {
+   if (upgradeCache.contains(island.getId())) {
       return; // Already processing
    }
 
