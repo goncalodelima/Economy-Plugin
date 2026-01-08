@@ -80,13 +80,6 @@ subprojects {
 
 }
 
-tasks.register("printMavenUsername") {
-    doLast {
-        val mavenUsername = System.getenv("goncalodelima_username") ?: return@doLast
-        println("Maven username: $mavenUsername")
-    }
-}
-
 val platforms = setOf(
     project(":bukkit"),
     project(":velocity")
