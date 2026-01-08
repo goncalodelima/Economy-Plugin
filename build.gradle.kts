@@ -53,19 +53,29 @@ subprojects {
 
         val javaExt = extensions.getByType<JavaPluginExtension>()
 
-        tasks.register<Jar>("sourcesJar") {
+        val sourcesJar = tasks.register<Jar>("sourcesJar") {
+
             archiveClassifier.set("sources")
             from(javaExt.sourceSets["main"].allSource)
+
+            if (project.name == "bukkit") { // Include the shared project in bukkit-sources.jar
+                val sharedProject = project(":shared")
+                val sharedJava = sharedProject.extensions.getByType<JavaPluginExtension>()
+                from(sharedJava.sourceSets["main"].allSource)
+            }
+
         }
 
         extensions.configure<PublishingExtension>("publishing") {
 
             publications {
-                create<MavenPublication>("mavenJava") {
+
+                create<MavenPublication>("mavenModules") {
                     artifactId = "EconomyPlugin-${project.name}"
                     from(components["java"])
-                    artifact(tasks.named("sourcesJar"))
+                    artifact(sourcesJar)
                 }
+
             }
 
             repositories {
