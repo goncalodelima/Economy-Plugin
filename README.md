@@ -187,16 +187,19 @@ public void upgradeIsland(Island island, Player player) {
    
    int requiredBalance = island.getRequiredBalanceForUpgrade();
 
-   // This cache is not strictly necessary, but it is recommended 
-   // because it prevents cases where a user floods clicks in the 
-   // menu—for example, trying to upgrade the island without having 
-   // enough balance. If the cache exists, it will be updated within
-   // moments, allowing the MySQL query to succeed. In the worst 
-   // case, it will just perform an extra lookup in the Map.
+   // The cache is not strictly necessary, but recommended
+   // because it prevents users from spamming clicks in the menu—for example,
+   // trying to upgrade the island without enough balance.
+   // If the player has a balance in the database but not yet in the cache,
+   // the cache will be updated within moments, allowing the MySQL query to succeed.
+   // In the worst case, an extra lookup in the Map is performed.
    if (balance < requiredBalance) {
        // Not enough money
       return;
    }
+
+   // Add island to lock to prevent multiple upgrade attempts at the same time
+   upgradeCache.add(island.getId());
 
    Main.economyApi
            .key()
@@ -210,7 +213,7 @@ public void upgradeIsland(Island island, Player player) {
            .thenAcceptAsync(result -> {
 
               // Always release the lock
-              upgradeCache.remove(player.getUniqueId());
+              upgradeCache.remove(island.getId());
 
               switch (result) {
 
@@ -247,6 +250,7 @@ public void upgradeIsland(Island island, Player player) {
                  
               }
 
+              // It is necessary to specify the main Bukkit thread to avoid concurrency issues.
            }, Bukkit.getScheduler().getMainThreadExecutor(YourPlugin.INSTANCE));
 }
 
