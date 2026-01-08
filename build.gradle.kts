@@ -27,7 +27,7 @@ plugins {
 
 allprojects {
     group = "pt.gongas"
-    version = "1.0.4"
+    version = "1.0.5"
     description = "Economy plugin system"
     ext.set("id", "economyplugin")
     ext.set("website", "https://github.com/goncalodelima/Economy-Plugin")
@@ -35,6 +35,8 @@ allprojects {
 }
 
 subprojects {
+
+    plugins.apply("maven-publish")
 
     plugins.withId("com.gradleup.shadow") {
         tasks.withType<ShadowJar>().configureEach {
@@ -45,6 +47,37 @@ subprojects {
     tasks.withType<Jar>().configureEach {
         archiveVersion.set(project.version.toString())
         archiveBaseName.set("EconomyPlugin-${project.name}")
+    }
+
+    project.afterEvaluate {
+        extensions.configure<PublishingExtension>("publishing") {
+
+            publications {
+                create<MavenPublication>("mavenJava") {
+                    artifactId = "EconomyPlugin-${project.name}"
+                    from(components["java"])
+                }
+            }
+
+            repositories {
+                val mavenUrl: String? by project
+                val mavenSnapshotUrl: String? by project
+
+                (if(version.toString().endsWith("SNAPSHOT")) mavenSnapshotUrl else mavenUrl)?.let { url ->
+                    maven(url) {
+                        val mavenUsername: String? by project
+                        val mavenPassword: String? by project
+                        if(mavenUsername != null && mavenPassword != null) {
+                            credentials {
+                                username = mavenUsername
+                                password = mavenPassword
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
     }
 
 }
