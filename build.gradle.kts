@@ -86,6 +86,13 @@ subprojects {
 
 }
 
+tasks.register("printMavenUsername") {
+    doLast {
+        val mavenUsername: String? by project
+        println("Maven username: $mavenUsername")
+    }
+}
+
 val platforms = setOf(
     project(":bukkit"),
     project(":velocity")
