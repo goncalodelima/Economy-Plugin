@@ -63,10 +63,14 @@ subprojects {
                 val mavenUrl: String? by project
                 val mavenSnapshotUrl: String? by project
 
+                println("mavenUrl: $mavenUrl")
+
                 (if(version.toString().endsWith("SNAPSHOT")) mavenSnapshotUrl else mavenUrl)?.let { url ->
+
                     maven(url) {
                         val mavenUsername: String? by project
                         val mavenPassword: String? by project
+                        println("mavenUsername: $mavenUsername")
                         if(mavenUsername != null && mavenPassword != null) {
                             credentials {
                                 username = mavenUsername
