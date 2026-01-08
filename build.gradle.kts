@@ -61,7 +61,7 @@ subprojects {
 
             repositories {
 
-                val url = "https://repo.codemc.io/repository/goncalodelima"
+                val url = "https://repo.codemc.io/repository/goncalodelima/"
 
                 val mavenUsername = System.getenv("goncalodelima_username") ?: return@repositories
                 val mavenPassword = System.getenv("goncalodelima_password") ?: return@repositories
