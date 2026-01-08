@@ -60,25 +60,19 @@ subprojects {
             }
 
             repositories {
-                val mavenUrl: String? by project
-                val mavenSnapshotUrl: String? by project
 
-                println("mavenUrl: $mavenUrl")
+                val url = "https://repo.codemc.io/repository/goncalodelima"
 
-                (if(version.toString().endsWith("SNAPSHOT")) mavenSnapshotUrl else mavenUrl)?.let { url ->
+                val mavenUsername = System.getenv("goncalodelima_username") ?: return@repositories
+                val mavenPassword = System.getenv("goncalodelima_password") ?: return@repositories
 
-                    maven(url) {
-                        val mavenUsername: String? by project
-                        val mavenPassword: String? by project
-                        println("mavenUsername: $mavenUsername")
-                        if(mavenUsername != null && mavenPassword != null) {
-                            credentials {
-                                username = mavenUsername
-                                password = mavenPassword
-                            }
-                        }
+                maven(url) {
+                    credentials {
+                        username = mavenUsername
+                        password = mavenPassword
                     }
                 }
+
             }
 
         }
@@ -88,7 +82,7 @@ subprojects {
 
 tasks.register("printMavenUsername") {
     doLast {
-        val mavenUsername: String? by project
+        val mavenUsername = System.getenv("goncalodelima_username") ?: return@doLast
         println("Maven username: $mavenUsername")
     }
 }
