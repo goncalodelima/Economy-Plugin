@@ -50,12 +50,21 @@ subprojects {
     }
 
     project.afterEvaluate {
+
+        val javaExt = extensions.getByType<JavaPluginExtension>()
+
+        tasks.register<Jar>("sourcesJar") {
+            archiveClassifier.set("sources")
+            from(javaExt.sourceSets["main"].allSource)
+        }
+
         extensions.configure<PublishingExtension>("publishing") {
 
             publications {
                 create<MavenPublication>("mavenJava") {
                     artifactId = "EconomyPlugin-${project.name}"
                     from(components["java"])
+                    artifact(tasks.named("sourcesJar"))
                 }
             }
 
@@ -76,15 +85,7 @@ subprojects {
             }
 
         }
+
     }
 
 }
-
-val platforms = setOf(
-    project(":bukkit"),
-    project(":velocity")
-)
-
-val specials = setOf(
-    project(":shared")
-)
