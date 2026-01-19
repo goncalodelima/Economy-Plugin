@@ -418,11 +418,11 @@ public class UserRepository implements UserFoundationRepository {
 
                 return result.orElse(new QueryUserResult.Error(ErrorType.NOT_FOUND));
 
-            } catch (Exception e) {
-                logger.log(Level.SEVERE, "Failed to get currency for nickname: " + nickname, e);
-                return new QueryUserResult.Error(ErrorType.EXCEPTION);
             }
-        }, databaseExecutor);
+        }, databaseExecutor).exceptionally(e -> {
+            logger.log(Level.SEVERE, "Failed to get currency for nickname: " + nickname, e);
+            return new QueryUserResult.Error(ErrorType.EXCEPTION);
+        });
     }
 
     @Override
