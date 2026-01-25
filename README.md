@@ -100,7 +100,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("pt.gongas:EconomyPlugin-bukkit:1.0.8")
+    compileOnly("pt.gongas:EconomyPlugin-bukkit:1.0.9")
 }
 ```
 
@@ -116,7 +116,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly "pt.gongas:EconomyPlugin-bukkit:1.0.8"
+    compileOnly "pt.gongas:EconomyPlugin-bukkit:1.0.9"
 }
 ```
 
@@ -136,7 +136,7 @@ dependencies {
     <dependency>
         <groupId>pt.gongas</groupId>
         <artifactId>EconomyPlugin-bukkit</artifactId>
-        <version>1.0.8</version>
+        <version>1.0.9</version>
         <scope>provided</scope>
     </dependency>
 </dependencies>
