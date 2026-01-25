@@ -39,14 +39,14 @@ public interface EconomyApi<P> {
      *
      * @return the CurrencyFoundationService
      */
-    CurrencyFoundationService getCurrencyService();
+    @NotNull CurrencyFoundationService getCurrencyService();
 
     /**
      * Returns the user service instance.
      *
      * @return the UserFoundationService
      */
-    UserFoundationService getUserService();
+    @NotNull UserFoundationService getUserService();
 
     /**
      * Gets the current balance of a specific currency for a target player.
@@ -57,7 +57,7 @@ public interface EconomyApi<P> {
      * @param currency The currency to query
      * @return CompletableFuture containing the query result
      */
-    CompletableFuture<QueryUserResult> getCurrencyAndNotifyIfNeeded(@Nullable P player, @NotNull String target, @NotNull Currency currency);
+    @NotNull CompletableFuture<QueryUserResult> getCurrencyAndNotifyIfNeeded(@Nullable P player, @NotNull String target, @NotNull Currency currency);
 
     /**
      * Pays a certain amount of currency to another player by name.
@@ -71,7 +71,7 @@ public interface EconomyApi<P> {
      * @param notify If true, notify both player and target; otherwise, no notification
      * @return CompletableFuture with the result of the operation
      */
-    CompletableFuture<QueryUserResult> payCurrencyAndNotifyIfNeeded(@NotNull P senderPlayer, @NotNull P targetPlayer, @NotNull User senderUser, @NotNull User targetUser, @NotNull Currency currency, double amount, boolean notify);
+    @NotNull CompletableFuture<QueryUserResult> payCurrencyAndNotifyIfNeeded(@NotNull P senderPlayer, @NotNull P targetPlayer, @NotNull User senderUser, @NotNull User targetUser, @NotNull Currency currency, double amount, boolean notify);
 
     /**
      * Pays a certain amount of currency to another player by name.
@@ -85,7 +85,7 @@ public interface EconomyApi<P> {
      * @param notify If true, notify both player and target; otherwise, no notification
      * @return CompletableFuture with the result of the operation
      */
-    CompletableFuture<QueryUserResult> payCurrencyAndNotifyIfNeeded(@NotNull P senderPlayer, @NotNull String target, @NotNull User senderUser, @NotNull Currency currency, double amount, boolean notify);
+    @NotNull CompletableFuture<QueryUserResult> payCurrencyAndNotifyIfNeeded(@NotNull P senderPlayer, @NotNull String target, @NotNull User senderUser, @NotNull Currency currency, double amount, boolean notify);
 
     /**
      * Sets the currency amount for another player.
@@ -98,7 +98,7 @@ public interface EconomyApi<P> {
      * @param amount       The new amount
      * @return CompletableFuture containing the result of the operation
      */
-    CompletableFuture<QueryUserResult> setCurrencyAndNotifyIfNeeded(@Nullable P senderPlayer, @NotNull P targetPlayer, @NotNull User targetUser, @NotNull Currency currency, double amount);
+    @NotNull CompletableFuture<QueryUserResult> setCurrencyAndNotifyIfNeeded(@Nullable P senderPlayer, @NotNull P targetPlayer, @NotNull User targetUser, @NotNull Currency currency, double amount);
 
     /**
      * Sets the currency amount for another player by name.
@@ -110,7 +110,7 @@ public interface EconomyApi<P> {
      * @param amount       The new amount
      * @return CompletableFuture with the result of the operation
      */
-    CompletableFuture<QueryUserResult> setCurrencyAndNotifyIfNeeded(@Nullable P senderPlayer, @NotNull String target, @NotNull Currency currency, double amount);
+    @NotNull CompletableFuture<QueryUserResult> setCurrencyAndNotifyIfNeeded(@Nullable P senderPlayer, @NotNull String target, @NotNull Currency currency, double amount);
 
     /**
      * Adds currency to another player.
@@ -124,7 +124,7 @@ public interface EconomyApi<P> {
      * @return CompletableFuture containing the result of the operation
      */
 
-    CompletableFuture<QueryUserResult> addCurrencyAndNotifyIfNeeded(@Nullable P senderPlayer, @NotNull P targetPlayer, @NotNull User targetUser, @NotNull Currency currency, double amount);
+    @NotNull CompletableFuture<QueryUserResult> addCurrencyAndNotifyIfNeeded(@Nullable P senderPlayer, @NotNull P targetPlayer, @NotNull User targetUser, @NotNull Currency currency, double amount);
 
     /**
      * Adds currency to another player by name.
@@ -136,7 +136,7 @@ public interface EconomyApi<P> {
      * @param amount       The amount to add
      * @return CompletableFuture with the result of the operation
      */
-    CompletableFuture<QueryUserResult> addCurrencyAndNotifyIfNeeded(@Nullable P senderPlayer, @NotNull String target, @NotNull Currency currency, double amount);
+    @NotNull CompletableFuture<QueryUserResult> addCurrencyAndNotifyIfNeeded(@Nullable P senderPlayer, @NotNull String target, @NotNull Currency currency, double amount);
 
     /**
      * Removes currency from another player, subtracting up to the available balance.
@@ -150,7 +150,7 @@ public interface EconomyApi<P> {
      * @param amount       The amount to remove
      * @return CompletableFuture containing the result of the operation
      */
-    CompletableFuture<QueryUserResult> removeCurrencyAndNotifyIfNeeded(@Nullable P senderPlayer, @NotNull P targetPlayer, @NotNull User targetUser, @NotNull Currency currency, double amount);
+    @NotNull CompletableFuture<QueryUserResult> removeCurrencyAndNotifyIfNeeded(@Nullable P senderPlayer, @NotNull P targetPlayer, @NotNull User targetUser, @NotNull Currency currency, double amount);
 
     /**
      * Removes currency from another player by name, subtracting up to the available balance.
@@ -162,7 +162,7 @@ public interface EconomyApi<P> {
      * @param amount       The amount to remove
      * @return CompletableFuture with the result of the operation
      */
-    CompletableFuture<QueryUserResult> removeCurrencyAndNotifyIfNeeded(@Nullable P senderPlayer, @NotNull String target, @NotNull Currency currency, double amount);
+    @NotNull CompletableFuture<QueryUserResult> removeCurrencyAndNotifyIfNeeded(@Nullable P senderPlayer, @NotNull String target, @NotNull Currency currency, double amount);
 
     /**
      * Withdraws currency from another player, only if sufficient balance is available.
@@ -175,7 +175,7 @@ public interface EconomyApi<P> {
      * @param amount       The amount to withdraw
      * @return CompletableFuture containing the result of the operation
      */
-    CompletableFuture<QueryUserResult> withdrawCurrencyAndNotifyIfNeeded(@Nullable P senderPlayer, @NotNull P targetPlayer, @NotNull User targetUser, @NotNull Currency currency, double amount);
+    @NotNull CompletableFuture<QueryUserResult> withdrawCurrencyAndNotifyIfNeeded(@Nullable P senderPlayer, @NotNull P targetPlayer, @NotNull User targetUser, @NotNull Currency currency, double amount);
 
     /**
      * Withdraws currency from another player by name, only if sufficient balance is available.
@@ -187,6 +187,6 @@ public interface EconomyApi<P> {
      * @param amount The amount to withdraw
      * @return CompletableFuture with the result of the operation
      */
-    CompletableFuture<QueryUserResult> withdrawCurrencyAndNotifyIfNeeded(@Nullable P senderPlayer, @NotNull String target, @NotNull Currency currency, double amount);
+    @NotNull CompletableFuture<QueryUserResult> withdrawCurrencyAndNotifyIfNeeded(@Nullable P senderPlayer, @NotNull String target, @NotNull Currency currency, double amount);
 
 }
