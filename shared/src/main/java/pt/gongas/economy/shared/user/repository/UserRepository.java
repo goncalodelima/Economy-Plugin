@@ -117,16 +117,10 @@ public class UserRepository implements UserFoundationRepository {
             int updated = executor
                     .query("UPDATE user_economy SET cents = cents - ? WHERE uuid = ? AND currency = ? AND cents >= ?")
                     .writeAndReturnRowCount(statement -> {
-
-                        try {
-                            statement.set(1, cents);
-                            statement.set(2, UUIDConverter.convert(senderUuid));
-                            statement.set(3, currencyName);
-                            statement.set(4, cents);
-                        } catch (SQLException e) {
-                            throw new RuntimeException(e);
-                        }
-
+                        statement.set(1, cents);
+                        statement.set(2, UUIDConverter.convert(senderUuid));
+                        statement.set(3, currencyName);
+                        statement.set(4, cents);
                     }, connection);
 
             if (updated == 0) {
@@ -136,15 +130,9 @@ public class UserRepository implements UserFoundationRepository {
 
             int updated1 = executor.query("UPDATE user_economy SET cents = cents + ? WHERE uuid = ? and currency = ?")
                     .writeAndReturnRowCount(statement -> {
-
-                        try {
-                            statement.set(1, cents);
-                            statement.set(2, UUIDConverter.convert(senderUuid));
-                            statement.set(3, currencyName);
-                        } catch (SQLException e) {
-                            throw new RuntimeException(e);
-                        }
-
+                        statement.set(1, cents);
+                        statement.set(2, UUIDConverter.convert(senderUuid));
+                        statement.set(3, currencyName);
                     }, connection);
 
             if (updated1 == 0) {
@@ -170,15 +158,7 @@ public class UserRepository implements UserFoundationRepository {
             executor.startTransaction(connection);
 
             Pair<byte[], String> pair = executor.query("SELECT uuid,nickname FROM user_account WHERE nickname = ? ORDER BY last_login_date DESC LIMIT 1")
-                    .readOne(statement -> {
-
-                        try {
-                            statement.set(1, receiverNickname);
-                        } catch (SQLException e) {
-                            throw new RuntimeException(e);
-                        }
-
-                    }, query -> {
+                    .readOne(statement -> statement.set(1, receiverNickname), query -> {
                         byte[] uuid = (byte[]) query.get("uuid");
                         String nickname = (String) query.get("nickname");
                         return new Pair<>(uuid, nickname);
@@ -191,16 +171,10 @@ public class UserRepository implements UserFoundationRepository {
 
             int updated = executor.query("UPDATE user_economy SET cents = cents - ? WHERE uuid = ? AND currency = ? AND cents >= ?")
                     .writeAndReturnRowCount(statement -> {
-
-                        try {
-                            statement.set(1, cents);
-                            statement.set(2, UUIDConverter.convert(senderUuid));
-                            statement.set(3, currencyName);
-                            statement.set(4, cents);
-                        } catch (SQLException e) {
-                            throw new RuntimeException(e);
-                        }
-
+                        statement.set(1, cents);
+                        statement.set(2, UUIDConverter.convert(senderUuid));
+                        statement.set(3, currencyName);
+                        statement.set(4, cents);
                     }, connection);
 
             if (updated == 0) {
@@ -210,16 +184,10 @@ public class UserRepository implements UserFoundationRepository {
 
             executor.query("INSERT INTO user_economy (uuid, currency, cents) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE cents = cents + ?")
                     .write(statement -> {
-
-                        try {
-                            statement.set(1, pair.key());
-                            statement.set(2, currencyName);
-                            statement.set(3, cents);
-                            statement.set(4, cents);
-                        } catch (SQLException e) {
-                            throw new RuntimeException(e);
-                        }
-
+                        statement.set(1, pair.key());
+                        statement.set(2, currencyName);
+                        statement.set(3, cents);
+                        statement.set(4, cents);
                     }, connection);
 
             executor.commitTransaction(connection);
@@ -255,11 +223,7 @@ public class UserRepository implements UserFoundationRepository {
                         int index = 1;
 
                         for (UUID uuid : uuids) {
-                            try {
-                                statement.set(index++, UUIDConverter.convert(uuid));
-                            } catch (SQLException e) {
-                                throw new RuntimeException(e);
-                            }
+                            statement.set(index++, UUIDConverter.convert(uuid));
                         }
 
                     }, query -> {
@@ -294,14 +258,9 @@ public class UserRepository implements UserFoundationRepository {
 
             int rows = executor.query("UPDATE user_economy SET cents = ? WHERE uuid = ? AND currency = ?")
                     .writeAndReturnRowCount(statement -> {
-
-                        try {
-                            statement.set(1, cents);
-                            statement.set(2, UUIDConverter.convert(uuid));
-                            statement.set(3, currency.name().toLowerCase());
-                        } catch (Exception e) {
-                            throw new RuntimeException(e);
-                        }
+                        statement.set(1, cents);
+                        statement.set(2, UUIDConverter.convert(uuid));
+                        statement.set(3, currency.name().toLowerCase());
 
                     });
 
@@ -323,15 +282,7 @@ public class UserRepository implements UserFoundationRepository {
         try (DatabaseExecutor executor = database.execute(); Connection connection = executor.getHikariConnection().getConnection()) {
 
             Pair<byte[], String> pair = executor.query("SELECT uuid,nickname FROM user_account WHERE nickname = ? ORDER BY last_login_date DESC LIMIT 1")
-                    .readOne(statement -> {
-
-                        try {
-                            statement.set(1, nickname);
-                        } catch (SQLException e) {
-                            throw new RuntimeException(e);
-                        }
-
-                    }, query -> {
+                    .readOne(statement -> statement.set(1, nickname), query -> {
                         byte[] uuid = (byte[]) query.get("uuid");
                         String name = (String) query.get("nickname");
                         return new Pair<>(uuid, name);
@@ -344,15 +295,9 @@ public class UserRepository implements UserFoundationRepository {
 
             int rows = executor.query("UPDATE user_economy SET cents = ? WHERE uuid = ? AND currency = ?")
                     .writeAndReturnRowCount(statement -> {
-
-                        try {
-                            statement.set(1, cents);
-                            statement.set(2, pair.key());
-                            statement.set(3, currency.name().toLowerCase());
-                        } catch (SQLException e) {
-                            throw new RuntimeException(e);
-                        }
-
+                        statement.set(1, cents);
+                        statement.set(2, pair.key());
+                        statement.set(3, currency.name().toLowerCase());
                     }, connection);
 
             if (rows == 0) {
@@ -374,15 +319,9 @@ public class UserRepository implements UserFoundationRepository {
 
             int rows = executor.query("UPDATE user_economy SET cents = cents + ? WHERE uuid = ? AND currency = ?")
                     .writeAndReturnRowCount(statement -> {
-
-                        try {
-                            statement.set(1, cents);
-                            statement.set(2, UUIDConverter.convert(uuid));
-                            statement.set(3, currency.name().toLowerCase());
-                        } catch (SQLException e) {
-                            throw new RuntimeException(e);
-                        }
-
+                        statement.set(1, cents);
+                        statement.set(2, UUIDConverter.convert(uuid));
+                        statement.set(3, currency.name().toLowerCase());
                     });
 
             if (rows == 0) {
@@ -403,15 +342,7 @@ public class UserRepository implements UserFoundationRepository {
         try (DatabaseExecutor executor = database.execute(); Connection connection = executor.getHikariConnection().getConnection()) {
 
             Pair<byte[], String> pair = executor.query("SELECT uuid,nickname FROM user_account WHERE nickname = ? ORDER BY last_login_date DESC LIMIT 1")
-                    .readOne(statement -> {
-
-                        try {
-                            statement.set(1, nickname);
-                        } catch (SQLException e) {
-                            throw new RuntimeException(e);
-                        }
-
-                    }, query -> {
+                    .readOne(statement -> statement.set(1, nickname), query -> {
                         byte[] uuid = (byte[]) query.get("uuid");
                         String name = (String) query.get("nickname");
                         return new Pair<>(uuid, name);
@@ -423,15 +354,9 @@ public class UserRepository implements UserFoundationRepository {
 
             int rows = executor.query("UPDATE user_economy SET cents = cents + ? WHERE uuid = ? AND currency = ?")
                     .writeAndReturnRowCount(statement -> {
-
-                        try {
-                            statement.set(1, cents);
-                            statement.set(2, pair.key());
-                            statement.set(3, currency.name().toLowerCase());
-                        } catch (Exception e) {
-                            throw new RuntimeException(e);
-                        }
-
+                        statement.set(1, cents);
+                        statement.set(2, pair.key());
+                        statement.set(3, currency.name().toLowerCase());
                     }, connection);
 
             if (rows == 0) {
@@ -453,14 +378,8 @@ public class UserRepository implements UserFoundationRepository {
 
             Optional<QueryUserResult> result = executor.query("SELECT ua.nickname, ue.cents FROM user_account ua LEFT JOIN user_economy ue ON ua.uuid = ue.uuid AND ue.currency = ? WHERE ua.nickname = ? ORDER BY ua.last_login_date DESC LIMIT 1")
                     .readOne(statement -> {
-
-                        try {
-                            statement.set(1, currency.name().toLowerCase());
-                            statement.set(2, nickname);
-                        } catch (SQLException e) {
-                            throw new RuntimeException(e);
-                        }
-
+                        statement.set(1, currency.name().toLowerCase());
+                        statement.set(2, nickname);
                     }, query -> new QueryUserResult.Success(null, (String) query.get("nickname"), (long) query.get("cents")));
 
             return result.orElse(new QueryUserResult.Error(ErrorType.NOT_FOUND));
@@ -478,15 +397,9 @@ public class UserRepository implements UserFoundationRepository {
 
             int rows = executor.query("UPDATE user_economy SET cents = cents - LEAST(cents, ?) WHERE uuid = ? AND currency = ?")
                     .writeAndReturnRowCount(statement -> {
-
-                        try {
-                            statement.set(1, cents);
-                            statement.set(2, UUIDConverter.convert(uuid));
-                            statement.set(3, currency.name().toLowerCase());
-                        } catch (SQLException e) {
-                            throw new RuntimeException(e);
-                        }
-
+                        statement.set(1, cents);
+                        statement.set(2, UUIDConverter.convert(uuid));
+                        statement.set(3, currency.name().toLowerCase());
                     });
 
             if (rows == 0) {
@@ -507,15 +420,7 @@ public class UserRepository implements UserFoundationRepository {
         try (DatabaseExecutor executor = database.execute(); Connection connection = executor.getHikariConnection().getConnection()) {
 
             Pair<byte[], String> pair = executor.query("SELECT uuid,nickname FROM user_account WHERE nickname = ? ORDER BY last_login_date DESC LIMIT 1")
-                    .readOne(statement -> {
-
-                        try {
-                            statement.set(1, nickname);
-                        } catch (SQLException e) {
-                            throw new RuntimeException(e);
-                        }
-
-                    }, query -> {
+                    .readOne(statement -> statement.set(1, nickname), query -> {
                         byte[] uuid = (byte[]) query.get("uuid");
                         String name = (String) query.get("nickname");
                         return new Pair<>(uuid, name);
@@ -527,15 +432,9 @@ public class UserRepository implements UserFoundationRepository {
 
             int rows = executor.query("UPDATE user_economy SET cents = cents - LEAST(cents, ?) WHERE uuid = ? AND currency = ?")
                     .writeAndReturnRowCount(statement -> {
-
-                        try {
-                            statement.set(1, cents);
-                            statement.set(2, pair.key());
-                            statement.set(3, currency.name().toLowerCase());
-                        } catch (SQLException e) {
-                            throw new RuntimeException(e);
-                        }
-
+                        statement.set(1, cents);
+                        statement.set(2, pair.key());
+                        statement.set(3, currency.name().toLowerCase());
                     }, connection);
 
             if (rows == 0) {
@@ -561,14 +460,8 @@ public class UserRepository implements UserFoundationRepository {
 
             long databaseCents = executor.query("SELECT cents FROM user_economy WHERE uuid = ? AND currency = ? FOR UPDATE")
                     .readOne(statement -> {
-
-                                try {
-                                    statement.set(1, UUIDConverter.convert(uuid));
-                                    statement.set(2, currencyName);
-                                } catch (SQLException e) {
-                                    throw new RuntimeException(e);
-                                }
-
+                                statement.set(1, UUIDConverter.convert(uuid));
+                                statement.set(2, currencyName);
                             },
                             query -> (long) query.get("cents"), connection)
                     .orElse(0L);
@@ -585,15 +478,9 @@ public class UserRepository implements UserFoundationRepository {
             // any uncommitted transaction when the connection is returned, releasing the lock).
             int rows = executor.query("UPDATE user_economy SET cents = cents - ? WHERE uuid = ? AND currency = ?")
                     .writeAndReturnRowCount(statement -> {
-
-                        try {
-                            statement.set(1, cents);
-                            statement.set(2, UUIDConverter.convert(uuid));
-                            statement.set(3, currencyName);
-                        } catch (Exception e) {
-                            throw new RuntimeException(e);
-                        }
-
+                        statement.set(1, cents);
+                        statement.set(2, UUIDConverter.convert(uuid));
+                        statement.set(3, currencyName);
                     }, connection);
 
             if (rows == 0) {
@@ -620,15 +507,7 @@ public class UserRepository implements UserFoundationRepository {
             executor.startTransaction(connection);
 
             Pair<byte[], String> pair = executor.query("SELECT uuid,nickname FROM user_account WHERE nickname = ? ORDER BY last_login_date DESC LIMIT 1")
-                    .readOne(statement -> {
-
-                        try {
-                            statement.set(1, nickname);
-                        } catch (SQLException e) {
-                            throw new RuntimeException(e);
-                        }
-
-                    }, query -> {
+                    .readOne(statement -> statement.set(1, nickname), query -> {
                         byte[] uuid = (byte[]) query.get("uuid");
                         String name = (String) query.get("nickname");
                         return new Pair<>(uuid, name);
@@ -641,14 +520,8 @@ public class UserRepository implements UserFoundationRepository {
 
             long databaseCents = executor.query("SELECT cents FROM user_economy WHERE uuid = ? AND currency = ? FOR UPDATE")
                     .readOne(statement -> {
-
-                                try {
-                                    statement.set(1, pair.key());
-                                    statement.set(2, currencyName);
-                                } catch (SQLException e) {
-                                    throw new RuntimeException(e);
-                                }
-
+                                statement.set(1, pair.key());
+                                statement.set(2, currencyName);
                             },
                             query -> (long) query.get("cents"), connection)
                     .orElse(0L);
@@ -665,15 +538,9 @@ public class UserRepository implements UserFoundationRepository {
             // any uncommitted transaction when the connection is returned, releasing the lock).
             int rows = executor.query("UPDATE user_economy SET cents = cents - ? WHERE uuid = ? AND currency = ?")
                     .writeAndReturnRowCount(statement -> {
-
-                        try {
-                            statement.set(1, cents);
-                            statement.set(2, pair.key());
-                            statement.set(3, currencyName);
-                        } catch (Exception e) {
-                            throw new RuntimeException(e);
-                        }
-
+                        statement.set(1, cents);
+                        statement.set(2, pair.key());
+                        statement.set(3, currencyName);
                     }, connection);
 
             if (rows == 0) {
@@ -705,15 +572,9 @@ public class UserRepository implements UserFoundationRepository {
                                 last_login_date = VALUES(last_login_date)
                             """)
                     .write(statement -> {
-
-                        try {
-                            statement.set(1, uuidBytes);
-                            statement.set(2, nickname);
-                            statement.set(3, LocalDateTime.now());
-                        } catch (SQLException e) {
-                            throw new RuntimeException(e);
-                        }
-
+                        statement.set(1, uuidBytes);
+                        statement.set(2, nickname);
+                        statement.set(3, LocalDateTime.now());
                     }, connection);
 
             StringBuilder insertCurrencies = new StringBuilder("INSERT IGNORE INTO user_economy (uuid, currency, cents) VALUES");
@@ -735,12 +596,8 @@ public class UserRepository implements UserFoundationRepository {
                 int index = 1;
 
                 for (Currency currency : currencies) {
-                    try {
-                        statement.set(index++, uuidBytes);
-                        statement.set(index++, currency.name().toLowerCase());
-                    } catch (SQLException e) {
-                        throw new RuntimeException(e);
-                    }
+                    statement.set(index++, uuidBytes);
+                    statement.set(index++, currency.name().toLowerCase());
                 }
 
             }, connection);
@@ -752,15 +609,7 @@ public class UserRepository implements UserFoundationRepository {
                             LEFT JOIN user_economy ue ON ua.uuid = ue.uuid
                             WHERE ua.uuid = ?
                             """)
-                    .readOne(statement -> {
-
-                        try {
-                            statement.set(1, uuidBytes);
-                        } catch (SQLException e) {
-                            throw new RuntimeException(e);
-                        }
-
-                    }, this.userAdapter, connection).orElse(null);
+                    .readOne(statement -> statement.set(1, uuidBytes), this.userAdapter, connection).orElse(null);
 
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Failed to retrieve economy user data", e);
@@ -784,15 +633,9 @@ public class UserRepository implements UserFoundationRepository {
                             ORDER BY ue.cents DESC, ua.last_login_date DESC LIMIT ? OFFSET ?
                             """)
                     .readMany(statement -> {
-
-                        try {
-                            statement.set(1, currency.name().toLowerCase());
-                            statement.set(2, pageSize + 1); // this is for the inventory to know if there is a next page or not
-                            statement.set(3, offset);
-                        } catch (SQLException e) {
-                            throw new RuntimeException(e);
-                        }
-
+                        statement.set(1, currency.name().toLowerCase());
+                        statement.set(2, pageSize + 1); // this is for the inventory to know if there is a next page or not
+                        statement.set(3, offset);
                     }, this.rankingAdapter, ArrayList::new);
 
         } catch (SQLException e) {
@@ -816,22 +659,14 @@ public class UserRepository implements UserFoundationRepository {
                     ORDER BY ue.cents DESC, ua.last_login_date DESC, ua.uuid DESC LIMIT ?
                     """
             ).readMany(statement -> {
-
-                try {
-
-                    statement.set(1, currency.name().toLowerCase());
-                    statement.set(2, lastAmount);
-                    statement.set(3, lastAmount);
-                    statement.set(4, lastLogin);
-                    statement.set(5, lastAmount);
-                    statement.set(6, lastLogin);
-                    statement.set(7, UUIDConverter.convert(lastUuid));
-                    statement.set(8, pageSize + 1); // this is for the inventory to know if there is a next page or not
-
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
-
+                statement.set(1, currency.name().toLowerCase());
+                statement.set(2, lastAmount);
+                statement.set(3, lastAmount);
+                statement.set(4, lastLogin);
+                statement.set(5, lastAmount);
+                statement.set(6, lastLogin);
+                statement.set(7, UUIDConverter.convert(lastUuid));
+                statement.set(8, pageSize + 1); // this is for the inventory to know if there is a next page or not
             }, this.rankingAdapter, ArrayList::new);
 
         } catch (SQLException e) {
@@ -855,22 +690,14 @@ public class UserRepository implements UserFoundationRepository {
                     ORDER BY ue.cents ASC, ua.last_login_date ASC, ua.uuid ASC LIMIT ?
                     """
             ).readMany(statement -> {
-
-                try {
-
-                    statement.set(1, currency.name().toLowerCase());
-                    statement.set(2, firstAmount);
-                    statement.set(3, firstAmount);
-                    statement.set(4, firstLogin);
-                    statement.set(5, firstAmount);
-                    statement.set(6, firstLogin);
-                    statement.set(7, UUIDConverter.convert(firstUuid));
-                    statement.set(8, pageSize + 1); // this is for the inventory to know if there is a previous page or not
-
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
-
+                statement.set(1, currency.name().toLowerCase());
+                statement.set(2, firstAmount);
+                statement.set(3, firstAmount);
+                statement.set(4, firstLogin);
+                statement.set(5, firstAmount);
+                statement.set(6, firstLogin);
+                statement.set(7, UUIDConverter.convert(firstUuid));
+                statement.set(8, pageSize + 1); // this is for the inventory to know if there is a previous page or not
             }, this.rankingAdapter, ArrayList::new);
 
         } catch (SQLException e) {
