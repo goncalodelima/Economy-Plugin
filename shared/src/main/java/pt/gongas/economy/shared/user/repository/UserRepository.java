@@ -611,7 +611,7 @@ public class UserRepository implements UserFoundationRepository {
                             """)
                     .readOne(statement -> statement.set(1, uuidBytes), this.userAdapter, connection).orElse(null);
 
-        } catch (Exception e) {
+        } catch (SQLException e) {
             logger.log(Level.SEVERE, "Failed to retrieve economy user data", e);
             return null;
         }
