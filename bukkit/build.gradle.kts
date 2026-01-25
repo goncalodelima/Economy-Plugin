@@ -50,7 +50,7 @@ java {
 }
 
 group = "pt.gongas"
-version = "1.0.6"
+version = "1.0.7"
 description = "Bukkit module for Economy Plugin"
 
 paperweight {

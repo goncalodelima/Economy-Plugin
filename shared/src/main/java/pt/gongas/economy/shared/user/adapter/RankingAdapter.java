@@ -26,13 +26,16 @@ import pt.gongas.database.executor.DatabaseQuery;
 import pt.gongas.economy.shared.user.RankingUser;
 import pt.gongas.economy.shared.util.UUIDConverter;
 
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class RankingAdapter implements DatabaseAdapter<RankingUser> {
 
+    private final
+
     @Override
-    public RankingUser adapt(DatabaseQuery databaseQuery) {
+    public RankingUser adapt(DatabaseQuery databaseQuery) throws SQLException {
 
         UUID uuid = UUIDConverter.convert((byte[]) databaseQuery.get("uuid"));
         String nickname = (String) databaseQuery.get("nickname");

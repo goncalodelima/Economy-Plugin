@@ -38,6 +38,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.Nullable;
 import pt.gongas.economy.platforms.bukkit.BukkitEconomyPlugin;
 import pt.gongas.economy.platforms.bukkit.util.config.Configuration;
 import pt.gongas.economy.shared.currency.Currency;
@@ -173,10 +174,6 @@ public class RankingView implements Listener {
 
             int previousPage = gui.getCurrentPage() - 1;
 
-            for (int i = 0; i < usersPerPage; i++) {
-                inventory.setItem(i, null);
-            }
-
             Currency currency = gui.getCurrency();
             RankingUser previousCursor = gui.getPreviousCursor();
 
@@ -199,7 +196,7 @@ public class RankingView implements Listener {
 
     }
 
-    private void fetchNextTop(CompletableFuture<List<RankingUser>> future, Currency currency, InventoryClickEvent event, Inventory inventory, GuiHolder gui, int nextPage) {
+    private void fetchNextTop(CompletableFuture<@Nullable List<RankingUser>> future, Currency currency, InventoryClickEvent event, Inventory inventory, GuiHolder gui, int nextPage) {
         future.thenAcceptAsync(list -> {
 
             Player player = (Player) event.getWhoClicked();
@@ -239,7 +236,7 @@ public class RankingView implements Listener {
         }, Bukkit.getScheduler().getMainThreadExecutor(BukkitEconomyPlugin.plugin));
     }
 
-    private void fetchPreviousTop(CompletableFuture<List<RankingUser>> future, Currency currency, InventoryClickEvent event, Inventory inventory, GuiHolder gui, int previousPage) {
+    private void fetchPreviousTop(CompletableFuture<@Nullable List<RankingUser>> future, Currency currency, InventoryClickEvent event, Inventory inventory, GuiHolder gui, int previousPage) {
 
         future.thenAcceptAsync(list -> {
 
@@ -249,7 +246,7 @@ public class RankingView implements Listener {
                 return;
             }
 
-            if (list == null || list.isEmpty()) { // keep on the same page
+            if (list == null || list.isEmpty()) { // keep the same items on page
 
                 inventory.setItem(backSlot, null);
                 gui.setBackPage(false);
@@ -259,6 +256,10 @@ public class RankingView implements Listener {
                 gui.setCurrentPage(newPage);
                 setTitle(player.getOpenInventory(), currency, newPage);
                 return;
+            }
+
+            for (int i = 0; i < usersPerPage; i++) {
+                inventory.setItem(i, null);
             }
 
             int newPreviousPage = populateInventoryPageOnBack(inventory, currency, list, previousPage);

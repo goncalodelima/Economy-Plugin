@@ -28,6 +28,7 @@ import pt.gongas.economy.shared.currency.Currency;
 import pt.gongas.economy.shared.currency.service.CurrencyFoundationService;
 import pt.gongas.economy.shared.user.User;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -41,20 +42,21 @@ public class UserAdapter implements DatabaseAdapter<User> {
     }
 
     @Override
-    public User adapt(DatabaseQuery databaseQuery) {
+    public User adapt(DatabaseQuery databaseQuery) throws SQLException {
 
         UUID uuid = UUIDConverter.convert((byte[]) databaseQuery.get("uuid"));
         String nickname = (String) databaseQuery.get("nickname");
         Map<Currency, Long> currencies = new HashMap<>();
 
         do {
+
             Currency currency = currencyService.get(((String) databaseQuery.get("currency")).toLowerCase());
 
             if (currency != null) {
                 currencies.put(currency, (Long) databaseQuery.get("cents"));
             }
 
-        }while (databaseQuery.next());
+        } while (databaseQuery.next());
 
         return new User(uuid, nickname, currencies);
     }
