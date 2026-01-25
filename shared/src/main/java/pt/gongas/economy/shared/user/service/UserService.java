@@ -27,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import pt.gongas.database.Database;
 import pt.gongas.economy.shared.currency.Currency;
 import pt.gongas.economy.shared.currency.service.CurrencyFoundationService;
+import pt.gongas.economy.shared.user.ErrorType;
 import pt.gongas.economy.shared.user.QueryUserResult;
 import pt.gongas.economy.shared.user.RankingUser;
 import pt.gongas.economy.shared.user.User;
@@ -56,96 +57,132 @@ public class UserService implements UserFoundationService {
     public UserService(Logger logger, ExecutorService databaseExecutor, CurrencyFoundationService currencyService, Database database) {
         this.logger = logger;
         this.databaseExecutor = databaseExecutor;
-        this.userRepository = new UserRepository(logger, databaseExecutor, database, currencyService, new UserAdapter(currencyService), new RankingAdapter());
+        this.userRepository = new UserRepository(logger, database, currencyService, new UserAdapter(currencyService), new RankingAdapter());
         this.userRepository.setup();
     }
 
     @Override
-    public CompletableFuture<QueryUserResult> updateCurrencies(UUID senderUuid, UUID receiverUuid, Currency currency, long cents) {
-        return userRepository.updateCurrencies(senderUuid, receiverUuid, currency, cents);
+    public @NotNull CompletableFuture<QueryUserResult> updateCurrencies(@NotNull UUID senderUuid, @NotNull UUID receiverUuid, @NotNull Currency currency, long cents) {
+        return CompletableFuture.supplyAsync(() -> userRepository.updateCurrencies(senderUuid, receiverUuid, currency, cents), databaseExecutor)
+                .exceptionally(e -> {
+                    logger.log(Level.SEVERE, "Failed to update both currencies data", e);
+                    return new QueryUserResult.Error(ErrorType.EXCEPTION);
+                });
     }
 
     @Override
-    public CompletableFuture<QueryUserResult> updateCurrencies(UUID senderUuid, String receiverNickname, Currency currency, long cents) {
-        return userRepository.updateCurrencies(senderUuid, receiverNickname, currency, cents);
+    public @NotNull CompletableFuture<QueryUserResult> updateCurrencies(@NotNull UUID senderUuid, @NotNull String receiverNickname, @NotNull Currency currency, long cents) {
+        return CompletableFuture.supplyAsync(() -> userRepository.updateCurrencies(senderUuid, receiverNickname, currency, cents), databaseExecutor)
+                .exceptionally(e -> {
+                    logger.log(Level.SEVERE, "Failed to update both currencies data", e);
+                    return new QueryUserResult.Error(ErrorType.EXCEPTION);
+                });
     }
 
     @Override
-    public CompletableFuture<Map<UUID, Map<Currency, Long>>> fetchPlayerBalances(Collection<UUID> uuids) {
-        return userRepository.fetchPlayerBalances(uuids);
+    public @NotNull CompletableFuture<Map<UUID, Map<Currency, Long>>> fetchPlayerBalances(@NotNull Collection<UUID> uuids) {
+        return CompletableFuture.supplyAsync(() -> userRepository.fetchPlayerBalances(uuids), databaseExecutor).exceptionally(e -> {
+            logger.log(Level.SEVERE, "Failed to fetch player balances", e);
+            return null;
+        });
     }
 
     @Override
-    public CompletableFuture<QueryUserResult> setCurrency(UUID uuid, Currency currency, long cents) {
-        return userRepository.setCurrency(uuid, currency, cents);
+    public @NotNull CompletableFuture<QueryUserResult> setCurrency(@NotNull UUID uuid, @NotNull Currency currency, long cents) {
+        return CompletableFuture.supplyAsync(() -> userRepository.setCurrency(uuid, currency, cents), databaseExecutor).exceptionally(e -> {
+            logger.log(Level.SEVERE, "Failed to set currency data", e);
+            return new QueryUserResult.Error(ErrorType.EXCEPTION);
+        });
     }
 
     @Override
-    public CompletableFuture<QueryUserResult> setCurrency(String nickname, Currency currency, long cents) {
-        return userRepository.setCurrency(nickname, currency, cents);
+    public @NotNull CompletableFuture<QueryUserResult> setCurrency(@NotNull String nickname, @NotNull Currency currency, long cents) {
+        return CompletableFuture.supplyAsync(() -> userRepository.setCurrency(nickname, currency, cents), databaseExecutor).exceptionally(e -> {
+            logger.log(Level.SEVERE, "Failed to set currency data", e);
+            return new QueryUserResult.Error(ErrorType.EXCEPTION);
+        });
     }
 
     @Override
-    public CompletableFuture<QueryUserResult> addCurrency(UUID uuid, Currency currency, long cents) {
-        return userRepository.addCurrency(uuid, currency, cents);
+    public @NotNull CompletableFuture<QueryUserResult> addCurrency(@NotNull UUID uuid, @NotNull Currency currency, long cents) {
+        return CompletableFuture.supplyAsync(() -> userRepository.addCurrency(uuid, currency, cents), databaseExecutor).exceptionally(e -> {
+            logger.log(Level.SEVERE, "Failed to add currency data", e);
+            return new QueryUserResult.Error(ErrorType.EXCEPTION);
+        });
     }
 
     @Override
-    public CompletableFuture<QueryUserResult> addCurrency(String nickname, Currency currency, long cents) {
-        return userRepository.addCurrency(nickname, currency, cents);
+    public @NotNull CompletableFuture<QueryUserResult> addCurrency(@NotNull String nickname, @NotNull Currency currency, long cents) {
+        return CompletableFuture.supplyAsync(() -> userRepository.addCurrency(nickname, currency, cents), databaseExecutor).exceptionally(e -> {
+            logger.log(Level.SEVERE, "Failed to add currency data", e);
+            return new QueryUserResult.Error(ErrorType.EXCEPTION);
+        });
     }
 
     @Override
-    public CompletableFuture<QueryUserResult> removeCurrency(UUID uuid, Currency currency, long cents) {
-        return userRepository.removeCurrency(uuid, currency, cents);
+    public @NotNull CompletableFuture<QueryUserResult> removeCurrency(@NotNull UUID uuid, @NotNull Currency currency, long cents) {
+        return CompletableFuture.supplyAsync(() -> userRepository.removeCurrency(uuid, currency, cents), databaseExecutor).exceptionally(e -> {
+            logger.log(Level.SEVERE, "Failed to remove currency data", e);
+            return new QueryUserResult.Error(ErrorType.EXCEPTION);
+        });
     }
 
     @Override
-    public CompletableFuture<QueryUserResult> removeCurrency(String nickname, Currency currency, long cents) {
-        return userRepository.removeCurrency(nickname, currency, cents);
+    public @NotNull CompletableFuture<QueryUserResult> removeCurrency(@NotNull String nickname, @NotNull Currency currency, long cents) {
+        return CompletableFuture.supplyAsync(() -> userRepository.removeCurrency(nickname, currency, cents), databaseExecutor).exceptionally(e -> {
+            logger.log(Level.SEVERE, "Failed to add currency data", e);
+            return new QueryUserResult.Error(ErrorType.EXCEPTION);
+        });
     }
 
     @Override
-    public CompletableFuture<QueryUserResult> withdrawCurrency(UUID uuid, Currency currency, long cents) {
-        return userRepository.withdrawCurrency(uuid, currency, cents);
+    public @NotNull CompletableFuture<QueryUserResult> withdrawCurrency(@NotNull UUID uuid, @NotNull Currency currency, long cents) {
+        return CompletableFuture.supplyAsync(() -> userRepository.withdrawCurrency(uuid, currency, cents), databaseExecutor).exceptionally(e -> {
+            logger.log(Level.SEVERE, "Failed to withdraw currency data", e);
+            return new QueryUserResult.Error(ErrorType.EXCEPTION);
+        });
     }
 
     @Override
-    public CompletableFuture<QueryUserResult> withdrawCurrency(String nickname, Currency currency, long cents) {
-        return userRepository.withdrawCurrency(nickname, currency, cents);
+    public @NotNull CompletableFuture<QueryUserResult> withdrawCurrency(@NotNull String nickname, @NotNull Currency currency, long cents) {
+        return CompletableFuture.supplyAsync(() -> userRepository.withdrawCurrency(nickname, currency, cents), databaseExecutor).exceptionally(e -> {
+            logger.log(Level.SEVERE, "Failed to withdraw currency data", e);
+            return new QueryUserResult.Error(ErrorType.EXCEPTION);
+        });
     }
 
     @Override
     @ApiStatus.Internal
-    public User remove(UUID uuid) {
+    public User remove(@NotNull UUID uuid) {
         return cache.remove(uuid);
     }
 
     @Override
     @ApiStatus.Internal
-    public void put(User user) {
+    public void put(@NotNull User user) {
         cache.put(user.getUuid(), user);
     }
 
     @Override
-    @Nullable
-    public User get(@NotNull UUID uuid) {
+    public @Nullable User get(@NotNull UUID uuid) {
         return cache.get(uuid);
     }
 
     @Override
-    @Nullable
-    public User getOrCreateDataAndUpdate(UUID uuid, String nickname) {
+    public @Nullable User getOrCreateDataAndUpdate(@NotNull UUID uuid, @NotNull String nickname) {
         return userRepository.findOrCreateAndUpdate(uuid, nickname);
     }
 
     @Override
-    public CompletableFuture<QueryUserResult> getCurrency(String nickname, Currency currency) {
-        return userRepository.getCurrency(nickname, currency);
+    public @NotNull CompletableFuture<QueryUserResult> getCurrency(@NotNull String nickname, @NotNull Currency currency) {
+        return CompletableFuture.supplyAsync(() -> userRepository.getCurrency(nickname, currency), databaseExecutor).exceptionally(e -> {
+            logger.log(Level.SEVERE, "Failed to get currency for nickname: " + nickname, e);
+            return new QueryUserResult.Error(ErrorType.EXCEPTION);
+        });
     }
 
     @Override
-    public CompletableFuture<List<RankingUser>> getTop(Currency currency, int page) {
+    public @NotNull CompletableFuture<@Nullable List<RankingUser>> getTop(@NotNull Currency currency, int page) {
         return CompletableFuture.supplyAsync(() -> userRepository.findTop(currency, page), databaseExecutor)
                 .exceptionally(e -> {
                     logger.log(Level.SEVERE, "Failed to retrieve top users for page " + page + " and currency " + currency.name(), e);
@@ -154,7 +191,7 @@ public class UserService implements UserFoundationService {
     }
 
     @Override
-    public CompletableFuture<List<RankingUser>> getTopSeek(Currency currency, Long lastAmount, LocalDateTime lastLogin, UUID lastUuid) {
+    public @NotNull CompletableFuture<@Nullable List<RankingUser>> getTopSeek(@NotNull Currency currency, @NotNull Long lastAmount, @NotNull LocalDateTime lastLogin, @NotNull UUID lastUuid) {
         return CompletableFuture.supplyAsync(() -> userRepository.findTopSeek(currency, lastAmount, lastLogin, lastUuid), databaseExecutor)
                 .exceptionally(e -> {
                     logger.log(Level.SEVERE, "Failed to retrieve top users using seek pagination for currency " + currency.name() + " (lastAmount=" + lastAmount + ", lastLogin=" + lastLogin + ")", e);
@@ -163,7 +200,7 @@ public class UserService implements UserFoundationService {
     }
 
     @Override
-    public CompletableFuture<List<RankingUser>> getTopSeekBackward(Currency currency, Long firstAmount, LocalDateTime firstLogin, UUID firstUuid) {
+    public @NotNull CompletableFuture<@Nullable List<RankingUser>> getTopSeekBackward(@NotNull Currency currency, @NotNull Long firstAmount, @NotNull LocalDateTime firstLogin, @NotNull UUID firstUuid) {
         return CompletableFuture.supplyAsync(() -> {
                     List<RankingUser> reversed = userRepository.findTopSeekBackward(currency, firstAmount, firstLogin, firstUuid);
                     Collections.reverse(reversed);

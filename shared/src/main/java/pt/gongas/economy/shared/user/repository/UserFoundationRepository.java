@@ -21,7 +21,6 @@
 
 package pt.gongas.economy.shared.user.repository;
 
-import org.jetbrains.annotations.Nullable;
 import pt.gongas.economy.shared.currency.Currency;
 import pt.gongas.economy.shared.user.QueryUserResult;
 import pt.gongas.economy.shared.user.RankingUser;
@@ -32,37 +31,36 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 
 public interface UserFoundationRepository {
 
     void setup();
 
-    CompletableFuture<QueryUserResult> updateCurrencies(UUID senderUuid, UUID receiverUuid, Currency currency, long cents);
+    QueryUserResult updateCurrencies(UUID senderUuid, UUID receiverUuid, Currency currency, long cents);
 
-    CompletableFuture<QueryUserResult> updateCurrencies(UUID senderUuid, String receiverNickname, Currency currency, long cents);
+    QueryUserResult updateCurrencies(UUID senderUuid, String receiverNickname, Currency currency, long cents);
 
-    CompletableFuture<Map<UUID, Map<Currency, Long>>> fetchPlayerBalances(Collection<UUID> uuids);
+    Map<UUID, Map<Currency, Long>> fetchPlayerBalances(Collection<UUID> uuids);
 
-    CompletableFuture<QueryUserResult> setCurrency(UUID uuid, Currency currency, long cents);
+    QueryUserResult setCurrency(UUID uuid, Currency currency, long cents);
 
-    CompletableFuture<QueryUserResult> setCurrency(String nickname, Currency currency, long cents);
+    QueryUserResult setCurrency(String nickname, Currency currency, long cents);
 
-    CompletableFuture<QueryUserResult> addCurrency(UUID uuid, Currency currency, long cents);
+    QueryUserResult addCurrency(UUID uuid, Currency currency, long cents);
 
-    CompletableFuture<QueryUserResult> addCurrency(String nickname, Currency currency, long cents);
+    QueryUserResult addCurrency(String nickname, Currency currency, long cents);
 
-    CompletableFuture<QueryUserResult> getCurrency(String nickname, Currency currency);
+    QueryUserResult getCurrency(String nickname, Currency currency);
 
-    CompletableFuture<QueryUserResult> removeCurrency(UUID uuid, Currency currency, long cents);
+    QueryUserResult removeCurrency(UUID uuid, Currency currency, long cents);
 
-    CompletableFuture<QueryUserResult> removeCurrency(String nickname, Currency currency, long cents);
+    QueryUserResult removeCurrency(String nickname, Currency currency, long cents);
 
-    CompletableFuture<QueryUserResult> withdrawCurrency(UUID uuid, Currency currency, long cents);
+    QueryUserResult withdrawCurrency(UUID uuid, Currency currency, long cents);
 
-    CompletableFuture<QueryUserResult> withdrawCurrency(String nickname, Currency currency, long cents);
+    QueryUserResult withdrawCurrency(String nickname, Currency currency, long cents);
 
-    @Nullable User findOrCreateAndUpdate(UUID uuid, String nickname);
+    User findOrCreateAndUpdate(UUID uuid, String nickname);
 
     List<RankingUser> findTop(Currency currency, int page);
 
