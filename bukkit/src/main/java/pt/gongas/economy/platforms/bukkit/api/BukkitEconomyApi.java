@@ -67,17 +67,17 @@ public class BukkitEconomyApi implements EconomyApi<Player> {
     }
 
     @Override
-    public CurrencyFoundationService getCurrencyService() {
+    public @NotNull CurrencyFoundationService getCurrencyService() {
         return currencyService;
     }
 
     @Override
-    public UserFoundationService getUserService() {
+    public @NotNull UserFoundationService getUserService() {
         return userService;
     }
 
     @Override
-    public CompletableFuture<QueryUserResult> getCurrencyAndNotifyIfNeeded(@Nullable Player player, @NotNull String target, @NotNull Currency currency) {
+    public @NotNull CompletableFuture<QueryUserResult> getCurrencyAndNotifyIfNeeded(@Nullable Player player, @NotNull String target, @NotNull Currency currency) {
 
         return userService.getCurrency(target, currency).thenApply(result -> {
 
@@ -115,7 +115,7 @@ public class BukkitEconomyApi implements EconomyApi<Player> {
     }
 
     @Override
-    public CompletableFuture<QueryUserResult> payCurrencyAndNotifyIfNeeded(@NotNull Player senderPlayer, @NotNull Player targetPlayer, @NotNull User senderUser, @NotNull User targetUser, @NotNull Currency currency, double amount, boolean notify) {
+    public @NotNull CompletableFuture<QueryUserResult> payCurrencyAndNotifyIfNeeded(@NotNull Player senderPlayer, @NotNull Player targetPlayer, @NotNull User senderUser, @NotNull User targetUser, @NotNull Currency currency, double amount, boolean notify) {
 
         long cents = (long) (amount * 100);
 
@@ -186,7 +186,7 @@ public class BukkitEconomyApi implements EconomyApi<Player> {
     }
 
     @Override
-    public CompletableFuture<QueryUserResult> payCurrencyAndNotifyIfNeeded(@NotNull Player senderPlayer, @NotNull String target, @NotNull User senderUser, @NotNull Currency currency, double amount, boolean notify) {
+    public @NotNull CompletableFuture<QueryUserResult> payCurrencyAndNotifyIfNeeded(@NotNull Player senderPlayer, @NotNull String target, @NotNull User senderUser, @NotNull Currency currency, double amount, boolean notify) {
 
         long cents = (long) (amount * 100);
 
@@ -261,7 +261,7 @@ public class BukkitEconomyApi implements EconomyApi<Player> {
     }
 
     @Override
-    public CompletableFuture<QueryUserResult> setCurrencyAndNotifyIfNeeded(@Nullable Player senderPlayer, @NotNull Player targetPlayer, @NotNull User targetUser, @NotNull Currency currency, double amount) {
+    public @NotNull CompletableFuture<QueryUserResult> setCurrencyAndNotifyIfNeeded(@Nullable Player senderPlayer, @NotNull Player targetPlayer, @NotNull User targetUser, @NotNull Currency currency, double amount) {
 
         long cents = (long) (amount * 100);
 
@@ -320,7 +320,7 @@ public class BukkitEconomyApi implements EconomyApi<Player> {
     }
 
     @Override
-    public CompletableFuture<QueryUserResult> setCurrencyAndNotifyIfNeeded(@Nullable Player senderPlayer, @NotNull String target, @NotNull Currency currency, double amount) {
+    public @NotNull CompletableFuture<QueryUserResult> setCurrencyAndNotifyIfNeeded(@Nullable Player senderPlayer, @NotNull String target, @NotNull Currency currency, double amount) {
 
         long cents = (long) (amount * 100);
 
@@ -384,7 +384,7 @@ public class BukkitEconomyApi implements EconomyApi<Player> {
     }
 
     @Override
-    public CompletableFuture<QueryUserResult> addCurrencyAndNotifyIfNeeded(@Nullable Player senderPlayer, @NotNull Player targetPlayer, @NotNull User targetUser, @NotNull Currency currency, double amount) {
+    public @NotNull CompletableFuture<QueryUserResult> addCurrencyAndNotifyIfNeeded(@Nullable Player senderPlayer, @NotNull Player targetPlayer, @NotNull User targetUser, @NotNull Currency currency, double amount) {
 
         long cents = (long) (amount * 100);
 
@@ -443,7 +443,7 @@ public class BukkitEconomyApi implements EconomyApi<Player> {
     }
 
     @Override
-    public CompletableFuture<QueryUserResult> addCurrencyAndNotifyIfNeeded(@Nullable Player senderPlayer, @NotNull String target, @NotNull Currency currency, double amount) {
+    public @NotNull CompletableFuture<QueryUserResult> addCurrencyAndNotifyIfNeeded(@Nullable Player senderPlayer, @NotNull String target, @NotNull Currency currency, double amount) {
 
         long cents = (long) (amount * 100);
 
@@ -508,7 +508,7 @@ public class BukkitEconomyApi implements EconomyApi<Player> {
     }
 
     @Override
-    public CompletableFuture<QueryUserResult> removeCurrencyAndNotifyIfNeeded(@Nullable Player senderPlayer, @NotNull Player targetPlayer, @NotNull User targetUser, @NotNull Currency currency, double amount) {
+    public @NotNull CompletableFuture<QueryUserResult> removeCurrencyAndNotifyIfNeeded(@Nullable Player senderPlayer, @NotNull Player targetPlayer, @NotNull User targetUser, @NotNull Currency currency, double amount) {
 
         long cents = (long) (amount * 100);
 
@@ -568,7 +568,7 @@ public class BukkitEconomyApi implements EconomyApi<Player> {
     }
 
     @Override
-    public CompletableFuture<QueryUserResult> removeCurrencyAndNotifyIfNeeded(@Nullable Player senderPlayer, @NotNull String target, @NotNull Currency currency, double amount) {
+    public @NotNull CompletableFuture<QueryUserResult> removeCurrencyAndNotifyIfNeeded(@Nullable Player senderPlayer, @NotNull String target, @NotNull Currency currency, double amount) {
 
         long cents = (long) (amount * 100);
 
@@ -633,7 +633,7 @@ public class BukkitEconomyApi implements EconomyApi<Player> {
     }
 
     @Override
-    public CompletableFuture<QueryUserResult> withdrawCurrencyAndNotifyIfNeeded(@Nullable Player senderPlayer, @NotNull Player targetPlayer, @NotNull User targetUser, @NotNull Currency currency, double amount) {
+    public @NotNull CompletableFuture<QueryUserResult> withdrawCurrencyAndNotifyIfNeeded(@Nullable Player senderPlayer, @NotNull Player targetPlayer, @NotNull User targetUser, @NotNull Currency currency, double amount) {
 
         long cents = (long) (amount * 100);
 
@@ -695,7 +695,7 @@ public class BukkitEconomyApi implements EconomyApi<Player> {
     }
 
     @Override
-    public CompletableFuture<QueryUserResult> withdrawCurrencyAndNotifyIfNeeded(@Nullable Player senderPlayer, @NotNull String target, @NotNull Currency currency, double amount) {
+    public @NotNull CompletableFuture<QueryUserResult> withdrawCurrencyAndNotifyIfNeeded(@Nullable Player senderPlayer, @NotNull String target, @NotNull Currency currency, double amount) {
 
         long cents = (long) (amount * 100);
 
