@@ -32,8 +32,6 @@ import java.util.UUID;
 
 public class RankingAdapter implements DatabaseAdapter<RankingUser> {
 
-    private final
-
     @Override
     public RankingUser adapt(DatabaseQuery databaseQuery) throws SQLException {
 
