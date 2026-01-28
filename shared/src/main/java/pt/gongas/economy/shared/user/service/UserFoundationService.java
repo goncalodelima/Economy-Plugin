@@ -194,9 +194,10 @@ public interface UserFoundationService {
      *
      * @param currency Currency to rank
      * @param page     Page number
+     * @param pageSize Number of users per page
      * @return CompletableFuture containing list of RankingUser
      */
-    @NotNull CompletableFuture<@Nullable List<RankingUser>> getTop(@NotNull Currency currency, int page);
+    @NotNull CompletableFuture<@Nullable List<RankingUser>> getTop(@NotNull Currency currency, int page, int pageSize);
 
     /**
      * Retrieves the leaderboard starting from a specific position (seek forward).
@@ -205,19 +206,21 @@ public interface UserFoundationService {
      * @param lastAmount Last amount on previous page
      * @param lastLogin  Last login date on previous page
      * @param lastUuid   Last UUID on previous page
+     * @param pageSize   Number of users per page
      * @return CompletableFuture containing list of RankingUser
      */
-    @NotNull CompletableFuture<@Nullable List<RankingUser>> getTopSeek(@NotNull Currency currency, @NotNull Long lastAmount, @NotNull LocalDateTime lastLogin, @NotNull UUID lastUuid);
+    @NotNull CompletableFuture<@Nullable List<RankingUser>> getTopSeek(@NotNull Currency currency, @NotNull Long lastAmount, @NotNull LocalDateTime lastLogin, @NotNull UUID lastUuid, int pageSize);
 
     /**
      * Retrieves the leaderboard starting backward from a specific position (seek backward).
      *
-     * @param currency   Currency to rank
+     * @param currency    Currency to rank
      * @param firstAmount First amount on previous page
      * @param firstLogin  First login date on previous page
      * @param firstUuid   First UUID on previous page
+     * @param pageSize    Number of users per page
      * @return CompletableFuture containing list of RankingUser
      */
-    @NotNull CompletableFuture<@Nullable List<RankingUser>> getTopSeekBackward(@NotNull Currency currency, @NotNull Long firstAmount, @NotNull LocalDateTime firstLogin, @NotNull UUID firstUuid);
+    @NotNull CompletableFuture<@Nullable List<RankingUser>> getTopSeekBackward(@NotNull Currency currency, @NotNull Long firstAmount, @NotNull LocalDateTime firstLogin, @NotNull UUID firstUuid, int pageSize);
 
 }

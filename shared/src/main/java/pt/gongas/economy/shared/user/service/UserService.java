@@ -182,8 +182,8 @@ public class UserService implements UserFoundationService {
     }
 
     @Override
-    public @NotNull CompletableFuture<@Nullable List<RankingUser>> getTop(@NotNull Currency currency, int page) {
-        return CompletableFuture.supplyAsync(() -> userRepository.findTop(currency, page), databaseExecutor)
+    public @NotNull CompletableFuture<@Nullable List<RankingUser>> getTop(@NotNull Currency currency, int page, int pageSize) {
+        return CompletableFuture.supplyAsync(() -> userRepository.findTop(currency, page, pageSize), databaseExecutor)
                 .exceptionally(e -> {
                     logger.log(Level.SEVERE, "Failed to retrieve top users for page " + page + " and currency " + currency.name(), e);
                     return null;
@@ -191,8 +191,8 @@ public class UserService implements UserFoundationService {
     }
 
     @Override
-    public @NotNull CompletableFuture<@Nullable List<RankingUser>> getTopSeek(@NotNull Currency currency, @NotNull Long lastAmount, @NotNull LocalDateTime lastLogin, @NotNull UUID lastUuid) {
-        return CompletableFuture.supplyAsync(() -> userRepository.findTopSeek(currency, lastAmount, lastLogin, lastUuid), databaseExecutor)
+    public @NotNull CompletableFuture<@Nullable List<RankingUser>> getTopSeek(@NotNull Currency currency, @NotNull Long lastAmount, @NotNull LocalDateTime lastLogin, @NotNull UUID lastUuid, int pageSize) {
+        return CompletableFuture.supplyAsync(() -> userRepository.findTopSeek(currency, lastAmount, lastLogin, lastUuid, pageSize), databaseExecutor)
                 .exceptionally(e -> {
                     logger.log(Level.SEVERE, "Failed to retrieve top users using seek pagination for currency " + currency.name() + " (lastAmount=" + lastAmount + ", lastLogin=" + lastLogin + ")", e);
                     return null;
@@ -200,9 +200,9 @@ public class UserService implements UserFoundationService {
     }
 
     @Override
-    public @NotNull CompletableFuture<@Nullable List<RankingUser>> getTopSeekBackward(@NotNull Currency currency, @NotNull Long firstAmount, @NotNull LocalDateTime firstLogin, @NotNull UUID firstUuid) {
+    public @NotNull CompletableFuture<@Nullable List<RankingUser>> getTopSeekBackward(@NotNull Currency currency, @NotNull Long firstAmount, @NotNull LocalDateTime firstLogin, @NotNull UUID firstUuid, int pageSize) {
         return CompletableFuture.supplyAsync(() -> {
-                    List<RankingUser> reversed = userRepository.findTopSeekBackward(currency, firstAmount, firstLogin, firstUuid);
+                    List<RankingUser> reversed = userRepository.findTopSeekBackward(currency, firstAmount, firstLogin, firstUuid, pageSize);
                     Collections.reverse(reversed);
                     return reversed;
                 }, databaseExecutor)

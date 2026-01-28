@@ -62,10 +62,10 @@ public interface UserFoundationRepository {
 
     User findOrCreateAndUpdate(UUID uuid, String nickname);
 
-    List<RankingUser> findTop(Currency currency, int page);
+    List<RankingUser> findTop(Currency currency, int page, int pageSize);
 
-    List<RankingUser> findTopSeek(Currency currency, Long lastAmount, LocalDateTime lastLogin, UUID lastUuid);
+    List<RankingUser> findTopSeek(Currency currency, Long lastAmount, LocalDateTime lastLogin, UUID lastUuid, int pageSize);
 
-    List<RankingUser> findTopSeekBackward(Currency currency, Long firstAmount, LocalDateTime firstLogin, UUID firstUuid);
+    List<RankingUser> findTopSeekBackward(Currency currency, Long firstAmount, LocalDateTime firstLogin, UUID firstUuid, int pageSize);
 
 }

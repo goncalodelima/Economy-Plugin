@@ -33,12 +33,12 @@ import java.util.UUID;
 public class RankingAdapter implements DatabaseAdapter<RankingUser> {
 
     @Override
-    public RankingUser adapt(DatabaseQuery databaseQuery) throws SQLException {
+    public RankingUser adapt(DatabaseQuery query) throws SQLException {
 
-        UUID uuid = UUIDConverter.convert((byte[]) databaseQuery.get("uuid"));
-        String nickname = (String) databaseQuery.get("nickname");
-        long cents = (long) databaseQuery.get("cents");
-        LocalDateTime lastLoginDate = (LocalDateTime) databaseQuery.get("last_login_date");
+        UUID uuid = UUIDConverter.convert((byte[]) query.get("uuid"));
+        String nickname = (String) query.get("nickname");
+        long cents = (long) query.get("cents");
+        LocalDateTime lastLoginDate = (LocalDateTime) query.get("last_login_date");
 
         return new RankingUser(uuid, nickname, cents, lastLoginDate);
     }
