@@ -100,7 +100,7 @@ public class RankingView implements Listener {
         player.openInventory(inventory);
 
         // compute items
-        userService.getTop(currency, 1).thenAcceptAsync(list -> {
+        userService.getTop(currency, 1, usersPerPage).thenAcceptAsync(list -> {
 
             if (!inventory.getViewers().contains(player)) {
                 return;
@@ -158,9 +158,9 @@ public class RankingView implements Listener {
             RankingUser lastCursor = gui.getLastCursor();
 
             if (lastCursor == null || nextPage < seek) {
-                fetchNextTop(userService.getTop(currency, nextPage), currency, event, inventory, gui, nextPage);
+                fetchNextTop(userService.getTop(currency, nextPage, usersPerPage), currency, event, inventory, gui, nextPage);
             } else {
-                fetchNextTop(userService.getTopSeek(currency, lastCursor.cents(), lastCursor.lastLoginDate(), lastCursor.uuid()), currency, event, inventory, gui, nextPage);
+                fetchNextTop(userService.getTopSeek(currency, lastCursor.cents(), lastCursor.lastLoginDate(), lastCursor.uuid(), usersPerPage), currency, event, inventory, gui, nextPage);
             }
 
             return;
@@ -178,9 +178,9 @@ public class RankingView implements Listener {
             RankingUser previousCursor = gui.getPreviousCursor();
 
             if (previousCursor == null || previousPage < seek) {
-                fetchPreviousTop(userService.getTop(currency, previousPage), currency, event, inventory, gui, previousPage);
+                fetchPreviousTop(userService.getTop(currency, previousPage, usersPerPage), currency, event, inventory, gui, previousPage, false);
             } else {
-                fetchPreviousTop(userService.getTopSeekBackward(currency, previousCursor.cents(), previousCursor.lastLoginDate(), previousCursor.uuid()), currency, event, inventory, gui, previousPage);
+                fetchPreviousTop(userService.getTopSeekBackward(currency, previousCursor.cents(), previousCursor.lastLoginDate(), previousCursor.uuid(), usersPerPage), currency, event, inventory, gui, previousPage, true);
             }
 
         }
@@ -204,6 +204,8 @@ public class RankingView implements Listener {
             if (!inventory.getViewers().contains(player)) {
                 return;
             }
+
+            gui.setLoading(false);
 
             if (list == null || list.isEmpty()) { // keep on the same page
                 inventory.setItem(nextSlot, null);
@@ -231,12 +233,10 @@ public class RankingView implements Listener {
                 gui.setNextPage(false);
             }
 
-            gui.setLoading(false);
-
         }, Bukkit.getScheduler().getMainThreadExecutor(BukkitEconomyPlugin.plugin));
     }
 
-    private void fetchPreviousTop(CompletableFuture<@Nullable List<RankingUser>> future, Currency currency, InventoryClickEvent event, Inventory inventory, GuiHolder gui, int previousPage) {
+    private void fetchPreviousTop(CompletableFuture<@Nullable List<RankingUser>> future, Currency currency, InventoryClickEvent event, Inventory inventory, GuiHolder gui, int previousPage, boolean seek) {
 
         future.thenAcceptAsync(list -> {
 
@@ -245,6 +245,8 @@ public class RankingView implements Listener {
             if (!inventory.getViewers().contains(player)) {
                 return;
             }
+
+            gui.setLoading(false);
 
             if (list == null || list.isEmpty()) { // keep the same items on page
 
@@ -262,7 +264,7 @@ public class RankingView implements Listener {
                 inventory.setItem(i, null);
             }
 
-            int newPreviousPage = populateInventoryPageOnBack(inventory, currency, list, previousPage);
+            int newPreviousPage = populateInventoryPageOnBack(inventory, currency, list, previousPage, seek);
 
             if (newPreviousPage != 1) {
                 setPageAndDisplayBackItem(gui, inventory, currency, newPreviousPage);
@@ -281,8 +283,6 @@ public class RankingView implements Listener {
             setTitle(player.getOpenInventory(), currency, newPreviousPage);
 
             setPageAndDisplayNextItem(gui, inventory, currency, newPreviousPage);
-
-            gui.setLoading(false);
 
         }, Bukkit.getScheduler().getMainThreadExecutor(BukkitEconomyPlugin.plugin));
 
@@ -371,13 +371,19 @@ public class RankingView implements Listener {
         return hasNextPage;
     }
 
-    private int populateInventoryPageOnBack(Inventory inventory, Currency currency, List<RankingUser> users, int page) {
+    private int populateInventoryPageOnBack(Inventory inventory, Currency currency, List<RankingUser> users, int page, boolean seek) {
 
         boolean hasPreviousPage = users.size() == usersPerPage + 1;
         int slot = 0;
 
         if (hasPreviousPage) {
-            users.removeFirst(); // remove the richest player from the list
+
+            if (seek) {
+                users.removeFirst(); // remove the richest player from the list
+            } else {
+                users.removeLast(); // remove the poorest player from the list
+            }
+
         } else if (users.size() < usersPerPage) {
             page = 1;
         }

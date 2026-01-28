@@ -131,7 +131,7 @@ public class UserRepository implements UserFoundationRepository {
             int updated1 = executor.query("UPDATE user_economy SET cents = cents + ? WHERE uuid = ? and currency = ?")
                     .writeAndReturnRowCount(statement -> {
                         statement.set(1, cents);
-                        statement.set(2, UUIDConverter.convert(senderUuid));
+                        statement.set(2, UUIDConverter.convert(receiverUuid));
                         statement.set(3, currencyName);
                     }, connection);
 
@@ -619,9 +619,8 @@ public class UserRepository implements UserFoundationRepository {
     }
 
     @Override
-    public List<RankingUser> findTop(Currency currency, int page) {
+    public List<RankingUser> findTop(Currency currency, int page, int pageSize) {
 
-        int pageSize = 45;
         int offset = (page - 1) * pageSize;
 
         try (DatabaseExecutor executor = database.execute()) {
@@ -645,9 +644,7 @@ public class UserRepository implements UserFoundationRepository {
     }
 
     @Override
-    public List<RankingUser> findTopSeek(Currency currency, Long lastAmount, LocalDateTime lastLogin, UUID lastUuid) {
-
-        int pageSize = 45;
+    public List<RankingUser> findTopSeek(Currency currency, Long lastAmount, LocalDateTime lastLogin, UUID lastUuid, int pageSize) {
 
         try (DatabaseExecutor executor = database.execute()) {
             return executor.query("""
@@ -676,9 +673,7 @@ public class UserRepository implements UserFoundationRepository {
     }
 
     @Override
-    public List<RankingUser> findTopSeekBackward(Currency currency, Long firstAmount, LocalDateTime firstLogin, UUID firstUuid) {
-
-        int pageSize = 45;
+    public List<RankingUser> findTopSeekBackward(Currency currency, Long firstAmount, LocalDateTime firstLogin, UUID firstUuid, int pageSize) {
 
         try (DatabaseExecutor executor = database.execute()) {
             return executor.query("""
