@@ -24,11 +24,14 @@ package pt.gongas.economy.shared.user.service;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import pt.gongas.database.executor.DatabaseExecutor;
 import pt.gongas.economy.shared.user.QueryUserResult;
 import pt.gongas.economy.shared.user.RankingUser;
 import pt.gongas.economy.shared.currency.Currency;
 import pt.gongas.economy.shared.user.User;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
@@ -222,5 +225,198 @@ public interface UserFoundationService {
      * @return CompletableFuture containing list of RankingUser
      */
     @NotNull CompletableFuture<@Nullable List<RankingUser>> getTopSeekBackward(@NotNull Currency currency, @NotNull Long firstAmount, @NotNull LocalDateTime firstLogin, @NotNull UUID firstUuid, int pageSize);
+
+    /**
+     * Low-level method for adding currency to a user's balance in the database.
+     *
+     * <p>This method is intended for advanced use cases where you want to synchronize
+     * economy transactions with your own plugin's database transactions. Use only if
+     * your updates are applied directly in the database (real-time). For pending updates
+     * in a cache or similar, use the standard methods provided by {@link pt.gongas.economy.shared.api.EconomyApi}.</p>
+     *
+     * <p>This method does not start, commit, or rollback transactions itself. If you want
+     * transaction management, use {@link pt.gongas.economy.shared.transaction.EconomyTransactionalApi},
+     * which handles transaction lifecycle for you.</p>
+     *
+     * <p><b>Important:</b> After executing this method, it is your responsibility to
+     * handle post-transaction operations such as updating caches. This is commonly done asynchronously, for example:
+     * <pre>
+     * CompletableFuture.supplyAsync(() -&gt; transactionalApi.executeInEconomyTransaction(...))
+     *     .thenAcceptAsync(result -&gt; {
+     *
+     *         // update economy cache here
+     *
+     *         UUID sellerUuid = auctionItem.getSellerUuid();
+     *
+     *         EconomyApi<Player> api = YOUR_PLUGIN_INSTANCE.economyApi.key();
+     *         User buyerUser = api.getUserService().get(buyerUuid);
+     *         User sellerUser = api.getUserService().get(sellerUuid);
+     *
+     *         boolean isBuyerOnline = buyerUser != null;
+     *         boolean isSellerOnline = sellerUser != null;
+     *
+     *         if (isBuyerOnline) {
+     *              api.getTrackedUuids().add(buyerUser.getUuid());
+     *         }
+     *
+     *         if (isSellerOnline) {
+     *              api.getTrackedUuids().add(sellerUser.getUuid());
+     *         }
+     *
+     *         RTopic transactions = api.getTransactions();
+     *
+     *         if (transactions != null && (!isBuyerOnline || !isSellerOnline)) {
+     *              UUID senderUuid = isBuyerOnline ? null : buyerUuid;
+     *              UUID receiverUuid = isSellerOnline ? null : sellerUuid;
+     *              transactions.publishAsync(new TransactionMessage(senderUuid, receiverUuid));
+     *         }
+     *
+     *         // update your plugin cache here if needed
+     *
+     *     }, Bukkit.getScheduler().getMainThreadExecutor(YOUR_PLUGIN_INSTANCE));
+     * </pre>
+     *
+     * <p>This ensures that the database operations are performed atomically while keeping
+     * caches and other dependent systems in sync without blocking the main thread.</p>
+     * </p>
+     *
+     * @param uuid       User UUID
+     * @param currency   Currency to add
+     * @param cents      Amount to add
+     * @param executor   DatabaseExecutor to use for the transaction
+     * @param connection Connection to use for the transaction
+     * @return QueryUserResult indicating success or error
+     * @throws SQLException If a database error occurs
+     */
+    QueryUserResult addCurrencyLowLevel(UUID uuid, Currency currency, long cents, DatabaseExecutor executor, Connection connection) throws SQLException;
+
+    /**
+     * Low-level method for adding currency to a user's balance in the database.
+     *
+     * <p>This method is intended for advanced use cases where you want to synchronize
+     * economy transactions with your own plugin's database transactions. Use only if
+     * your updates are applied directly in the database (real-time). For pending updates
+     * in a cache or similar, use the standard methods provided by {@link pt.gongas.economy.shared.api.EconomyApi}.</p>
+     *
+     * <p>This method does not start, commit, or rollback transactions itself. If you want
+     * transaction management, use {@link pt.gongas.economy.shared.transaction.EconomyTransactionalApi},
+     * which handles transaction lifecycle for you.</p>
+     *
+     * <p><b>Important:</b> After executing this method, it is your responsibility to
+     * handle post-transaction operations such as updating caches. This is commonly done asynchronously, for example:
+     * <pre>
+     * CompletableFuture.supplyAsync(() -&gt; transactionalApi.executeInEconomyTransaction(...))
+     *     .thenAcceptAsync(result -&gt; {
+     *
+     *         // update economy cache here
+     *
+     *         UUID sellerUuid = auctionItem.getSellerUuid();
+     *
+     *         EconomyApi<Player> api = YOUR_PLUGIN_INSTANCE.economyApi.key();
+     *         User buyerUser = api.getUserService().get(buyerUuid);
+     *         User sellerUser = api.getUserService().get(sellerUuid);
+     *
+     *         boolean isBuyerOnline = buyerUser != null;
+     *         boolean isSellerOnline = sellerUser != null;
+     *
+     *         if (isBuyerOnline) {
+     *              api.getTrackedUuids().add(buyerUser.getUuid());
+     *         }
+     *
+     *         if (isSellerOnline) {
+     *              api.getTrackedUuids().add(sellerUser.getUuid());
+     *         }
+     *
+     *         RTopic transactions = api.getTransactions();
+     *
+     *         if (transactions != null && (!isBuyerOnline || !isSellerOnline)) {
+     *              UUID senderUuid = isBuyerOnline ? null : buyerUuid;
+     *              UUID receiverUuid = isSellerOnline ? null : sellerUuid;
+     *              transactions.publishAsync(new TransactionMessage(senderUuid, receiverUuid));
+     *         }
+     *
+     *         // update your plugin cache here if needed
+     *
+     *     }, Bukkit.getScheduler().getMainThreadExecutor(YOUR_PLUGIN_INSTANCE));
+     * </pre>
+     *
+     * <p>This ensures that the database operations are performed atomically while keeping
+     * caches and other dependent systems in sync without blocking the main thread.</p>
+     * </p>
+     *
+     * @param uuid       User UUID
+     * @param currency   Currency to withdraw
+     * @param cents      Amount to withdraw
+     * @param executor   DatabaseExecutor to use for the transaction
+     * @param connection Connection to use for the transaction
+     * @return QueryUserResult indicating success or error
+     * @throws SQLException If a database error occurs
+     */
+    QueryUserResult withdrawCurrencyLowLevel(UUID uuid, Currency currency, long cents, DatabaseExecutor executor, Connection connection) throws SQLException;
+
+    /**
+     * Low-level method for adding currency to a user's balance in the database.
+     *
+     * <p>This method is intended for advanced use cases where you want to synchronize
+     * economy transactions with your own plugin's database transactions. Use only if
+     * your updates are applied directly in the database (real-time). For pending updates
+     * in a cache or similar, use the standard methods provided by {@link pt.gongas.economy.shared.api.EconomyApi}.</p>
+     *
+     * <p>This method does not start, commit, or rollback transactions itself. If you want
+     * transaction management, use {@link pt.gongas.economy.shared.transaction.EconomyTransactionalApi},
+     * which handles transaction lifecycle for you.</p>
+     *
+     * <p><b>Important:</b> After executing this method, it is your responsibility to
+     * handle post-transaction operations such as updating caches. This is commonly done asynchronously, for example:
+     * <pre>
+     * CompletableFuture.supplyAsync(() -&gt; transactionalApi.executeInEconomyTransaction(...))
+     *     .thenAcceptAsync(result -&gt; {
+     *
+     *         // update economy cache here
+     *
+     *         UUID sellerUuid = auctionItem.getSellerUuid();
+     *
+     *         EconomyApi<Player> api = YOUR_PLUGIN_INSTANCE.economyApi.key();
+     *         User buyerUser = api.getUserService().get(buyerUuid);
+     *         User sellerUser = api.getUserService().get(sellerUuid);
+     *
+     *         boolean isBuyerOnline = buyerUser != null;
+     *         boolean isSellerOnline = sellerUser != null;
+     *
+     *         if (isBuyerOnline) {
+     *              api.getTrackedUuids().add(buyerUser.getUuid());
+     *         }
+     *
+     *         if (isSellerOnline) {
+     *              api.getTrackedUuids().add(sellerUser.getUuid());
+     *         }
+     *
+     *         RTopic transactions = api.getTransactions();
+     *
+     *         if (transactions != null && (!isBuyerOnline || !isSellerOnline)) {
+     *              UUID senderUuid = isBuyerOnline ? null : buyerUuid;
+     *              UUID receiverUuid = isSellerOnline ? null : sellerUuid;
+     *              transactions.publishAsync(new TransactionMessage(senderUuid, receiverUuid));
+     *         }
+     *
+     *         // update your plugin cache here if needed
+     *
+     *     }, Bukkit.getScheduler().getMainThreadExecutor(YOUR_PLUGIN_INSTANCE));
+     * </pre>
+     *
+     * <p>This ensures that the database operations are performed atomically while keeping
+     * caches and other dependent systems in sync without blocking the main thread.</p>
+     * </p>
+     *
+     * @param senderUuid   UUID of the sender
+     * @param receiverUuid UUID of the receiver
+     * @param currency     Currency to transfer
+     * @param cents        Amount to transfer
+     * @param executor     DatabaseExecutor to use for the transaction
+     * @param connection   Connection to use for the transaction
+     * @return QueryUserResult indicating success or error
+     * @throws SQLException If a database error occurs
+     */
+    QueryUserResult updateCurrenciesLowLevel(UUID senderUuid, UUID receiverUuid, Currency currency, long cents, DatabaseExecutor executor, Connection connection) throws SQLException;
 
 }

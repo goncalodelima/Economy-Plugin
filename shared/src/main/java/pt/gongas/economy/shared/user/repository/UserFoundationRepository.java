@@ -21,11 +21,14 @@
 
 package pt.gongas.economy.shared.user.repository;
 
+import pt.gongas.database.executor.DatabaseExecutor;
 import pt.gongas.economy.shared.currency.Currency;
 import pt.gongas.economy.shared.user.QueryUserResult;
 import pt.gongas.economy.shared.user.RankingUser;
 import pt.gongas.economy.shared.user.User;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
@@ -67,5 +70,11 @@ public interface UserFoundationRepository {
     List<RankingUser> findTopSeek(Currency currency, Long lastAmount, LocalDateTime lastLogin, UUID lastUuid, int pageSize);
 
     List<RankingUser> findTopSeekBackward(Currency currency, Long firstAmount, LocalDateTime firstLogin, UUID firstUuid, int pageSize);
+
+    QueryUserResult addCurrencyLowLevel(UUID uuid, Currency currency, long cents, DatabaseExecutor executor, Connection connection) throws SQLException;
+
+    QueryUserResult withdrawCurrencyLowLevel(UUID uuid, Currency currency, long cents, DatabaseExecutor executor, Connection connection) throws SQLException;
+
+    QueryUserResult updateCurrenciesLowLevel(UUID senderUuid, UUID receiverUuid, Currency currency, long cents, DatabaseExecutor executor, Connection connection) throws SQLException;
 
 }

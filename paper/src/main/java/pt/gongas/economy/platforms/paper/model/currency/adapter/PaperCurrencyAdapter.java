@@ -19,19 +19,19 @@
  *
  */
 
-plugins {
-    id("java")
-}
+package pt.gongas.economy.platforms.paper.model.currency.adapter;
 
-group = "pt.gongas"
-version = "1.2.0"
-description = "Shared module for Economy Plugin"
+import org.bukkit.configuration.ConfigurationSection;
+import pt.gongas.economy.shared.currency.Currency;
+import pt.gongas.economy.shared.util.config.ConfigurationAdapter;
 
-dependencies {
-    compileOnly("org.jetbrains:annotations:26.0.2-1")
-    compileOnly(fileTree(mapOf("dir" to rootDir.resolve("libs"), "include" to listOf("*.jar"))))
-}
+import java.util.Objects;
 
-tasks.withType<JavaCompile> {
-    options.encoding = "UTF-8"
+public class PaperCurrencyAdapter implements ConfigurationAdapter<Currency, ConfigurationSection> {
+
+    @Override
+    public Currency adapt(ConfigurationSection section) {
+        return new Currency(Objects.requireNonNull(section.getString("name")), Objects.requireNonNull(section.getString("command")), Objects.requireNonNull(section.getString("icon")));
+    }
+
 }

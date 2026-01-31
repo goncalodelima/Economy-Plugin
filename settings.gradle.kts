@@ -42,5 +42,5 @@ pluginManagement {
 rootProject.name = "EconomyPlugin"
 
 include(":shared")
-include(":bukkit")
+include(":paper")
 include(":velocity")

@@ -23,12 +23,16 @@ package pt.gongas.economy.shared.api;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.redisson.api.RTopic;
 import pt.gongas.economy.shared.currency.Currency;
 import pt.gongas.economy.shared.currency.service.CurrencyFoundationService;
+import pt.gongas.economy.shared.transaction.EconomyTransactionalApi;
 import pt.gongas.economy.shared.user.QueryUserResult;
 import pt.gongas.economy.shared.user.User;
 import pt.gongas.economy.shared.user.service.UserFoundationService;
 
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 @SuppressWarnings({"UnusedReturnValue", "UnusedDeclaration"})
@@ -47,6 +51,40 @@ public interface EconomyApi<P> {
      * @return the UserFoundationService
      */
     @NotNull UserFoundationService getUserService();
+
+    /**
+     * Returns the transaction manager instance.
+     *
+     * @return the EconomyTransactionalApi
+     */
+    @NotNull EconomyTransactionalApi getEconomyTransactionalApi();
+
+    /**
+     * Returns the transactions topic for publishing messages to offline users on the current server.
+     *
+     * <p>This topic can be used to notify users who are offline on this server but may be online
+     * on another server in a network. It is typically used in conjunction with {@link EconomyTransactionalApi}
+     * or low-level economy operations to synchronize transactions across servers.</p>
+     *
+     * @return the RTopic instance, or null if messaging is not enabled
+     */
+    @Nullable RTopic getTransactions();
+
+    /**
+     * Returns the set of player UUIDs that are currently tracked for cache updates.
+     *
+     * <p><b>Important:</b> This set should only be used in low-level operations,
+     * such as methods from {@code UserService} (e.g., {@code addCurrencyLowLevel},
+     * {@code withdrawCurrencyLowLevel}, {@code updateCurrenciesLowLevel}) or within
+     * {@link EconomyTransactionalApi} transactions. Using it with high-level API methods
+     * may result in inconsistent cache states.</p>
+     *
+     * <p>This set is thread-safe ({@link java.util.concurrent.ConcurrentHashMap#newKeySet()})
+     * and is updated automatically when transactions occur or players perform low-level economy actions.</p>
+     *
+     * @return the modifiable set of UUIDs currently needing cache updates
+     */
+    @NotNull Set<UUID> getTrackedUuids();
 
     /**
      * Gets the current balance of a specific currency for a target player.

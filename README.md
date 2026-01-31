@@ -64,7 +64,7 @@ Click the image to watch the video on YouTube.
 2. Install required dependencies (libs.zip)
 
 3. Place the `.jar` files in your server's `plugins` folder:
-    - For a **Bukkit/Spigot/Paper server**, place the main `Economy-Plugin.jar` in `plugins`.
+    - For a **Paper server**, place the main `Economy-Plugin.jar` in `plugins`.
     - **Velocity server with Redis as messaging service**:
         - Place the `EconomyPlugin-Velocity.jar` in the `plugins` folder of your Velocity server.
         - This jar only works on Velocity.
@@ -89,7 +89,7 @@ Click the image to watch the video on YouTube.
 
 ## 📚 Documentation (Developer API)
 
-#### 📦 Using Economy-Plugin as a dependency
+### 📦 Using Economy-Plugin as a dependency
 
 <details>
 <summary><strong>Gradle (Kotlin DSL)</strong></summary>
@@ -100,7 +100,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("pt.gongas:EconomyPlugin-bukkit:1.1.0")
+    compileOnly("pt.gongas:EconomyPlugin-paper:1.2.0")
 }
 ```
 
@@ -116,7 +116,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly "pt.gongas:EconomyPlugin-bukkit:1.1.0"
+    compileOnly "pt.gongas:EconomyPlugin-paper:1.2.0"
 }
 ```
 
@@ -135,8 +135,8 @@ dependencies {
 <dependencies>
     <dependency>
         <groupId>pt.gongas</groupId>
-        <artifactId>EconomyPlugin-bukkit</artifactId>
-        <version>1.1.0</version>
+        <artifactId>EconomyPlugin-paper</artifactId>
+        <version>1.2.0</version>
         <scope>provided</scope>
     </dependency>
 </dependencies>
@@ -144,28 +144,46 @@ dependencies {
 
 </details>
 
-#### Withdraw money securely using the API (Bukkit)
+### Withdraw money securely using the API (Paper)
 
+The Economy-Plugin provides **two distinct ways** to interact with the economy system. Choosing the correct one is important to avoid data inconsistencies and to match your plugin's architecture.
+
+### 1️⃣ High-Level Economy API (Default / Cached)
+
+This is the **simplest** way to interact with the economy system.
+
+#### When to use
+- Your plugin **does not require atomic synchronization** with its own database.
+- You only need to withdraw, deposit, or transfer money safely.
+- Temporary desynchronization between your plugin and the economy is acceptable. (e.g. pending updates)
+
+#### Characteristics
+- Uses internal caching.
+- Automatically handles notifications and cross-server synchronization.
+- Safe for most plugins.
+- **Do NOT use inside database transactions.**
+
+#### Main.class:
 ```java
-Main.class:
 
 public static Pair<EconomyApi<Player>, Currency> economyApi;
 
 @Override
 public void onEnable() {
 
-   Currency currency = BukkitEconomyPlugin.plugin.getEconomyApi().getCurrencyService().get(getConfig().getString("currency", "money"));
+   Currency currency = PaperEconomyPlugin.plugin.getEconomyApi().getCurrencyService().get(getConfig().getString("currency", "money"));
 
    if (currency == null) {
       throw new RuntimeException("The currency provided do not exist in the Economy-Plugin plugin.");
    }
 
-   economyApi = new Pair<>(BukkitEconomyPlugin.plugin.getEconomyApi(), currency);
+   economyApi = new Pair<>(PaperEconomyPlugin.plugin.getEconomyApi(), currency);
 
 }
+```
 
-Upgrade.class:
-
+#### Upgrade.class:
+```java
 // Simple lock to prevent duplicate operations
 private final Set<UUID> upgradeCache = new HashMap<>();
 
@@ -254,7 +272,116 @@ public void upgradeIsland(Island island, Player player) {
               // It is necessary to specify the main Bukkit thread to avoid concurrency issues.
            }, Bukkit.getScheduler().getMainThreadExecutor(YourPlugin.INSTANCE));
 }
+```
 
+---
+
+### 2️⃣ Low-Level + EconomyTransactionalApi (Atomic / Database-Safe)
+
+This approach is advanced and should only be used when strictly necessary.
+
+#### When to use
+- Your plugin must update its own database atomically with economy changes.
+- Economy updates must be committed in the same SQL transaction.
+- You need full control over database execution order.
+Examples:
+- Shops or auctions with SQL persistence
+- Marketplaces
+- Cross-table consistency requirements
+
+#### Characteristics
+- No caching
+- No deferred updates
+- Uses low-level UserService methods
+- Must be combined with EconomyTransactionalApi
+
+#### Important rules
+
+❌ Do NOT use high-level EconomyApi methods
+❌ Do NOT rely on economy cache
+✅ Use only addCurrencyLowLevel, withdrawCurrencyLowLevel, updateCurrenciesLowLevel, etc.
+
+#### Cache & Messaging handling
+
+When using EconomyTransactionalApi, you are responsible for:
+- Updating your plugin cache
+- Updating economy cache (if needed)
+- Publishing transaction messages for offline users
+
+This is intentionally manual to ensure correctness.
+
+⚠️ Incorrect cache usage may cause visual inconsistencies only, not data corruption.
+
+#### Main.class:
+```java
+
+public static Pair<EconomyApi<Player>, Currency> economyApi;
+
+@Override
+public void onEnable() {
+
+   Currency currency = PaperEconomyPlugin.plugin.getEconomyApi().getCurrencyService().get(getConfig().getString("currency", "money"));
+
+   if (currency == null) {
+      throw new RuntimeException("The currency provided does not exist in the Economy-Plugin plugin.");
+   }
+
+   economyApi = new Pair<>(PaperEconomyPlugin.plugin.getEconomyApi(), currency);
+
+   auctionItemService = new AuctionItemService(auctionItemRepository, ..., economyApi.key().getUserService(), economyApi.key().getEconomyTransactionalApi(), economyApi.value());
+}
+```
+
+#### AuctionItemService.class: (Implements: `AuctionItemFoundationItemRepository`)
+```java
+
+@Override
+public CompletableFuture<Boolean> purchaseItem(UUID buyerUuid, AuctionItem auctionItem) {
+    return CompletableFuture.supplyAsync(() -> auctionItemRepository.purchaseItem(buyerUuid, auctionItem), databaseExecutor)
+            .exceptionally(e -> {
+                logger.log(Level.SEVERE, "Failed to purchase auction item with ID " + auctionItem.getId() + " by buyer " + buyerUuid, e);
+                return false;
+            });
+}
+```
+
+#### AuctionItemRepository.class: (Implements: `AuctionItemFoundationItemRepository`)
+```java
+
+@Override
+public boolean purchaseItem(UUID buyerUuid, AuctionItem auctionItem) {
+
+    try {
+
+        return transactionalApi.executeInEconomyTransaction(database, (userService, executor, connection) -> {
+            
+            int rows = executor.query("""
+                            UPDATE auction_house_items
+                            SET auctionEnded = TRUE
+                            WHERE id = ?
+                            AND auctionEnded = FALSE
+                            """)
+                    .writeAndReturnRowCount(statement -> statement.set(1, auctionItem.getId()), connection);
+            
+            if (rows != 1) {
+                return new QueryUserResult.Error(ErrorType.EXTERNAL_PLUGIN);
+            }
+
+            QueryUserResult result = userService.updateCurrenciesLowLevel(buyerUuid, auctionItem.getSellerUuid(), currency, auctionItem.getCentsPrice(), executor, connection);
+
+            if (result instanceof QueryUserResult.Error error) {
+                return error;
+            }
+
+            return new QueryUserResult.SuccessNoData();
+            
+        });
+
+    } catch (SQLException e) {
+        throw new RuntimeException(e);
+    }
+    
+}
 ```
 
 ---

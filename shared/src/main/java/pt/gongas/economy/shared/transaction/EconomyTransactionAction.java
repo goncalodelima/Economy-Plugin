@@ -1,7 +1,7 @@
 /*
  *
  *  * This file is part of Economy-Plugin - https://github.com/goncalodelima/Economy-Plugin
- *  * Copyright (c) 2025 goncalodelima and contributors
+ *  * Copyright (c) 2026 goncalodelima and contributors
  *  *
  *  * This program is free software: you can redistribute it and/or modify
  *  * it under the terms of the GNU General Public License as published by
@@ -19,19 +19,18 @@
  *
  */
 
-plugins {
-    id("java")
-}
+package pt.gongas.economy.shared.transaction;
 
-group = "pt.gongas"
-version = "1.2.0"
-description = "Shared module for Economy Plugin"
+import pt.gongas.database.executor.DatabaseExecutor;
+import pt.gongas.economy.shared.user.QueryUserResult;
+import pt.gongas.economy.shared.user.service.UserFoundationService;
 
-dependencies {
-    compileOnly("org.jetbrains:annotations:26.0.2-1")
-    compileOnly(fileTree(mapOf("dir" to rootDir.resolve("libs"), "include" to listOf("*.jar"))))
-}
+import java.sql.Connection;
+import java.sql.SQLException;
 
-tasks.withType<JavaCompile> {
-    options.encoding = "UTF-8"
+@FunctionalInterface
+public interface EconomyTransactionAction {
+
+    QueryUserResult execute(UserFoundationService userService, DatabaseExecutor executor, Connection connection) throws SQLException;
+
 }

@@ -25,6 +25,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pt.gongas.database.Database;
+import pt.gongas.database.executor.DatabaseExecutor;
 import pt.gongas.economy.shared.currency.Currency;
 import pt.gongas.economy.shared.currency.service.CurrencyFoundationService;
 import pt.gongas.economy.shared.user.ErrorType;
@@ -36,6 +37,8 @@ import pt.gongas.economy.shared.user.adapter.UserAdapter;
 import pt.gongas.economy.shared.user.repository.UserFoundationRepository;
 import pt.gongas.economy.shared.user.repository.UserRepository;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -210,6 +213,21 @@ public class UserService implements UserFoundationService {
                     logger.log(Level.SEVERE, "Failed to retrieve top users using seek pagination for currency " + currency.name() + " (firstAmount=" + firstAmount + ")", e);
                     return null;
                 });
+    }
+
+    @Override
+    public QueryUserResult addCurrencyLowLevel(UUID uuid, Currency currency, long cents, DatabaseExecutor executor, Connection connection) throws SQLException {
+        return userRepository.addCurrencyLowLevel(uuid, currency, cents, executor, connection);
+    }
+
+    @Override
+    public QueryUserResult withdrawCurrencyLowLevel(UUID uuid, Currency currency, long cents, DatabaseExecutor executor, Connection connection) throws SQLException {
+        return userRepository.withdrawCurrencyLowLevel(uuid, currency, cents, executor, connection);
+    }
+
+    @Override
+    public QueryUserResult updateCurrenciesLowLevel(UUID senderUuid, UUID receiverUuid, Currency currency, long cents, DatabaseExecutor executor, Connection connection) throws SQLException {
+        return userRepository.updateCurrenciesLowLevel(senderUuid, receiverUuid, currency, cents, executor, connection);
     }
 
 }
