@@ -189,7 +189,7 @@ private final Set<UUID> upgradeCache = new HashMap<>();
 
 public void upgradeIsland(Island island, Player player) {
    
-   EconomyUser economyUser = Main.economyApi.key().getUserService().get(player.getUniqueId());
+   User economyUser = Main.economyApi.key().getUserService().get(player.getUniqueId());
    
    if (economyUser == null) {
        // Something strange happened. The player will have to log in again.
@@ -382,6 +382,103 @@ public boolean purchaseItem(UUID buyerUuid, AuctionItem auctionItem) {
     }
     
 }
+```
+
+#### AuctionHousePurchaseView
+```java
+
+// Simple lock to prevent duplicate operations
+private final Set<Integer> pendingCache = new HashMap<>();
+
+@EventHandler
+public void onInventoryClick(InventoryClickEvent event) {
+
+        if (!((event.getInventory().getHolder()) instanceof AuctionHousePurchaseGuiHolder gui)) {
+            return;
+        }
+
+        event.setCancelled(true);
+
+        ItemStack clickedItem = event.getCurrentItem();
+
+        if (clickedItem == null) {
+            return;
+        }
+
+        if (event.getRawSlot() == confirmSlot) {
+
+           // Prevents purchases at the same time for the same auctionItem
+           if (pendingCache.contains(auctionItem.getId())) {
+              // Already processing
+               return;
+           }
+
+           HumanEntity humanEntity = event.getWhoClicked();
+           UUID buyerUuid = humanEntity.getUniqueId();
+            
+           EconomyApi<Player> api = Main.economyApi.key();
+           User buyerUser = api.getUserService().get(buyerUuid);
+           long balance = buyerUser.get(Main.economyApi.value());
+           AuctionItem auctionItem = gui.getAuctionItem();
+           
+           // The cache is not strictly necessary, but recommended
+           // because it prevents users from spamming clicks in the menu—for example,
+           // trying to upgrade the island without enough balance.
+           // If the player has a balance in the database but not yet in the cache,
+           // the cache will be updated within moments, allowing the MySQL query to succeed.
+           // In the worst case, an extra lookup in the Map is performed.
+           if (balance < auctionItem.getCentsPrice()) {
+              // Not enough money
+              return;
+           }
+
+           // Add auctionItem id to lock to prevent multiple purchase attempts at the same time
+           pendingCache.add(auctionItem.getId());
+
+            auctionItemService.purchaseItem(buyerUuid, auctionItem).thenAcceptAsync(success -> {
+
+               // Always release the lock
+               pendingCache.remove(auctionItem.getId());
+                
+                if (!success) {
+                   // Not enough money, SQL error, or item already purchased
+                   return;
+                }
+                
+                // update economy cache here
+                
+                UUID sellerUuid = auctionItem.getSellerUuid();
+                User sellerUser = api.getUserService().get(sellerUuid);
+
+                boolean isBuyerOnline = buyerUser.isOnline();
+                boolean isSellerOnline = sellerUser != null;
+
+                if (isBuyerOnline) {
+                    api.getTrackedUuids().add(buyerUser.getUuid());
+                }
+
+                if (isSellerOnline) {
+                    api.getTrackedUuids().add(sellerUser.getUuid());
+                }
+
+                RTopic transactions = api.getTransactions();
+
+                if (transactions != null && (!isBuyerOnline || !isSellerOnline)) {
+                    UUID senderUuid = isBuyerOnline ? null : buyerUuid;
+                    UUID receiverUuid = isSellerOnline ? null : sellerUuid;
+                    transactions.publishAsync(new TransactionMessage(senderUuid, receiverUuid));
+                }
+                
+                // update your plugin cache here if needed
+                // (...)
+               
+               
+               // It is necessary to specify the main Bukkit thread to avoid concurrency issues.
+            }, Bukkit.getScheduler().getMainThreadExecutor(YourPlugin.INSTANCE));
+
+        }
+
+    }
 ```
 
 ---
