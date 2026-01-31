@@ -23,6 +23,6 @@ package pt.gongas.economy.shared.user;
 
 public enum ErrorType {
 
-    EXCEPTION, NOT_FOUND, NOT_ENOUGH_BALANCE
+    EXCEPTION, NOT_FOUND, NOT_ENOUGH_BALANCE, EXTERNAL_PLUGIN
 
 }

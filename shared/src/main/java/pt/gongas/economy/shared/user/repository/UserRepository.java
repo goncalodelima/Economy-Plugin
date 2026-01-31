@@ -114,7 +114,7 @@ public class UserRepository implements UserFoundationRepository {
 
             executor.startTransaction(connection);
 
-            int updated = executor
+            int rows = executor
                     .query("UPDATE user_economy SET cents = cents - ? WHERE uuid = ? AND currency = ? AND cents >= ?")
                     .writeAndReturnRowCount(statement -> {
                         statement.set(1, cents);
@@ -123,19 +123,19 @@ public class UserRepository implements UserFoundationRepository {
                         statement.set(4, cents);
                     }, connection);
 
-            if (updated == 0) {
+            if (rows != 1) {
                 executor.rollbackTransaction(connection);
                 return new QueryUserResult.Error(ErrorType.NOT_ENOUGH_BALANCE);
             }
 
-            int updated1 = executor.query("UPDATE user_economy SET cents = cents + ? WHERE uuid = ? and currency = ?")
+            int rows1 = executor.query("UPDATE user_economy SET cents = cents + ? WHERE uuid = ? and currency = ?")
                     .writeAndReturnRowCount(statement -> {
                         statement.set(1, cents);
                         statement.set(2, UUIDConverter.convert(receiverUuid));
                         statement.set(3, currencyName);
                     }, connection);
 
-            if (updated1 == 0) {
+            if (rows1 != 1) {
                 executor.rollbackTransaction(connection);
                 return new QueryUserResult.Error(ErrorType.NOT_FOUND);
             }
@@ -169,7 +169,7 @@ public class UserRepository implements UserFoundationRepository {
                 return new QueryUserResult.Error(ErrorType.NOT_FOUND);
             }
 
-            int updated = executor.query("UPDATE user_economy SET cents = cents - ? WHERE uuid = ? AND currency = ? AND cents >= ?")
+            int rows = executor.query("UPDATE user_economy SET cents = cents - ? WHERE uuid = ? AND currency = ? AND cents >= ?")
                     .writeAndReturnRowCount(statement -> {
                         statement.set(1, cents);
                         statement.set(2, UUIDConverter.convert(senderUuid));
@@ -177,7 +177,7 @@ public class UserRepository implements UserFoundationRepository {
                         statement.set(4, cents);
                     }, connection);
 
-            if (updated == 0) {
+            if (rows != 1) {
                 executor.rollbackTransaction(connection);
                 return new QueryUserResult.Error(ErrorType.NOT_ENOUGH_BALANCE);
             }
@@ -264,7 +264,7 @@ public class UserRepository implements UserFoundationRepository {
 
                     });
 
-            if (rows == 0) {
+            if (rows != 1) {
                 return new QueryUserResult.Error(ErrorType.NOT_FOUND);
             }
 
@@ -300,7 +300,7 @@ public class UserRepository implements UserFoundationRepository {
                         statement.set(3, currency.name().toLowerCase());
                     }, connection);
 
-            if (rows == 0) {
+            if (rows != 1) {
                 return new QueryUserResult.Error(ErrorType.NOT_FOUND);
             }
 
@@ -324,7 +324,7 @@ public class UserRepository implements UserFoundationRepository {
                         statement.set(3, currency.name().toLowerCase());
                     });
 
-            if (rows == 0) {
+            if (rows != 1) {
                 return new QueryUserResult.Error(ErrorType.NOT_FOUND);
             }
 
@@ -359,7 +359,7 @@ public class UserRepository implements UserFoundationRepository {
                         statement.set(3, currency.name().toLowerCase());
                     }, connection);
 
-            if (rows == 0) {
+            if (rows != 1) {
                 return new QueryUserResult.Error(ErrorType.NOT_FOUND);
             }
 
@@ -402,7 +402,7 @@ public class UserRepository implements UserFoundationRepository {
                         statement.set(3, currency.name().toLowerCase());
                     });
 
-            if (rows == 0) {
+            if (rows != 1) {
                 return new QueryUserResult.Error(ErrorType.NOT_FOUND);
             }
 
@@ -437,7 +437,7 @@ public class UserRepository implements UserFoundationRepository {
                         statement.set(3, currency.name().toLowerCase());
                     }, connection);
 
-            if (rows == 0) {
+            if (rows != 1) {
                 return new QueryUserResult.Error(ErrorType.NOT_FOUND);
             }
 
@@ -452,43 +452,20 @@ public class UserRepository implements UserFoundationRepository {
     @Override
     public QueryUserResult withdrawCurrency(UUID uuid, Currency currency, long cents) {
 
-        try (DatabaseExecutor executor = database.execute(); Connection connection = executor.getHikariConnection().getConnection()) {
+        try (DatabaseExecutor executor = database.execute()) {
 
-            String currencyName = currency.name().toLowerCase();
-
-            executor.startTransaction(connection);
-
-            long databaseCents = executor.query("SELECT cents FROM user_economy WHERE uuid = ? AND currency = ? FOR UPDATE")
-                    .readOne(statement -> {
-                                statement.set(1, UUIDConverter.convert(uuid));
-                                statement.set(2, currencyName);
-                            },
-                            query -> (long) query.get("cents"), connection)
-                    .orElse(0L);
-
-            if (databaseCents < cents) {
-                executor.rollbackTransaction(connection);
-                return new QueryUserResult.Error(ErrorType.NOT_ENOUGH_BALANCE);
-            }
-
-            // The `cents >= ?` check here is not strictly necessary because we already perform
-            // a SELECT ... FOR UPDATE within a transaction (auto-commit = false),
-            // which locks the row until the transaction either commits, rolls back,
-            // or the connection is returned to the HikariCP pool (Hikari will automatically roll back
-            // any uncommitted transaction when the connection is returned, releasing the lock).
-            int rows = executor.query("UPDATE user_economy SET cents = cents - ? WHERE uuid = ? AND currency = ?")
+            int rows = executor.query("UPDATE user_economy SET cents = cents - ? WHERE uuid = ? AND currency = ? AND cents >= ?")
                     .writeAndReturnRowCount(statement -> {
                         statement.set(1, cents);
                         statement.set(2, UUIDConverter.convert(uuid));
-                        statement.set(3, currencyName);
-                    }, connection);
+                        statement.set(3, currency.name().toLowerCase());
+                        statement.set(4, cents);
+                    });
 
-            if (rows == 0) {
-                executor.rollbackTransaction(connection);
-                return new QueryUserResult.Error(ErrorType.NOT_FOUND);
+            if (rows != 1) {
+                return new QueryUserResult.Error(ErrorType.NOT_ENOUGH_BALANCE);
             }
 
-            executor.commitTransaction(connection);
             return new QueryUserResult.SuccessNoData();
 
         } catch (SQLException e) {
@@ -518,34 +495,17 @@ public class UserRepository implements UserFoundationRepository {
                 return new QueryUserResult.Error(ErrorType.NOT_FOUND);
             }
 
-            long databaseCents = executor.query("SELECT cents FROM user_economy WHERE uuid = ? AND currency = ? FOR UPDATE")
-                    .readOne(statement -> {
-                                statement.set(1, pair.key());
-                                statement.set(2, currencyName);
-                            },
-                            query -> (long) query.get("cents"), connection)
-                    .orElse(0L);
-
-            if (databaseCents < cents) {
-                executor.rollbackTransaction(connection);
-                return new QueryUserResult.Error(ErrorType.NOT_ENOUGH_BALANCE);
-            }
-
-            // The `cents >= ?` check here is not strictly necessary because we already perform
-            // a SELECT ... FOR UPDATE within a transaction (auto-commit = false),
-            // which locks the row until the transaction either commits, rolls back,
-            // or the connection is returned to the HikariCP pool (Hikari will automatically roll back
-            // any uncommitted transaction when the connection is returned, releasing the lock).
-            int rows = executor.query("UPDATE user_economy SET cents = cents - ? WHERE uuid = ? AND currency = ?")
+            int rows = executor.query("UPDATE user_economy SET cents = cents - ? WHERE uuid = ? AND currency = ? AND cents >= ?")
                     .writeAndReturnRowCount(statement -> {
                         statement.set(1, cents);
                         statement.set(2, pair.key());
                         statement.set(3, currencyName);
+                        statement.set(4, cents);
                     }, connection);
 
-            if (rows == 0) {
+            if (rows != 1) {
                 executor.rollbackTransaction(connection);
-                return new QueryUserResult.Error(ErrorType.NOT_FOUND);
+                return new QueryUserResult.Error(ErrorType.NOT_ENOUGH_BALANCE);
             }
 
             executor.commitTransaction(connection);
@@ -699,6 +659,75 @@ public class UserRepository implements UserFoundationRepository {
             throw new RuntimeException(e);
         }
 
+    }
+
+    @Override
+    public QueryUserResult addCurrencyLowLevel(UUID uuid, Currency currency, long cents, DatabaseExecutor executor, Connection connection) throws SQLException {
+
+        int rows = executor.query("UPDATE user_economy SET cents = cents + ? WHERE uuid = ? AND currency = ?")
+                .writeAndReturnRowCount(statement -> {
+                    statement.set(1, cents);
+                    statement.set(2, UUIDConverter.convert(uuid));
+                    statement.set(3, currency.name().toLowerCase());
+                }, connection);
+
+        if (rows != 1) {
+            return new QueryUserResult.Error(ErrorType.NOT_FOUND);
+        }
+
+        return new QueryUserResult.SuccessNoData();
+    }
+
+    @Override
+    public QueryUserResult withdrawCurrencyLowLevel(UUID uuid, Currency currency, long cents, DatabaseExecutor executor, Connection connection) throws SQLException {
+
+        String currencyName = currency.name().toLowerCase();
+
+        int rows = executor
+                .query("UPDATE user_economy SET cents = cents - ? WHERE uuid = ? AND currency = ? AND cents >= ?")
+                .writeAndReturnRowCount(statement -> {
+                    statement.set(1, cents);
+                    statement.set(2, UUIDConverter.convert(uuid));
+                    statement.set(3, currencyName);
+                    statement.set(4, cents);
+                }, connection);
+
+        if (rows != 1) {
+            return new QueryUserResult.Error(ErrorType.NOT_ENOUGH_BALANCE);
+        }
+
+        return new QueryUserResult.SuccessNoData();
+    }
+
+    @Override
+    public QueryUserResult updateCurrenciesLowLevel(UUID senderUuid, UUID receiverUuid, Currency currency, long cents, DatabaseExecutor executor, Connection connection) throws SQLException {
+
+        String currencyName = currency.name().toLowerCase();
+
+        int rows = executor.query("UPDATE user_economy SET cents = cents - ? WHERE uuid = ? AND currency = ? AND cents >= ?")
+                .writeAndReturnRowCount(statement -> {
+                    statement.set(1, cents);
+                    statement.set(2, UUIDConverter.convert(senderUuid));
+                    statement.set(3, currencyName);
+                    statement.set(4, cents);
+                }, connection);
+
+        if (rows != 1) {
+            return new QueryUserResult.Error(ErrorType.NOT_ENOUGH_BALANCE);
+        }
+
+        int rows1 = executor.query("UPDATE user_economy SET cents = cents + ? WHERE uuid = ? AND currency = ?")
+                .writeAndReturnRowCount(statement -> {
+                    statement.set(1, cents);
+                    statement.set(2, UUIDConverter.convert(receiverUuid));
+                    statement.set(3, currencyName);
+                }, connection);
+
+        if (rows1 != 1) {
+            return new QueryUserResult.Error(ErrorType.NOT_FOUND);
+        }
+
+        return new QueryUserResult.SuccessNoData();
     }
 
 }
