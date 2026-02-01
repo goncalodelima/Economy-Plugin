@@ -407,6 +407,8 @@ public void onInventoryClick(InventoryClickEvent event) {
 
         if (event.getRawSlot() == confirmSlot) {
 
+           AuctionItem auctionItem = gui.getAuctionItem();
+            
            // Prevents purchases at the same time for the same auctionItem
            if (pendingCache.contains(auctionItem.getId())) {
               // Already processing
@@ -419,7 +421,6 @@ public void onInventoryClick(InventoryClickEvent event) {
            EconomyApi<Player> api = Main.economyApi.key();
            User buyerUser = api.getUserService().get(buyerUuid);
            long balance = buyerUser.get(Main.economyApi.value());
-           AuctionItem auctionItem = gui.getAuctionItem();
            
            // The cache is not strictly necessary, but recommended
            // because it prevents users from spamming clicks in the menu—for example,
