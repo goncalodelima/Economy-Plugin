@@ -332,7 +332,7 @@ public void onEnable() {
 }
 ```
 
-#### AuctionItemService.class: (Implements: `AuctionItemFoundationItemRepository`)
+#### AuctionItemService.class: (Implements: `AuctionItemFoundationItemService`)
 ```java
 
 @Override
