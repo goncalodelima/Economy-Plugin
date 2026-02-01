@@ -40,26 +40,24 @@ public class EconomyTransactionManager implements EconomyTransactionalApi {
     }
 
     @Override
-    public boolean executeInEconomyTransaction(@NotNull Database database, @NotNull EconomyTransactionAction action) throws SQLException {
+    public QueryUserResult executeInEconomyTransaction(@NotNull Database database, @NotNull EconomyTransactionAction action) throws SQLException {
 
         try (DatabaseExecutor executor = database.execute();
              Connection connection = executor.getHikariConnection().getConnection()) {
 
             executor.startTransaction(connection);
 
-            QueryUserResult result;
-
             try {
 
-                result = action.execute(userService, executor, connection);
+                QueryUserResult result = action.execute(userService, executor, connection);
 
                 if (result instanceof QueryUserResult.Error) {
                     executor.rollbackTransaction(connection);
-                    return false;
+                    return result;
                 }
 
                 executor.commitTransaction(connection);
-                return true;
+                return result;
 
             } catch (Exception exception) {
                 executor.rollbackTransaction(connection);

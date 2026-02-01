@@ -50,7 +50,7 @@ java {
 }
 
 group = "pt.gongas"
-version = "1.2.0"
+version = "1.2.1"
 description = "Paper module for Economy Plugin"
 
 paperweight {

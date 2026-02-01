@@ -22,6 +22,7 @@
 package pt.gongas.economy.shared.transaction;
 
 import pt.gongas.database.Database;
+import pt.gongas.economy.shared.user.QueryUserResult;
 
 import java.sql.SQLException;
 
@@ -85,6 +86,6 @@ import java.sql.SQLException;
  */
 public interface EconomyTransactionalApi {
 
-    boolean executeInEconomyTransaction(Database database, EconomyTransactionAction action) throws SQLException;
+    QueryUserResult executeInEconomyTransaction(Database database, EconomyTransactionAction action) throws SQLException;
 
 }
