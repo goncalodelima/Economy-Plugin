@@ -100,7 +100,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("pt.gongas:EconomyPlugin-paper:1.2.0")
+    compileOnly("pt.gongas:EconomyPlugin-paper:1.2.1")
 }
 ```
 
@@ -116,7 +116,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly "pt.gongas:EconomyPlugin-paper:1.2.0"
+    compileOnly "pt.gongas:EconomyPlugin-paper:1.2.1"
 }
 ```
 
@@ -136,7 +136,7 @@ dependencies {
     <dependency>
         <groupId>pt.gongas</groupId>
         <artifactId>EconomyPlugin-paper</artifactId>
-        <version>1.2.0</version>
+        <version>1.2.1</version>
         <scope>provided</scope>
     </dependency>
 </dependencies>
@@ -336,7 +336,7 @@ public void onEnable() {
 ```java
 
 @Override
-public CompletableFuture<Boolean> purchaseItem(UUID buyerUuid, AuctionItem auctionItem) {
+public CompletableFuture<QueryUserResult> purchaseItem(UUID buyerUuid, AuctionItem auctionItem) {
     return CompletableFuture.supplyAsync(() -> auctionItemRepository.purchaseItem(buyerUuid, auctionItem), databaseExecutor)
             .exceptionally(e -> {
                 logger.log(Level.SEVERE, "Failed to purchase auction item with ID " + auctionItem.getId() + " by buyer " + buyerUuid, e);
@@ -349,7 +349,7 @@ public CompletableFuture<Boolean> purchaseItem(UUID buyerUuid, AuctionItem aucti
 ```java
 
 @Override
-public boolean purchaseItem(UUID buyerUuid, AuctionItem auctionItem) {
+public QueryUserResult purchaseItem(UUID buyerUuid, AuctionItem auctionItem) {
 
     try {
 
@@ -436,15 +436,23 @@ public void onInventoryClick(InventoryClickEvent event) {
            // Add auctionItem id to lock to prevent multiple purchase attempts at the same time
            pendingCache.add(auctionItem.getId());
 
-            auctionItemService.purchaseItem(buyerUuid, auctionItem).thenAcceptAsync(success -> {
+            auctionItemService.purchaseItem(buyerUuid, auctionItem).thenAcceptAsync(query -> {
 
                // Always release the lock
                pendingCache.remove(auctionItem.getId());
-                
-                if (!success) {
-                   // Not enough money, SQL error, or item already purchased
-                   return;
-                }
+
+               if (result instanceof QueryUserResult.Error(ErrorType type)) {
+
+                  Component errorMessage = switch (type) {
+                     case EXTERNAL_PLUGIN -> Component.translatable("auction-item-expired-or-purchased:");
+                     case NOT_ENOUGH_BALANCE -> Component.translatable("not-enough-money");
+                     case NOT_FOUND -> Component.translatable("seller-user-not-found");
+                     default -> Component.translatable("lang.error"); // Exception error
+                  };
+
+                  humanEntity.sendMessage(errorMessage);
+                  return;
+               }
                 
                 // update economy cache here
                 

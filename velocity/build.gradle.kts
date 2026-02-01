@@ -45,7 +45,7 @@ java {
 }
 
 group = "pt.gongas"
-version = "1.2.0"
+version = "1.2.1"
 description = "Velocity module for Economy Plugin"
 
 dependencies {
