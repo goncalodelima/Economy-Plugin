@@ -388,7 +388,7 @@ public QueryUserResult purchaseItem(UUID buyerUuid, AuctionItem auctionItem) {
 ```java
 
 // Simple lock to prevent duplicate operations
-private final Set<Integer> pendingCache = new HashSet<>();
+private final Map<UUID, Integer> pendingCache = new HashMap<>();
 
 @EventHandler
 public void onInventoryClick(InventoryClickEvent event) {
@@ -407,20 +407,31 @@ public void onInventoryClick(InventoryClickEvent event) {
 
         if (event.getRawSlot() == confirmSlot) {
 
-           AuctionItem auctionItem = gui.getAuctionItem();
-            
-           // Prevents purchases at the same time for the same auctionItem
-           if (pendingCache.contains(auctionItem.getId())) {
-              // Already processing
-               return;
-           }
-
            HumanEntity humanEntity = event.getWhoClicked();
            UUID buyerUuid = humanEntity.getUniqueId();
-            
+
+           // Helps reduce load by avoiding duplicate purchase attempts from the same user
+           // in this JVM. It is not a real prevention—at worst, it just results in
+           // an extra lookup in the map. The actual protection is enforced by the SQL query.
+           if (pendingCache.containsKey(buyerUuid)) {
+              // Already processing
+              humanEntity.sendMessage(Component.translatable("lang.wait"));
+              UISoundUtil.playErrorSound(humanEntity);
+              return;
+           }
+           
            EconomyApi<Player> api = Main.economyApi.key();
            User buyerUser = api.getUserService().get(buyerUuid);
+
+           if (buyerUser == null) {
+              // Something strange happened and the player needs to log back into the server
+              humanEntity.sendMessage(Component.translatable("lang.error-relog"));
+              UISoundUtil.playErrorSound(humanEntity);
+              return;
+           }
+           
            long balance = buyerUser.get(Main.economyApi.value());
+           AuctionItem auctionItem = gui.getAuctionItem();
            
            // The cache is not strictly necessary, but recommended
            // because it prevents users from spamming clicks in the menu—for example,
@@ -430,27 +441,31 @@ public void onInventoryClick(InventoryClickEvent event) {
            // In the worst case, an extra lookup in the Map is performed.
            if (balance < auctionItem.getCentsPrice()) {
               // Not enough money
+              humanEntity.sendMessage(Component.translatable("not-enough-money"));
+              UISoundUtil.playErrorSound(humanEntity);
               return;
            }
 
-           // Add auctionItem id to lock to prevent multiple purchase attempts at the same time
-           pendingCache.add(auctionItem.getId());
+           // Adds the auctionItem ID to the lock for the same user in this process
+           // to prevent multiple purchase attempts at the same time.
+           pendingCache.put(buyerUuid, auctionItem.getId());
 
             auctionItemService.purchaseItem(buyerUuid, auctionItem).thenAcceptAsync(query -> {
 
                // Always release the lock
-               pendingCache.remove(auctionItem.getId());
-
+               pendingCache.remove(buyerUuid);
+                
                if (result instanceof QueryUserResult.Error(ErrorType type)) {
 
                   Component errorMessage = switch (type) {
-                     case EXTERNAL_PLUGIN -> Component.translatable("auction-item-expired-or-purchased:");
+                     case EXTERNAL_PLUGIN -> Component.translatable("auction-item-expired-or-purchased");
                      case NOT_ENOUGH_BALANCE -> Component.translatable("not-enough-money");
                      case NOT_FOUND -> Component.translatable("seller-user-not-found");
                      default -> Component.translatable("lang.error"); // Exception error
                   };
 
                   humanEntity.sendMessage(errorMessage);
+                  UISoundUtil.playErrorSound(humanEntity);
                   return;
                }
                 
