@@ -21,7 +21,7 @@
 
 package pt.gongas.economy.platforms.paper;
 
-import co.aikar.commands.BukkitCommandManager;
+import co.aikar.commands.PaperCommandManager;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.entity.Player;
 import pt.gongas.database.Database;
@@ -144,7 +144,7 @@ public class PaperEconomyPlugin extends JavaPlugin {
         RankingView view = new RankingView(inventory, userService);
         getServer().getPluginManager().registerEvents(view, this);
 
-        BukkitCommandManager commandManager = new BukkitCommandManager(this);
+        PaperCommandManager commandManager = new PaperCommandManager(this);
         commandManager.enableUnstableAPI("help");
 
         Set<UUID> uuids = ConcurrentHashMap.newKeySet();
