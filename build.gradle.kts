@@ -58,7 +58,7 @@ subprojects {
             archiveClassifier.set("sources")
             from(javaExt.sourceSets["main"].allSource)
 
-            if (project.name == "bukkit") { // Include the shared project in bukkit-sources.jar
+            if (project.name == "paper") { // Include the shared project in paper-sources.jar
                 val sharedProject = project(":shared")
                 val sharedJava = sharedProject.extensions.getByType<JavaPluginExtension>()
                 from(sharedJava.sourceSets["main"].allSource)
