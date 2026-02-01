@@ -388,7 +388,7 @@ public boolean purchaseItem(UUID buyerUuid, AuctionItem auctionItem) {
 ```java
 
 // Simple lock to prevent duplicate operations
-private final Set<Integer> pendingCache = new HashMap<>();
+private final Set<Integer> pendingCache = new HashSet<>();
 
 @EventHandler
 public void onInventoryClick(InventoryClickEvent event) {
