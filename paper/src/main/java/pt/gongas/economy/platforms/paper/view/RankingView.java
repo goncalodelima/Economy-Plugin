@@ -1,7 +1,7 @@
 /*
  *
  *  * This file is part of Economy-Plugin - https://github.com/goncalodelima/Economy-Plugin
- *  * Copyright (c) 2025 goncalodelima and contributors
+ *  * Copyright (c) 2026 goncalodelima and contributors
  *  *
  *  * This program is free software: you can redistribute it and/or modify
  *  * it under the terms of the GNU General Public License as published by
@@ -102,7 +102,7 @@ public class RankingView implements Listener {
         // compute items
         userService.getTop(currency, 1, usersPerPage).thenAcceptAsync(list -> {
 
-            if (!inventory.getViewers().contains(player)) {
+            if (!player.isConnected() || !inventory.getViewers().contains(player)) {
                 return;
             }
 
@@ -124,7 +124,7 @@ public class RankingView implements Listener {
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
 
-        if (!(event.getInventory().getHolder() instanceof GuiHolder gui)) {
+        if (!(event.getInventory().getHolder(false) instanceof GuiHolder gui)) {
             return;
         }
 
@@ -190,7 +190,7 @@ public class RankingView implements Listener {
     @EventHandler
     public void onInventoryDrag(InventoryDragEvent event) {
 
-        if (event.getInventory().getHolder() instanceof GuiHolder) {
+        if (event.getInventory().getHolder(false) instanceof GuiHolder) {
             event.setCancelled(true);
         }
 
@@ -201,7 +201,7 @@ public class RankingView implements Listener {
 
             Player player = (Player) event.getWhoClicked();
 
-            if (!inventory.getViewers().contains(player)) {
+            if (!player.isConnected() || !inventory.getViewers().contains(player)) {
                 return;
             }
 
@@ -242,7 +242,7 @@ public class RankingView implements Listener {
 
             Player player = (Player) event.getWhoClicked();
 
-            if (!inventory.getViewers().contains(player)) {
+            if (!player.isConnected() || !inventory.getViewers().contains(player)) {
                 return;
             }
 

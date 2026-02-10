@@ -393,7 +393,7 @@ private final Map<UUID, Integer> pendingCache = new HashMap<>();
 @EventHandler
 public void onInventoryClick(InventoryClickEvent event) {
 
-        if (!((event.getInventory().getHolder()) instanceof AuctionHousePurchaseGuiHolder gui)) {
+        if (!((event.getInventory().getHolder(false)) instanceof AuctionHousePurchaseGuiHolder gui)) {
             return;
         }
 
