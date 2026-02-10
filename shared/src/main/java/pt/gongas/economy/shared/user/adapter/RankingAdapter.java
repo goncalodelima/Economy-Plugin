@@ -35,9 +35,9 @@ public class RankingAdapter implements DatabaseAdapter<RankingUser> {
     @Override
     public RankingUser adapt(DatabaseQuery query) throws SQLException {
 
-        UUID uuid = UUIDConverter.convert((byte[]) query.get("uuid"));
-        String nickname = (String) query.get("nickname");
-        long cents = (long) query.get("cents");
+        UUID uuid = UUIDConverter.convert(query.getBytes("uuid"));
+        String nickname = query.getString("nickname");
+        long cents = query.getLong("cents");
         LocalDateTime lastLoginDate = (LocalDateTime) query.get("last_login_date");
 
         return new RankingUser(uuid, nickname, cents, lastLoginDate);

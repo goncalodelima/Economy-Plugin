@@ -44,16 +44,16 @@ public class UserAdapter implements DatabaseAdapter<User> {
     @Override
     public User adapt(DatabaseQuery query) throws SQLException {
 
-        UUID uuid = UUIDConverter.convert((byte[]) query.get("uuid"));
-        String nickname = (String) query.get("nickname");
+        UUID uuid = UUIDConverter.convert(query.getBytes("uuid"));
+        String nickname = query.getString("nickname");
         Map<Currency, Long> currencies = new HashMap<>();
 
         do {
 
-            Currency currency = currencyService.get(((String) query.get("currency")).toLowerCase());
+            Currency currency = currencyService.get(query.getString("currency").toLowerCase());
 
             if (currency != null) {
-                currencies.put(currency, (Long) query.get("cents"));
+                currencies.put(currency, query.getLong("cents"));
             }
 
         } while (query.next());
