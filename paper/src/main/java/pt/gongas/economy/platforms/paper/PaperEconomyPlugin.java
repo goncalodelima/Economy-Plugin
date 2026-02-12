@@ -54,11 +54,7 @@ import pt.gongas.redis.redis.RedisManager;
 
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
+import java.util.concurrent.*;
 
 public class PaperEconomyPlugin extends JavaPlugin {
 
@@ -95,6 +91,12 @@ public class PaperEconomyPlugin extends JavaPlugin {
         CurrencyFoundationService currencyService = new CurrencyService();
         new PaperCurrencyLoader(currency).setup().forEach(currencyService::put);
 
+        int hikariMaxPoolSize = getConfig().getInt("hikari.hikariMaxPoolSize", 10);
+        int hikariConnectionTimeout = getConfig().getInt("hikari.connectionTimeout", 5_000);
+        int hikariMinimumIdle = getConfig().getInt("hikari.minimumIdle", 10);
+        int hikariMaximumLifeTime = getConfig().getInt("hikari.maximumLifetime", 1800_000);
+        int hikariKeepAliveTime = getConfig().getInt("hikari.hikariKeepAliveTime", 30_000);
+
         datacenter = new CustomDatabaseConnection(
                 new DatabaseCredentialsImpl(DatabaseType.MYSQL,
                         getConfig().getString("database.host"),
@@ -104,11 +106,11 @@ public class PaperEconomyPlugin extends JavaPlugin {
                         getConfig().getString("database.password"),
                         getConfig().getString("database.file"))
         ).setup(
-                getConfig().getInt("hikari.maximumPoolSize"),
-                getConfig().getInt("hikari.connectionTimeout"),
-                getConfig().getInt("hikari.minimumIdle"),
-                getConfig().getInt("hikari.maximumLifetime"),
-                getConfig().getInt("hikari.keepaliveTime")
+                hikariMaxPoolSize,
+                hikariConnectionTimeout,
+                hikariMinimumIdle,
+                hikariMaximumLifeTime,
+                hikariKeepAliveTime
         );
 
         String messagingConfig = getConfig().getString("messaging-service", "none");
@@ -132,12 +134,12 @@ public class PaperEconomyPlugin extends JavaPlugin {
             transactions = null;
         }
 
-        int cores = Runtime.getRuntime().availableProcessors();
-        databaseExecutor = Executors.newFixedThreadPool(Math.min(cores / 2, Math.max(1, getConfig().getInt("database.executorThreads"))));
-
-        if (cores < 4) {
-            getLogger().log(Level.WARNING, "The plugin is running on a machine that provides less than 4 cores to the JVM, which is very low. The general rule is to switch machines when you deploy the server to production.");
-        }
+        databaseExecutor = new ThreadPoolExecutor(hikariMinimumIdle,
+                hikariMaxPoolSize,
+                hikariKeepAliveTime,
+                TimeUnit.MILLISECONDS,
+                new LinkedBlockingQueue<>()
+        );
 
         UserFoundationService userService = new UserService(getLogger(), databaseExecutor, currencyService, datacenter);
 
