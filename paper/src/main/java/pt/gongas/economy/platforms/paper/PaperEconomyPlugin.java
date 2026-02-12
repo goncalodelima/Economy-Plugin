@@ -91,11 +91,11 @@ public class PaperEconomyPlugin extends JavaPlugin {
         CurrencyFoundationService currencyService = new CurrencyService();
         new PaperCurrencyLoader(currency).setup().forEach(currencyService::put);
 
-        int hikariMaxPoolSize = getConfig().getInt("hikari.hikariMaxPoolSize", 10);
+        int hikariMaxPoolSize = getConfig().getInt("hikari.maximumPoolSize", 10);
         int hikariConnectionTimeout = getConfig().getInt("hikari.connectionTimeout", 5_000);
         int hikariMinimumIdle = getConfig().getInt("hikari.minimumIdle", 10);
         int hikariMaximumLifeTime = getConfig().getInt("hikari.maximumLifetime", 1800_000);
-        int hikariKeepAliveTime = getConfig().getInt("hikari.hikariKeepAliveTime", 30_000);
+        int hikariKeepaliveTime = getConfig().getInt("hikari.keepaliveTime", 30_000);
 
         datacenter = new CustomDatabaseConnection(
                 new DatabaseCredentialsImpl(DatabaseType.MYSQL,
@@ -110,7 +110,7 @@ public class PaperEconomyPlugin extends JavaPlugin {
                 hikariConnectionTimeout,
                 hikariMinimumIdle,
                 hikariMaximumLifeTime,
-                hikariKeepAliveTime
+                hikariKeepaliveTime
         );
 
         String messagingConfig = getConfig().getString("messaging-service", "none");
@@ -136,7 +136,7 @@ public class PaperEconomyPlugin extends JavaPlugin {
 
         databaseExecutor = new ThreadPoolExecutor(hikariMinimumIdle,
                 hikariMaxPoolSize,
-                hikariKeepAliveTime,
+                hikariKeepaliveTime,
                 TimeUnit.MILLISECONDS,
                 new LinkedBlockingQueue<>()
         );
