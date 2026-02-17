@@ -23,6 +23,7 @@ package pt.gongas.economy.platforms.paper;
 
 import co.aikar.commands.PaperCommandManager;
 import org.bstats.bukkit.Metrics;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import pt.gongas.database.Database;
 import pt.gongas.database.DatabaseType;
@@ -143,7 +144,7 @@ public class PaperEconomyPlugin extends JavaPlugin {
 
         UserFoundationService userService = new UserService(getLogger(), databaseExecutor, currencyService, datacenter);
 
-        RankingView view = new RankingView(inventory, userService);
+        RankingView view = new RankingView(inventory, userService, new NamespacedKey(this, "menu-item"));
         getServer().getPluginManager().registerEvents(view, this);
 
         PaperCommandManager commandManager = new PaperCommandManager(this);
