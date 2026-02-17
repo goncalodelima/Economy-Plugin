@@ -30,6 +30,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -38,6 +39,7 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.Nullable;
 import pt.gongas.economy.platforms.paper.PaperEconomyPlugin;
 import pt.gongas.economy.platforms.paper.util.config.Configuration;
@@ -51,6 +53,8 @@ import java.util.concurrent.CompletableFuture;
 public class RankingView implements Listener {
 
     private final UserFoundationService userService;
+
+    private final NamespacedKey key;
 
     private final int usersPerPage;
 
@@ -76,8 +80,9 @@ public class RankingView implements Listener {
 
     private final int seek;
 
-    public RankingView(Configuration inventory, UserFoundationService userService) {
+    public RankingView(Configuration inventory, UserFoundationService userService, NamespacedKey key) {
         this.userService = userService;
+        this.key = key;
         this.usersPerPage = inventory.getInt("ranking.usersPerPage", 45);
         this.size = inventory.getInt("ranking.size", 54);
         this.title = inventory.getString("ranking.title", "Most <currency> (Page <page>)");
@@ -308,6 +313,8 @@ public class RankingView implements Listener {
         );
 
         back.setData(DataComponentTypes.LORE, ItemLore.lore().lines(lore).build());
+
+        back.editPersistentDataContainer(pdc -> pdc.set(key, PersistentDataType.BOOLEAN, true));
         inventory.setItem(backSlot, back);
     }
 
@@ -331,6 +338,8 @@ public class RankingView implements Listener {
         );
 
         next.setData(DataComponentTypes.LORE, ItemLore.lore().lines(lore).build());
+
+        next.editPersistentDataContainer(pdc -> pdc.set(key, PersistentDataType.BOOLEAN, true));
         inventory.setItem(nextSlot, next);
     }
 
@@ -417,6 +426,7 @@ public class RankingView implements Listener {
         item.setData(DataComponentTypes.PROFILE, ResolvableProfile.resolvableProfile().name(user.nickname()).build());
         item.setData(DataComponentTypes.TOOLTIP_DISPLAY, TooltipDisplay.tooltipDisplay().addHiddenComponents(DataComponentTypes.PROFILE));
 
+        item.editPersistentDataContainer(pdc -> pdc.set(key, PersistentDataType.BOOLEAN, true));
         return item;
     }
 

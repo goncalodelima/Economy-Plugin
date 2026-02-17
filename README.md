@@ -100,7 +100,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("pt.gongas:EconomyPlugin-paper:1.2.2")
+    compileOnly("pt.gongas:EconomyPlugin-paper:1.2.3")
 }
 ```
 
@@ -116,7 +116,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly "pt.gongas:EconomyPlugin-paper:1.2.2"
+    compileOnly "pt.gongas:EconomyPlugin-paper:1.2.3"
 }
 ```
 
@@ -136,7 +136,7 @@ dependencies {
     <dependency>
         <groupId>pt.gongas</groupId>
         <artifactId>EconomyPlugin-paper</artifactId>
-        <version>1.2.2</version>
+        <version>1.2.3</version>
         <scope>provided</scope>
     </dependency>
 </dependencies>
@@ -185,7 +185,7 @@ public void onEnable() {
 #### Upgrade.class:
 ```java
 // Simple lock to prevent duplicate operations
-private final Set<UUID> upgradeCache = new HashMap<>();
+private final Set<UUID> upgradeCache = new HashSet<>();
 
 public void upgradeIsland(Island island, Player player) {
    
