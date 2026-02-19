@@ -96,7 +96,7 @@ public class PaperEconomyPlugin extends JavaPlugin {
         int hikariMaxPoolSize = getConfig().getInt("hikari.maximumPoolSize", 10);
         int hikariConnectionTimeout = getConfig().getInt("hikari.connectionTimeout", 5_000);
         int hikariMinimumIdle = getConfig().getInt("hikari.minimumIdle", 10);
-        int hikariMaximumLifeTime = getConfig().getInt("hikari.maximumLifetime", 1800_000);
+        int hikariMaximumLifeTime = getConfig().getInt("hikari.maximumLifetime", 1_800_000);
         int hikariKeepaliveTime = getConfig().getInt("hikari.keepaliveTime", 30_000);
 
         datacenter = new CustomDatabaseConnection(
