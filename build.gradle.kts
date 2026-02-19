@@ -51,7 +51,6 @@ subprojects {
 
     repositories {
         mavenCentral()
-        mavenLocal()
         maven("https://repo.extendedclip.com/releases") // PlaceholderAPI
         maven("https://repo.aikar.co/content/groups/aikar/") // Aikar
         maven("https://repo.papermc.io/repository/maven-public/") // paperweight, Velocity
