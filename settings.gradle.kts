@@ -21,23 +21,12 @@
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
-dependencyResolutionManagement {
-    repositories {
-        mavenCentral()
-        maven("https://repo.aikar.co/content/groups/aikar/") // Aikar
-        maven("https://repo.papermc.io/repository/maven-public/") // paperweight, Velocity
-        maven("https://repo.codemc.org/repository/nms/") // CraftBukkit + NMS
-        maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
-        maven("https://hub.spigotmc.org/nexus/content/groups/public/") // BStats
-    }
-}
-
-pluginManagement {
-    repositories {
-        gradlePluginPortal()
-        mavenCentral()
-    }
-}
+//pluginManagement {
+//    repositories {
+//        gradlePluginPortal()
+//        mavenCentral()
+//    }
+//}
 
 rootProject.name = "EconomyPlugin"
 
