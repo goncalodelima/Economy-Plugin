@@ -49,6 +49,18 @@ subprojects {
         archiveBaseName.set("EconomyPlugin-${project.name}")
     }
 
+    repositories {
+        mavenCentral()
+        mavenLocal()
+        maven("https://repo.extendedclip.com/releases") // PlaceholderAPI
+        maven("https://repo.aikar.co/content/groups/aikar/") // Aikar
+        maven("https://repo.papermc.io/repository/maven-public/") // paperweight, Velocity
+        maven("https://repo.codemc.org/repository/nms/") // CraftBukkit + NMS
+        maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+        maven("https://hub.spigotmc.org/nexus/content/groups/public/") // BStats
+        maven("https://repo.piggypiglet.me/releases")
+    }
+
     project.afterEvaluate {
 
         val javaExt = extensions.getByType<JavaPluginExtension>()

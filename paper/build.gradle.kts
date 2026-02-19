@@ -64,6 +64,7 @@ dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
     compileOnly(fileTree(mapOf("dir" to rootDir.resolve("libs"), "include" to listOf("*.jar"))))
     compileOnly("net.kyori:adventure-text-minimessage:4.24.0")
+    compileOnly("me.clip:placeholderapi:2.12.2")
     implementation("co.aikar:acf-paper:0.5.1-SNAPSHOT")
     implementation("org.bstats:bstats-bukkit:3.1.0")
     paperweight.paperDevBundle("1.21.11-R0.1-SNAPSHOT")
@@ -81,5 +82,5 @@ bukkit {
     author = "ReeachyZ_"
     website = "https://github.com/goncalodelima/Economy-Plugin"
     description = "Free Multi-economy plugin with multi-server support"
-    apiVersion = "1.13"
+    apiVersion = "1.21"
 }

@@ -33,6 +33,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.redisson.api.RTopic;
 import pt.gongas.economy.platforms.paper.api.PaperEconomyApi;
 import pt.gongas.economy.platforms.paper.command.EconomyCommand;
+import pt.gongas.economy.platforms.paper.hook.EconomyPlaceholderExpansion;
 import pt.gongas.economy.platforms.paper.listener.PlayerListener;
 import pt.gongas.economy.platforms.paper.runnable.PlayerBalanceRunnable;
 import pt.gongas.economy.platforms.paper.view.RankingView;
@@ -193,6 +194,8 @@ public class PaperEconomyPlugin extends JavaPlugin {
             });
 
         }
+
+        new EconomyPlaceholderExpansion(currencyService, userService).register();
 
         // BStats Metrics
         metrics = new Metrics(this, 28595);
