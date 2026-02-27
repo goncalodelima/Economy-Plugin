@@ -94,10 +94,10 @@ public class PaperEconomyPlugin extends JavaPlugin {
         new PaperCurrencyLoader(currency).setup().forEach(currencyService::put);
 
         int hikariMaxPoolSize = getConfig().getInt("hikari.maximumPoolSize", 10);
-        int hikariConnectionTimeout = getConfig().getInt("hikari.connectionTimeout", 5_000);
+        long hikariConnectionTimeout = getConfig().getLong("hikari.connectionTimeout", 5_000);
         int hikariMinimumIdle = getConfig().getInt("hikari.minimumIdle", 10);
-        int hikariMaximumLifeTime = getConfig().getInt("hikari.maximumLifetime", 1_800_000);
-        int hikariKeepaliveTime = getConfig().getInt("hikari.keepaliveTime", 30_000);
+        long hikariMaximumLifeTime = getConfig().getLong("hikari.maximumLifetime", 1_800_000);
+        long hikariKeepaliveTime = getConfig().getLong("hikari.keepaliveTime", 30_000);
 
         datacenter = new CustomDatabaseConnection(
                 new DatabaseCredentialsImpl(DatabaseType.MYSQL,
@@ -222,6 +222,7 @@ public class PaperEconomyPlugin extends JavaPlugin {
             } catch (InterruptedException ie) {
                 // (Re-)Cancel if current thread also interrupted
                 databaseExecutor.shutdownNow();
+                Thread.currentThread().interrupt();
             }
 
         }

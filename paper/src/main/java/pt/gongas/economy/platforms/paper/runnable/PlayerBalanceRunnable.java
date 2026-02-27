@@ -49,7 +49,7 @@ public class PlayerBalanceRunnable extends BukkitRunnable {
     @Override
     public void run() {
 
-        if (i++ == UPDATE_INTERVAL) { // Every hour, the cache is forcibly updated from the database for all players.
+        if (++i == UPDATE_INTERVAL) { // Every hour, the cache is forcibly updated from the database for all players.
 
             for (Player player : Bukkit.getOnlinePlayers()) {
                 uuidsToUpdate.add(player.getUniqueId());
