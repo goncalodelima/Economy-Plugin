@@ -136,12 +136,7 @@ public class PaperEconomyPlugin extends JavaPlugin {
             transactions = null;
         }
 
-        databaseExecutor = new ThreadPoolExecutor(hikariMinimumIdle,
-                hikariMaxPoolSize,
-                hikariKeepaliveTime,
-                TimeUnit.MILLISECONDS,
-                new LinkedBlockingQueue<>()
-        );
+        databaseExecutor = Executors.newVirtualThreadPerTaskExecutor();
 
         UserFoundationService userService = new UserService(getLogger(), databaseExecutor, currencyService, datacenter);
 
