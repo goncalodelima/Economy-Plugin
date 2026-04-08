@@ -100,7 +100,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("pt.gongas:EconomyPlugin-paper:1.2.6")
+    compileOnly("pt.gongas:EconomyPlugin-paper:1.2.7")
 }
 ```
 
@@ -116,7 +116,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly "pt.gongas:EconomyPlugin-paper:1.2.6"
+    compileOnly "pt.gongas:EconomyPlugin-paper:1.2.7"
 }
 ```
 
@@ -136,7 +136,7 @@ dependencies {
     <dependency>
         <groupId>pt.gongas</groupId>
         <artifactId>EconomyPlugin-paper</artifactId>
-        <version>1.2.6</version>
+        <version>1.2.7</version>
         <scope>provided</scope>
     </dependency>
 </dependencies>

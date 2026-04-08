@@ -89,7 +89,7 @@ public class Formatter {
 
             value = Double.parseDouble(formattedNumber);
 
-            if (Double.isInfinite(value) || Double.isNaN(value)) {
+            if (!Double.isFinite(value)) {
                 return -1;
             }
 
@@ -102,10 +102,22 @@ public class Formatter {
         }
 
         if (suffixIndex != -1) {
+
             value *= Math.pow(1000, suffixIndex);
+
+            if (!Double.isFinite(value)) {
+                return -1;
+            }
+
         }
 
-        return negative ? -value : value;
+        double finalValue = negative ? -value : value;
+
+        if (finalValue > Long.MAX_VALUE / 100.0 || finalValue < Long.MIN_VALUE / 100.0) {
+            return -1;
+        }
+
+        return finalValue;
     }
 
 }

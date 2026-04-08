@@ -24,7 +24,7 @@ plugins {
 }
 
 group = "pt.gongas"
-version = "1.2.6"
+version = "1.2.7"
 description = "Shared module for Economy Plugin"
 
 dependencies {
