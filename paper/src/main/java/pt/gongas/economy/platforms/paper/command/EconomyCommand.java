@@ -26,6 +26,7 @@ import co.aikar.commands.CommandHelp;
 import co.aikar.commands.annotation.*;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import pt.gongas.economy.platforms.paper.PaperEconomyPlugin;
 import pt.gongas.economy.platforms.paper.view.RankingView;
@@ -151,20 +152,26 @@ public class EconomyCommand extends BaseCommand {
     @Syntax("<target> <amount>")
     @CommandPermission("economy-plugin.admin")
     @CommandCompletion("@players")
-    public void set(Player player, String target, String amountToParse) {
+    public void set(CommandSender sender, String target, String amountToParse) {
 
         double amount = PaperEconomyPlugin.plugin.formatter.parseFormattedNumber(amountToParse);
 
         if (amount < 0) {
-            player.sendRichMessage(lang.getString("set-invalid-amount", "<red>The value must be greater than or equal to zero."));
+            sender.sendRichMessage(lang.getString("set-invalid-amount", "<red>The value must be greater than or equal to zero."));
             return;
         }
 
-        User user = userService.get(player.getUniqueId());
+        Player senderPlayer = (sender instanceof Player player) ? player : null;
 
-        if (user == null) {
-            player.sendRichMessage(lang.getString("error", "<red>Something unexpected happened. Please re-log into the server."));
-            return;
+        if (senderPlayer != null) {
+
+            User user = userService.get(senderPlayer.getUniqueId());
+
+            if (user == null) {
+                sender.sendRichMessage(lang.getString("error", "<red>Something unexpected happened. Please re-log into the server."));
+                return;
+            }
+
         }
 
         Player targetPlayer = Bukkit.getPlayer(target);
@@ -174,14 +181,14 @@ public class EconomyCommand extends BaseCommand {
             User targetUser = userService.get(targetPlayer.getUniqueId());
 
             if (targetUser == null) {
-                player.sendRichMessage(lang.getString("error1", "<red>Something unexpected happened. Contact an administrator."));
+                sender.sendRichMessage(lang.getString("error1", "<red>Something unexpected happened. Contact an administrator."));
                 return;
             }
 
-            economyApi.setCurrencyAndNotifyIfNeeded(player, targetPlayer, targetUser, currency, amount);
+            economyApi.setCurrencyAndNotifyIfNeeded(senderPlayer, targetPlayer, targetUser, currency, amount);
 
         } else {
-            economyApi.setCurrencyAndNotifyIfNeeded(player, target, currency, amount);
+            economyApi.setCurrencyAndNotifyIfNeeded(senderPlayer, target, currency, amount);
         }
 
     }
@@ -191,20 +198,26 @@ public class EconomyCommand extends BaseCommand {
     @Syntax("<target> <amount>")
     @CommandPermission("economy-plugin.admin")
     @CommandCompletion("@players")
-    public void add(Player player, String target, String amountToParse) {
+    public void add(CommandSender sender, String target, String amountToParse) {
 
         double amount = PaperEconomyPlugin.plugin.formatter.parseFormattedNumber(amountToParse);
 
         if (amount <= 0) {
-            player.sendRichMessage(lang.getString("add-invalid-amount", "<red>The amount must be greater than zero."));
+            sender.sendRichMessage(lang.getString("add-invalid-amount", "<red>The amount must be greater than zero."));
             return;
         }
 
-        User user = userService.get(player.getUniqueId());
+        Player senderPlayer = (sender instanceof Player player) ? player : null;
 
-        if (user == null) {
-            player.sendRichMessage(lang.getString("error", "<red>Something unexpected happened. Please re-log into the server."));
-            return;
+        if (senderPlayer != null) {
+
+            User user = userService.get(senderPlayer.getUniqueId());
+
+            if (user == null) {
+                sender.sendRichMessage(lang.getString("error", "<red>Something unexpected happened. Please re-log into the server."));
+                return;
+            }
+
         }
 
         Player targetPlayer = Bukkit.getPlayer(target);
@@ -214,14 +227,14 @@ public class EconomyCommand extends BaseCommand {
             User targetUser = userService.get(targetPlayer.getUniqueId());
 
             if (targetUser == null) {
-                player.sendRichMessage(lang.getString("error1", "<red>Something unexpected happened. Contact an administrator."));
+                sender.sendRichMessage(lang.getString("error1", "<red>Something unexpected happened. Contact an administrator."));
                 return;
             }
 
-            economyApi.addCurrencyAndNotifyIfNeeded(player, targetPlayer, targetUser, currency, amount);
+            economyApi.addCurrencyAndNotifyIfNeeded(senderPlayer, targetPlayer, targetUser, currency, amount);
 
         } else {
-            economyApi.addCurrencyAndNotifyIfNeeded(player, target, currency, amount);
+            economyApi.addCurrencyAndNotifyIfNeeded(senderPlayer, target, currency, amount);
         }
 
     }
@@ -231,20 +244,26 @@ public class EconomyCommand extends BaseCommand {
     @Syntax("<target> <amount>")
     @CommandPermission("economy-plugin.admin")
     @CommandCompletion("@players")
-    public void remove(Player player, String target, String amountToParse) {
+    public void remove(CommandSender sender, String target, String amountToParse) {
 
         double amount = PaperEconomyPlugin.plugin.formatter.parseFormattedNumber(amountToParse);
 
         if (amount <= 0) {
-            player.sendRichMessage(lang.getString("remove-invalid-amount", "<red>The amount must be greater than zero."));
+            sender.sendRichMessage(lang.getString("remove-invalid-amount", "<red>The amount must be greater than zero."));
             return;
         }
 
-        User user = userService.get(player.getUniqueId());
+        Player senderPlayer = (sender instanceof Player player) ? player : null;
 
-        if (user == null) {
-            player.sendRichMessage(lang.getString("error", "<red>Something unexpected happened. Please re-log into the server."));
-            return;
+        if (senderPlayer != null) {
+
+            User user = userService.get(senderPlayer.getUniqueId());
+
+            if (user == null) {
+                sender.sendRichMessage(lang.getString("error", "<red>Something unexpected happened. Please re-log into the server."));
+                return;
+            }
+
         }
 
         Player targetPlayer = Bukkit.getPlayer(target);
@@ -254,14 +273,14 @@ public class EconomyCommand extends BaseCommand {
             User targetUser = userService.get(targetPlayer.getUniqueId());
 
             if (targetUser == null) {
-                player.sendRichMessage(lang.getString("error1", "<red>Something unexpected happened. Contact an administrator."));
+                sender.sendRichMessage(lang.getString("error1", "<red>Something unexpected happened. Contact an administrator."));
                 return;
             }
 
-            economyApi.removeCurrencyAndNotifyIfNeeded(player, targetPlayer, targetUser, currency, amount);
+            economyApi.removeCurrencyAndNotifyIfNeeded(senderPlayer, targetPlayer, targetUser, currency, amount);
 
         } else {
-            economyApi.removeCurrencyAndNotifyIfNeeded(player, target, currency, amount);
+            economyApi.removeCurrencyAndNotifyIfNeeded(senderPlayer, target, currency, amount);
         }
 
     }
