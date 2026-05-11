@@ -34,6 +34,7 @@ import org.redisson.api.RTopic;
 import pt.gongas.economy.platforms.paper.api.PaperEconomyApi;
 import pt.gongas.economy.platforms.paper.command.EconomyCommand;
 import pt.gongas.economy.platforms.paper.hook.EconomyPlaceholderExpansion;
+import pt.gongas.economy.platforms.paper.lang.LangMessages;
 import pt.gongas.economy.platforms.paper.listener.PlayerListener;
 import pt.gongas.economy.platforms.paper.runnable.PlayerBalanceRunnable;
 import pt.gongas.economy.platforms.paper.view.RankingView;
@@ -87,6 +88,8 @@ public class PaperEconomyPlugin extends JavaPlugin {
 
         Configuration inventory = new Configuration(this, "inventory", "inventory.yml");
         inventory.saveDefaultConfig();
+
+        LangMessages messages = LangMessages.from(lang);
 
         formatter = new Formatter();
 
@@ -149,14 +152,14 @@ public class PaperEconomyPlugin extends JavaPlugin {
         Set<UUID> uuids = ConcurrentHashMap.newKeySet();
 
         EconomyTransactionManager transactionManager = new EconomyTransactionManager(userService);
-        economyApi = new PaperEconomyApi(lang, currencyService, userService, transactionManager, messaging, transactions, uuids);
+        economyApi = new PaperEconomyApi(messages, currencyService, userService, transactionManager, messaging, transactions, uuids);
 
         for (Currency economy : currencyService.getAll()) {
             commandManager.getCommandReplacements().addReplacement("currency", economy.name().toLowerCase());
-            commandManager.registerCommand(new EconomyCommand(lang, economy, userService, view, economyApi));
+            commandManager.registerCommand(new EconomyCommand(messages, economy, userService, view, economyApi));
         }
 
-        getServer().getPluginManager().registerEvents(new PlayerListener(lang, userService), this);
+        getServer().getPluginManager().registerEvents(new PlayerListener(messages, userService), this);
         new PlayerBalanceRunnable(userService, uuids).runTaskTimer(this, 20, 20);
 
         if (transactions != null) {

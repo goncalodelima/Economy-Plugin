@@ -172,8 +172,11 @@ public class UserService implements UserFoundationService {
     }
 
     @Override
-    public @Nullable User getOrCreateDataAndUpdate(@NotNull UUID uuid, @NotNull String nickname) {
-        return userRepository.findOrCreateAndUpdate(uuid, nickname);
+    public CompletableFuture<@Nullable User> getOrCreateDataAndUpdate(@NotNull UUID uuid, @NotNull String nickname) {
+        return CompletableFuture.supplyAsync(() -> userRepository.findOrCreateAndUpdate(uuid, nickname), databaseExecutor).exceptionally(e -> {
+            logger.log(Level.SEVERE, "Failed to get or create user and update: " + nickname, e);
+            return null;
+        });
     }
 
     @Override

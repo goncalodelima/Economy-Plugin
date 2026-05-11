@@ -190,7 +190,7 @@ public interface UserFoundationService {
      * @param nickname User nickname
      * @return User object
      */
-    @Nullable User getOrCreateDataAndUpdate(@NotNull UUID uuid, @NotNull String nickname);
+    CompletableFuture<@Nullable User> getOrCreateDataAndUpdate(@NotNull UUID uuid, @NotNull String nickname);
 
     /**
      * Retrieves a paginated leaderboard for a specific currency.

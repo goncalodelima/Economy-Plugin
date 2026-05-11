@@ -56,7 +56,7 @@ public class EconomyPlaceholderExpansion extends PlaceholderExpansion {
     @Override
     @NotNull
     public String getVersion() {
-        return "1.2.8";
+        return "1.2.9";
     }
 
     @Override

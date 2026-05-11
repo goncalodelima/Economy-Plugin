@@ -22,47 +22,50 @@
 package pt.gongas.economy.platforms.paper.listener;
 
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import pt.gongas.economy.platforms.paper.util.config.Configuration;
+import pt.gongas.economy.platforms.paper.PaperEconomyPlugin;
+import pt.gongas.economy.platforms.paper.lang.LangMessages;
 import pt.gongas.economy.shared.user.User;
 import pt.gongas.economy.shared.user.service.UserFoundationService;
 
 public class PlayerListener implements Listener {
 
-    private final Configuration lang;
+    private final LangMessages messages;
 
     private final UserFoundationService userService;
 
-    public PlayerListener(Configuration lang, UserFoundationService userService) {
-        this.lang = lang;
+    public PlayerListener(LangMessages messages, UserFoundationService userService) {
+        this.messages = messages;
         this.userService = userService;
-    }
-
-    @EventHandler
-    public void onAsyncPlayerLogin(AsyncPlayerPreLoginEvent event) {
-
-        User user = userService.getOrCreateDataAndUpdate(event.getUniqueId(), event.getName());
-
-        if (user == null) {
-            event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, MiniMessage.miniMessage().deserialize(lang.getString("error3", "<red>Something unexpected happened. Please try again.")));
-            return;
-        }
-
-        userService.put(user);
     }
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
 
-        User user = userService.get(event.getPlayer().getUniqueId());
+        Player player = event.getPlayer();
 
-        if (user != null) {
-            user.setOnline(true);
-        }
+        userService.getOrCreateDataAndUpdate(player.getUniqueId(), player.getName())
+                .thenAcceptAsync(user -> {
+
+                    if (!player.isConnected()) {
+                        return;
+                    }
+
+                    if (user == null) {
+                        // kick the player
+                        player.kick(MiniMessage.miniMessage().deserialize(messages.error));
+                        return;
+                    }
+
+                    userService.put(user);
+                    user.setOnline(true);
+
+                }, Bukkit.getScheduler().getMainThreadExecutor(PaperEconomyPlugin.plugin));
 
     }
 

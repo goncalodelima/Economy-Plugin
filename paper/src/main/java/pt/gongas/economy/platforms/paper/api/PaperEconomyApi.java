@@ -28,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.redisson.api.RTopic;
 import pt.gongas.economy.platforms.paper.PaperEconomyPlugin;
-import pt.gongas.economy.platforms.paper.util.config.Configuration;
+import pt.gongas.economy.platforms.paper.lang.LangMessages;
 import pt.gongas.economy.shared.api.EconomyApi;
 import pt.gongas.economy.shared.currency.Currency;
 import pt.gongas.economy.shared.currency.service.CurrencyFoundationService;
@@ -47,7 +47,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class PaperEconomyApi implements EconomyApi<Player> {
 
-    private final Configuration lang;
+    private final LangMessages messages;
 
     private final CurrencyFoundationService currencyService;
 
@@ -61,8 +61,8 @@ public class PaperEconomyApi implements EconomyApi<Player> {
 
     private final Set<UUID> uuids;
 
-    public PaperEconomyApi(Configuration lang, CurrencyFoundationService currencyService, UserFoundationService userService, EconomyTransactionManager transactionManager, Messaging messaging, RTopic transactions, Set<UUID> uuids) {
-        this.lang = lang;
+    public PaperEconomyApi(LangMessages messages, CurrencyFoundationService currencyService, UserFoundationService userService, EconomyTransactionManager transactionManager, Messaging messaging, RTopic transactions, Set<UUID> uuids) {
+        this.messages = messages;
         this.currencyService = currencyService;
         this.userService = userService;
         this.transactionManager = transactionManager;
@@ -105,7 +105,7 @@ public class PaperEconomyApi implements EconomyApi<Player> {
 
                 case QueryUserResult.Success s -> {
                     if (player != null)
-                        player.sendRichMessage(lang.getString("view-other-balance", "<green>The player <white><target> <green>has <white><balance><icon></bold><green>."),
+                        player.sendRichMessage(messages.viewOtherBalance,
                                 Placeholder.unparsed("target", s.nickname()),
                                 Placeholder.unparsed("balance", getFormatted(s.cents() / 100D)),
                                 Placeholder.parsed("icon", currency.icon())
@@ -117,9 +117,9 @@ public class PaperEconomyApi implements EconomyApi<Player> {
                     if (player != null) {
 
                         if (e.type() == ErrorType.NOT_FOUND) {
-                            player.sendRichMessage(lang.getString("database-not-found", "<red>No player with the entered name was found in the database."));
+                            player.sendRichMessage(messages.databaseNotFound);
                         } else { // Exception Error
-                            player.sendRichMessage(lang.getString("error2", "<red>An error occurred in the database while searching for this player's balance. Please contact an administrator."));
+                            player.sendRichMessage(messages.error2);
                         }
 
                     }
@@ -147,13 +147,13 @@ public class PaperEconomyApi implements EconomyApi<Player> {
 
                     if (notify) {
 
-                        senderPlayer.sendRichMessage(lang.getString("transaction-successful", "<green>You have successfully executed a transaction of <white><amount><icon></bold> <green>to the player <white><target><green>!"),
+                        senderPlayer.sendRichMessage(messages.transactionSuccessful,
                                 Placeholder.unparsed("target", targetPlayer.getName()),
                                 Placeholder.unparsed("amount", getFormatted(amount)),
                                 Placeholder.parsed("icon", currency.icon())
                         );
 
-                        targetPlayer.sendRichMessage(lang.getString("transaction-received-successful", "<green>You have successfully received <white><amount><icon> </bold><green>from the player <white><sender><green>!"),
+                        targetPlayer.sendRichMessage(messages.transactionReceivedSuccessful,
                                 Placeholder.unparsed("sender", senderPlayer.getName()),
                                 Placeholder.unparsed("amount", getFormatted(amount)),
                                 Placeholder.parsed("icon", currency.icon())
@@ -185,11 +185,11 @@ public class PaperEconomyApi implements EconomyApi<Player> {
                     if (notify) {
 
                         if (e.type() == ErrorType.NOT_ENOUGH_BALANCE) {
-                            senderPlayer.sendRichMessage(lang.getString("not-enough-balance", "<red>You don't have enough balance to complete this transaction!"));
+                            senderPlayer.sendRichMessage(messages.notEnoughBalance);
                         } else if (e.type() == ErrorType.NOT_FOUND) {
-                            senderPlayer.sendRichMessage(lang.getString("database-not-found", "<red>No player with the entered name was found in the database."));
+                            senderPlayer.sendRichMessage(messages.databaseNotFound);
                         } else { // Exception Error
-                            senderPlayer.sendRichMessage(lang.getString("payment-error", "<red>An unexpected error occurred while attempting to complete a transaction. Please try again, and if the problem persists, contact an administrator."));
+                            senderPlayer.sendRichMessage(messages.paymentError);
                         }
 
                     }
@@ -218,14 +218,14 @@ public class PaperEconomyApi implements EconomyApi<Player> {
 
                     if (notify) {
 
-                        senderPlayer.sendRichMessage(lang.getString("transaction-successful", "<green>You have successfully executed a transaction of <white><amount><icon></bold> <green>to the player <white><target><green>!"),
+                        senderPlayer.sendRichMessage(messages.transactionSuccessful,
                                 Placeholder.unparsed("target", s.nickname()),
                                 Placeholder.unparsed("amount", getFormatted(amount)),
                                 Placeholder.parsed("icon", currency.icon())
                         );
 
                         if (messaging != null) {
-                            messaging.sendMessage(target, lang.getString("transaction-received-successful", "<green>You have successfully received <white><amount><icon></bold> <green>from the player <white><sender><green>!")
+                            messaging.sendMessage(target, messages.transactionReceivedSuccessful
                                     .replace("<sender>", senderPlayer.getName())
                                     .replace("<amount>", getFormatted(amount))
                                     .replace("<icon>", currency.icon())
@@ -260,11 +260,11 @@ public class PaperEconomyApi implements EconomyApi<Player> {
                     if (notify) {
 
                         if (e.type() == ErrorType.NOT_FOUND) {
-                            senderPlayer.sendRichMessage(lang.getString("database-not-found", "<red>No player with the entered name was found in the database."));
+                            senderPlayer.sendRichMessage(messages.databaseNotFound);
                         } else if (e.type() == ErrorType.NOT_ENOUGH_BALANCE) {
-                            senderPlayer.sendRichMessage(lang.getString("not-enough-balance", "<red>You don't have enough balance to complete this transaction!"));
+                            senderPlayer.sendRichMessage(messages.notEnoughBalance);
                         } else { // Exception Error
-                            senderPlayer.sendRichMessage(lang.getString("payment-error", "<red>An unexpected error occurred while attempting to complete a transaction. Please try again, and if the problem persists, contact an administrator."));
+                            senderPlayer.sendRichMessage(messages.paymentError);
                         }
 
                     }
@@ -293,13 +293,13 @@ public class PaperEconomyApi implements EconomyApi<Player> {
 
                     if (senderPlayer != null) {
 
-                        senderPlayer.sendRichMessage(lang.getString("set-transaction-successful", "<green>You have successfully set <white><amount><icon></bold> <green>for <white><target><green>."),
+                        senderPlayer.sendRichMessage(messages.setTransactionSuccessful,
                                 Placeholder.unparsed("target", targetPlayer.getName()),
                                 Placeholder.unparsed("amount", getFormatted(amount)),
                                 Placeholder.parsed("icon", currency.icon())
                         );
 
-                        targetPlayer.sendRichMessage(lang.getString("set-transaction-received-successful", "<green>Your balance was set to <white><amount><icon></bold> <green>by <white><sender><green>."),
+                        targetPlayer.sendRichMessage(messages.setTransactionReceivedSuccessful,
                                 Placeholder.unparsed("sender", senderPlayer.getName()),
                                 Placeholder.unparsed("amount", getFormatted(amount)),
                                 Placeholder.parsed("icon", currency.icon())
@@ -321,9 +321,9 @@ public class PaperEconomyApi implements EconomyApi<Player> {
                     if (senderPlayer != null) {
 
                         if (e.type() == ErrorType.NOT_FOUND) {
-                            senderPlayer.sendRichMessage(lang.getString("database-not-found", "<red>No player with the entered name was found in the database."));
+                            senderPlayer.sendRichMessage(messages.databaseNotFound);
                         } else { // Exception Error
-                            senderPlayer.sendRichMessage(lang.getString("payment-error", "<red>An unexpected error occurred while attempting to complete a transaction. Please try again, and if the problem persists, contact an administrator."));
+                            senderPlayer.sendRichMessage(messages.paymentError);
                         }
 
                     }
@@ -352,14 +352,14 @@ public class PaperEconomyApi implements EconomyApi<Player> {
 
                     if (senderPlayer != null) {
 
-                        senderPlayer.sendRichMessage(lang.getString("set-transaction-successful", "<green>You have successfully set <white><amount><icon></bold> <green>for <white><target><green>."),
+                        senderPlayer.sendRichMessage(messages.setTransactionSuccessful,
                                 Placeholder.unparsed("target", s.nickname()),
                                 Placeholder.unparsed("amount", getFormatted(amount)),
                                 Placeholder.parsed("icon", currency.icon())
                         );
 
                         if (messaging != null) {
-                            messaging.sendMessage(s.nickname(), lang.getString("set-transaction-received-successful", "<green>Your balance was set to <white><amount><icon></bold> <green>by <white><sender><green>.")
+                            messaging.sendMessage(s.nickname(), messages.setTransactionReceivedSuccessful
                                     .replace("<sender>", senderPlayer.getName())
                                     .replace("<amount>", getFormatted(amount))
                                     .replace("<icon>", currency.icon())
@@ -385,9 +385,9 @@ public class PaperEconomyApi implements EconomyApi<Player> {
                     if (senderPlayer != null) {
 
                         if (e.type() == ErrorType.NOT_FOUND) {
-                            senderPlayer.sendRichMessage(lang.getString("database-not-found", "<red>No player with the entered name was found in the database."));
+                            senderPlayer.sendRichMessage(messages.databaseNotFound);
                         } else { // Exception Error
-                            senderPlayer.sendRichMessage(lang.getString("payment-error", "<red>An unexpected error occurred while attempting to complete a transaction. Please try again, and if the problem persists, contact an administrator."));
+                            senderPlayer.sendRichMessage(messages.paymentError);
                         }
 
                     }
@@ -416,13 +416,13 @@ public class PaperEconomyApi implements EconomyApi<Player> {
 
                     if (senderPlayer != null) {
 
-                        senderPlayer.sendRichMessage(lang.getString("add-transaction-successful", "<green>You have successfully added <white><amount><icon></bold> <green>to <white><target><green>."),
+                        senderPlayer.sendRichMessage(messages.addTransactionSuccessful,
                                 Placeholder.unparsed("target", targetPlayer.getName()),
                                 Placeholder.unparsed("amount", getFormatted(amount)),
                                 Placeholder.parsed("icon", currency.icon())
                         );
 
-                        targetPlayer.sendRichMessage(lang.getString("add-transaction-received-successful", "<green>You have successfully received <white><amount><icon></bold> <green>from <white><sender><green>."),
+                        targetPlayer.sendRichMessage(messages.addTransactionReceivedSuccessful,
                                 Placeholder.unparsed("sender", senderPlayer.getName()),
                                 Placeholder.unparsed("amount", getFormatted(amount)),
                                 Placeholder.parsed("icon", currency.icon())
@@ -444,9 +444,9 @@ public class PaperEconomyApi implements EconomyApi<Player> {
                     if (senderPlayer != null) {
 
                         if (e.type() == ErrorType.NOT_ENOUGH_BALANCE) {
-                            senderPlayer.sendRichMessage(lang.getString("not-enough-balance", "<red>You don't have enough balance to complete this transaction!"));
+                            senderPlayer.sendRichMessage(messages.notEnoughBalance);
                         } else { // Exception Error
-                            senderPlayer.sendRichMessage(lang.getString("payment-error", "<red>An unexpected error occurred while attempting to complete a transaction. Please try again, and if the problem persists, contact an administrator."));
+                            senderPlayer.sendRichMessage(messages.paymentError);
                         }
 
                     }
@@ -475,14 +475,14 @@ public class PaperEconomyApi implements EconomyApi<Player> {
 
                     if (senderPlayer != null) {
 
-                        senderPlayer.sendRichMessage(lang.getString("add-transaction-successful", "<green>You have successfully added <white><amount><icon></bold> <green>to <white><target><green>."),
+                        senderPlayer.sendRichMessage(messages.addTransactionSuccessful,
                                 Placeholder.unparsed("target", s.nickname()),
                                 Placeholder.unparsed("amount", getFormatted(amount)),
                                 Placeholder.parsed("icon", currency.icon())
                         );
 
                         if (messaging != null) {
-                            messaging.sendMessage(target, lang.getString("add-transaction-received-successful", "<green>You have successfully received <white><amount><icon></bold> <green>from <white><sender><green>.")
+                            messaging.sendMessage(target, messages.addTransactionReceivedSuccessful
                                     .replace("<sender>", senderPlayer.getName())
                                     .replace("<amount>", getFormatted(amount))
                                     .replace("<icon>", currency.icon())
@@ -507,11 +507,11 @@ public class PaperEconomyApi implements EconomyApi<Player> {
                     if (senderPlayer != null) {
 
                         if (e.type() == ErrorType.NOT_FOUND) {
-                            senderPlayer.sendRichMessage(lang.getString("database-not-found", "<red>No player with the entered name was found in the database."));
+                            senderPlayer.sendRichMessage(messages.databaseNotFound);
                         } else if (e.type() == ErrorType.NOT_ENOUGH_BALANCE) {
-                            senderPlayer.sendRichMessage(lang.getString("not-enough-balance", "<red>You don't have enough balance to complete this transaction!"));
+                            senderPlayer.sendRichMessage(messages.notEnoughBalance);
                         } else { // Exception Error
-                            senderPlayer.sendRichMessage(lang.getString("payment-error", "<red>An unexpected error occurred while attempting to complete a transaction. Please try again, and if the problem persists, contact an administrator."));
+                            senderPlayer.sendRichMessage(messages.paymentError);
                         }
 
                     }
@@ -540,13 +540,13 @@ public class PaperEconomyApi implements EconomyApi<Player> {
 
                     if (senderPlayer != null) {
 
-                        senderPlayer.sendRichMessage(lang.getString("remove-transaction-successful", "<green>You have successfully removed <white><amount><icon></bold> <green>from <white><target><green>."),
+                        senderPlayer.sendRichMessage(messages.removeTransactionSuccessful,
                                 Placeholder.unparsed("target", targetPlayer.getName()),
                                 Placeholder.unparsed("amount", getFormatted(amount)),
                                 Placeholder.parsed("icon", currency.icon())
                         );
 
-                        targetPlayer.sendRichMessage(lang.getString("remove-transaction-received-successful", "<green><white><amount><icon></bold> <green>was successfully removed from your balance by <white><sender><green>."),
+                        targetPlayer.sendRichMessage(messages.removeTransactionReceivedSuccessful,
                                 Placeholder.unparsed("sender", senderPlayer.getName()),
                                 Placeholder.unparsed("amount", getFormatted(amount)),
                                 Placeholder.parsed("icon", currency.icon())
@@ -569,9 +569,9 @@ public class PaperEconomyApi implements EconomyApi<Player> {
                     if (senderPlayer != null) {
 
                         if (e.type() == ErrorType.NOT_FOUND) {
-                            senderPlayer.sendRichMessage(lang.getString("database-not-found", "<red>No player with the entered name was found in the database."));
+                            senderPlayer.sendRichMessage(messages.databaseNotFound);
                         } else { // Exception Error
-                            senderPlayer.sendRichMessage(lang.getString("payment-error", "<red>An unexpected error occurred while attempting to complete a transaction. Please try again, and if the problem persists, contact an administrator."));
+                            senderPlayer.sendRichMessage(messages.paymentError);
                         }
 
                     }
@@ -600,14 +600,14 @@ public class PaperEconomyApi implements EconomyApi<Player> {
 
                     if (senderPlayer != null) {
 
-                        senderPlayer.sendRichMessage(lang.getString("remove-transaction-successful", "<green>You have successfully removed <white><amount><icon></bold> <green>from <white><target><green>."),
+                        senderPlayer.sendRichMessage(messages.removeTransactionSuccessful,
                                 Placeholder.unparsed("target", s.nickname()),
                                 Placeholder.unparsed("amount", getFormatted(amount)),
                                 Placeholder.parsed("icon", currency.icon())
                         );
 
                         if (messaging != null) {
-                            messaging.sendMessage(target, lang.getString("remove-transaction-received-successful", "<green><white><amount><icon></bold> <green>was successfully removed from your balance by <white><sender><green>.")
+                            messaging.sendMessage(target, messages.removeTransactionReceivedSuccessful
                                     .replace("<sender>", senderPlayer.getName())
                                     .replace("<amount>", getFormatted(amount))
                                     .replace("<icon>", currency.icon())
@@ -632,11 +632,11 @@ public class PaperEconomyApi implements EconomyApi<Player> {
                     if (senderPlayer != null) {
 
                         if (e.type() == ErrorType.NOT_FOUND) {
-                            senderPlayer.sendRichMessage(lang.getString("database-not-found", "<red>No player with the entered name was found in the database."));
+                            senderPlayer.sendRichMessage(messages.databaseNotFound);
                         } else if (e.type() == ErrorType.NOT_ENOUGH_BALANCE) {
-                            senderPlayer.sendRichMessage(lang.getString("not-enough-balance", "<red>You don't have enough balance to complete this transaction!"));
+                            senderPlayer.sendRichMessage(messages.notEnoughBalance);
                         } else { // Exception Error
-                            senderPlayer.sendRichMessage(lang.getString("payment-error", "<red>An unexpected error occurred while attempting to complete a transaction. Please try again, and if the problem persists, contact an administrator."));
+                            senderPlayer.sendRichMessage(messages.paymentError);
                         }
 
                     }
@@ -665,13 +665,13 @@ public class PaperEconomyApi implements EconomyApi<Player> {
 
                     if (senderPlayer != null) {
 
-                        senderPlayer.sendRichMessage(lang.getString("remove-transaction-successful", "<green>You have successfully removed <white><amount><icon></bold> <green>from <white><target><green>."),
+                        senderPlayer.sendRichMessage(messages.removeTransactionSuccessful,
                                 Placeholder.unparsed("target", targetPlayer.getName()),
                                 Placeholder.unparsed("amount", getFormatted(amount)),
                                 Placeholder.parsed("icon", currency.icon())
                         );
 
-                        targetPlayer.sendRichMessage(lang.getString("remove-transaction-received-successful", "<green><white><amount><icon></bold> <green>was successfully removed from your balance by <white><sender><green>."),
+                        targetPlayer.sendRichMessage(messages.removeTransactionReceivedSuccessful,
                                 Placeholder.unparsed("sender", senderPlayer.getName()),
                                 Placeholder.unparsed("amount", getFormatted(amount)),
                                 Placeholder.parsed("icon", currency.icon())
@@ -694,11 +694,11 @@ public class PaperEconomyApi implements EconomyApi<Player> {
                     if (senderPlayer != null) {
 
                         if (e.type() == ErrorType.NOT_ENOUGH_BALANCE) {
-                            senderPlayer.sendRichMessage(lang.getString("not-enough-balance", "<red>You don't have enough balance to complete this transaction!"));
+                            senderPlayer.sendRichMessage(messages.notEnoughBalance);
                         } else if (e.type() == ErrorType.NOT_FOUND) {
-                            senderPlayer.sendRichMessage(lang.getString("database-not-found", "<red>No player with the entered name was found in the database."));
+                            senderPlayer.sendRichMessage(messages.databaseNotFound);
                         } else { // Exception Error
-                            senderPlayer.sendRichMessage(lang.getString("payment-error", "<red>An unexpected error occurred while attempting to complete a transaction. Please try again, and if the problem persists, contact an administrator."));
+                            senderPlayer.sendRichMessage(messages.paymentError);
                         }
 
                     }
@@ -727,14 +727,14 @@ public class PaperEconomyApi implements EconomyApi<Player> {
 
                     if (senderPlayer != null) {
 
-                        senderPlayer.sendRichMessage(lang.getString("remove-transaction-successful", "<green>You have successfully removed <white><amount><icon></bold> <green>from <white><target><green>."),
+                        senderPlayer.sendRichMessage(messages.removeTransactionSuccessful,
                                 Placeholder.unparsed("target", s.nickname()),
                                 Placeholder.unparsed("amount", getFormatted(amount)),
                                 Placeholder.parsed("icon", currency.icon())
                         );
 
                         if (messaging != null) {
-                            messaging.sendMessage(target, lang.getString("remove-transaction-received-successful", "<green><white><amount><icon></bold> <green>was successfully removed from your balance by <white><sender><green>.")
+                            messaging.sendMessage(target, messages.removeTransactionReceivedSuccessful
                                     .replace("<sender>", senderPlayer.getName())
                                     .replace("<amount>", getFormatted(amount))
                                     .replace("<icon>", currency.icon())
@@ -759,11 +759,11 @@ public class PaperEconomyApi implements EconomyApi<Player> {
                     if (senderPlayer != null) {
 
                         if (e.type() == ErrorType.NOT_FOUND) {
-                            senderPlayer.sendRichMessage(lang.getString("database-not-found", "<red>No player with the entered name was found in the database."));
+                            senderPlayer.sendRichMessage(messages.databaseNotFound);
                         } else if (e.type() == ErrorType.NOT_ENOUGH_BALANCE) {
-                            senderPlayer.sendRichMessage(lang.getString("not-enough-balance", "<red>You don't have enough balance to complete this transaction!"));
+                            senderPlayer.sendRichMessage(messages.notEnoughBalance);
                         } else { // Exception Error
-                            senderPlayer.sendRichMessage(lang.getString("payment-error", "<red>An unexpected error occurred while attempting to complete a transaction. Please try again, and if the problem persists, contact an administrator."));
+                            senderPlayer.sendRichMessage(messages.paymentError);
                         }
 
                     }

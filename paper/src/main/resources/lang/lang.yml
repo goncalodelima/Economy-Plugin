@@ -1,7 +1,6 @@
 error: "<red>Something unexpected happened. Please re-log into the server."
 error1: "<red>Something unexpected happened. Contact an administrator."
 error2: "<red>An error occurred in the database while searching for this player's balance. Please contact an administrator."
-error3: "<red>Something unexpected happened. Please try again."
 view-own-balance: "<green>You have <white><balance><icon></bold><green>."
 view-other-balance: "<green>The player <white><target> <green>has <white><balance><icon></bold><green>."
 database-not-found: "<red>No player with the entered name was found in the database."
