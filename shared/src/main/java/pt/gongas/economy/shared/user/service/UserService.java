@@ -233,4 +233,9 @@ public class UserService implements UserFoundationService {
         return userRepository.updateCurrenciesLowLevel(senderUuid, receiverUuid, currency, cents, executor, connection);
     }
 
+    @Override
+    public QueryUserResult getCurrencyLowLevel(UUID uuid, Currency currency, DatabaseExecutor executor, Connection connection) throws SQLException {
+        return userRepository.getCurrencyLowLevel(uuid, currency, executor, connection);
+    }
+
 }

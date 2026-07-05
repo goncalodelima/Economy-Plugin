@@ -730,4 +730,21 @@ public class UserRepository implements UserFoundationRepository {
         return new QueryUserResult.SuccessNoData();
     }
 
+    @Override
+    public QueryUserResult getCurrencyLowLevel(UUID uuid, Currency currency, DatabaseExecutor executor, Connection connection) throws SQLException {
+
+        Optional<QueryUserResult> result = executor.query("""
+                    SELECT ua.nickname, ue.cents
+                    FROM user_account ua
+                    LEFT JOIN user_economy ue ON ua.uuid = ue.uuid AND ue.currency = ?
+                    WHERE ua.uuid = ?
+                    """)
+                .readOne(statement -> {
+                    statement.set(1, currency.name().toLowerCase());
+                    statement.set(2, UUIDConverter.convert(uuid));
+                }, query -> new QueryUserResult.Success(uuid, query.getString("nickname"), query.getLong("cents")), connection);
+
+        return result.orElse(new QueryUserResult.Error(ErrorType.NOT_FOUND));
+    }
+
 }

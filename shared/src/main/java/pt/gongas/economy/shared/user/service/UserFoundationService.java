@@ -419,4 +419,32 @@ public interface UserFoundationService {
      */
     QueryUserResult updateCurrenciesLowLevel(UUID senderUuid, UUID receiverUuid, Currency currency, long cents, DatabaseExecutor executor, Connection connection) throws SQLException;
 
+    /**
+     * Low-level method for reading a user's balance directly from the database.
+     *
+     * <p>This method exists simply because it is future-less, which makes it usable
+     * from within a {@link pt.gongas.economy.shared.transaction.EconomyTransactionalApi}
+     * transaction — for example, re-validating funds immediately before a
+     * {@link #withdrawCurrencyLowLevel} call inside the same transaction, so the check
+     * and the withdrawal run against the same connection and are consistent with each
+     * other. {@link #getCurrency(String, Currency)} cannot be used for this, since it
+     * returns a {@code CompletableFuture} and cannot be composed inside a synchronous
+     * transaction block.</p>
+     *
+     * <p>This method does not start, commit, or rollback transactions itself. If you want
+     * transaction management, use {@link pt.gongas.economy.shared.transaction.EconomyTransactionalApi},
+     * which handles transaction lifecycle for you.</p>
+     *
+     * <p>Unlike the other low-level methods, this is a pure read with no side effects, so
+     * there is nothing to reconcile with the cache afterward.</p>
+     *
+     * @param uuid       User UUID
+     * @param currency   Currency to query
+     * @param executor   DatabaseExecutor to use for the transaction
+     * @param connection Connection to use for the transaction
+     * @return QueryUserResult containing the user's balance, or an error if the user could not be found
+     * @throws SQLException If a database error occurs
+     */
+    QueryUserResult getCurrencyLowLevel(UUID uuid, Currency currency, DatabaseExecutor executor, Connection connection) throws SQLException;
+
 }

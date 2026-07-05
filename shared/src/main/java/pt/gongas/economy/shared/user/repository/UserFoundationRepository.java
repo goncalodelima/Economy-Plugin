@@ -77,4 +77,6 @@ public interface UserFoundationRepository {
 
     QueryUserResult updateCurrenciesLowLevel(UUID senderUuid, UUID receiverUuid, Currency currency, long cents, DatabaseExecutor executor, Connection connection) throws SQLException;
 
+    QueryUserResult getCurrencyLowLevel(UUID uuid, Currency currency, DatabaseExecutor executor, Connection connection) throws SQLException;
+
 }
