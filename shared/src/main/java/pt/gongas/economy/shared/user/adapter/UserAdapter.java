@@ -29,9 +29,9 @@ import pt.gongas.economy.shared.currency.service.CurrencyFoundationService;
 import pt.gongas.economy.shared.user.User;
 
 import java.sql.SQLException;
-import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 public class UserAdapter implements DatabaseAdapter<User> {
 
@@ -46,7 +46,7 @@ public class UserAdapter implements DatabaseAdapter<User> {
 
         UUID uuid = UUIDConverter.convert(query.getBytes("uuid"));
         String nickname = query.getString("nickname");
-        Map<Currency, Long> currencies = new ConcurrentHashMap<>();
+        ConcurrentMap<Currency, Long> currencies = new ConcurrentHashMap<>();
 
         do {
 
