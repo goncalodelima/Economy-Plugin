@@ -25,10 +25,10 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import pt.gongas.economy.shared.currency.Currency;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 public class User {
 
@@ -37,16 +37,16 @@ public class User {
     @NotNull
     private String nickname;
     @NotNull
-    private final Map<Currency, Long> currencies;
+    private final ConcurrentMap<Currency, Long> currencies;
     private boolean online;
 
     public User(@NotNull UUID uuid, @NotNull String nickname) {
         this.uuid = uuid;
         this.nickname = nickname;
-        this.currencies = new HashMap<>();
+        this.currencies = new ConcurrentHashMap<>();
     }
 
-    public User(@NotNull UUID uuid, @NotNull String nickname, @NotNull Map<Currency, Long> currencies) {
+    public User(@NotNull UUID uuid, @NotNull String nickname, @NotNull ConcurrentMap<Currency, Long> currencies) {
         this.uuid = uuid;
         this.nickname = nickname;
         this.currencies = currencies;
@@ -80,7 +80,7 @@ public class User {
         this.nickname = nickname;
     }
 
-    public @NotNull Map<Currency, Long> getCurrencies() {
+    public @NotNull ConcurrentMap<Currency, Long> getCurrencies() {
         return currencies;
     }
 
