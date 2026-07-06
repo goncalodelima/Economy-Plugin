@@ -135,10 +135,10 @@ public class EconomyCommand extends BaseCommand {
 
             User targetUser = userService.get(targetPlayer.getUniqueId());
 
-        if (targetUser == null) {
-            player.sendRichMessage(messages.error1);
-            return;
-        }
+            if (targetUser == null) {
+                player.sendRichMessage(messages.error1);
+                return;
+            }
 
             economyApi.payCurrencyAndNotifyIfNeeded(player, targetPlayer, user, targetUser, currency, amount, true);
         } else {
